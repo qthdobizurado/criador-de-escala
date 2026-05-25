@@ -744,8 +744,10 @@ function atualizarSelectResponsaveis() {
     const val = sel.value;
     sel.innerHTML = '<option value="">Selecione um responsável</option>' +
       responsaveis.map(r => {
-        const dt = new Date(parseInt($('ano').value), parseInt($('mes').value) - 1, parseInt(sel.id.split('-')[1]));
-        const afastado = isResponsavelAfastado(r, dt);
+        // Vínculos gerais (responsavel-vinculo) não têm dia no id → diaId = NaN → sem cálculo de afastamento
+        const diaId = parseInt(sel.id.split('-')[1]);
+        const dt = isNaN(diaId) ? null : new Date(parseInt($('ano').value), parseInt($('mes').value) - 1, diaId);
+        const afastado = dt ? isResponsavelAfastado(r, dt) : false;
         return `<option value="${r}" ${r === val ? 'selected' : ''}>${r}${afastado ? ' (Afastado)' : ''}</option>`;
       }).join('');
   });
@@ -912,6 +914,8 @@ function gerarCalendarioInterno(mantemEd) {
       const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.geradoAutomaticamente);
       if (excluida || jaExisteManual) return;
       if (!jaExisteAutomatica) {
+        // ✅ Intencional: ocultar é definido globalmente no dia 1 e propagado via geral.ocultar
+        // Nos outros dias gerados automaticamente, ocultar segue o vínculo geral (checkbox só aparece no dia 1)
         let ocultarValue = false;
         if (dia === 1) ocultarValue = geral.hasOwnProperty('ocultar') ? geral.ocultar : false;
         vinculos[ala].push({
@@ -1405,10 +1409,8 @@ function atualizarRespCal(a, funcao, r, d) {
       openModal(`O responsável ${r} já está atribuído em outra função neste mesmo dia. Deseja continuar?`,
         () => {
           vinculoDia.responsavel = r || 'Indeterminado';
-          atualizarCusto(d, a, funcao);
-          gerarResumoResponsaveis();
-          gerarEscala();
-          gerarCalendario(true);
+          atualizarCusto(d, a, funcao); // já chama gerarResumoResponsaveis, gerarVagasDisponiveis, gerarEscala internamente
+          gerarCalendario(true); // atualiza alertas de cor do responsável no calendário
           salvarDadosPersistentes();
         },
         () => {
@@ -1421,10 +1423,8 @@ function atualizarRespCal(a, funcao, r, d) {
     }
   }
   vinculoDia.responsavel = r || 'Indeterminado';
-  atualizarCusto(d, a, funcao);
-  gerarResumoResponsaveis();
-  gerarEscala();
-  gerarCalendario(true);
+  atualizarCusto(d, a, funcao); // já chama gerarResumoResponsaveis, gerarVagasDisponiveis, gerarEscala internamente
+  gerarCalendario(true); // atualiza alertas de cor do responsável no calendário
   salvarDadosPersistentes();
 }
 function atualizarCusto(d, a, funcao) {
@@ -1671,7 +1671,7 @@ function removerAfastamento(idx) {
     mes = parseInt($('mes').value, 10);
   alas.forEach(ala => {
     vinculos[ala] = vinculos[ala].filter(v => {
-      if (!v.geradoAutomaticamente) return true;
+      if (!v.geradoAutomaticamente || v.bloqueada) return true; // preserva manuais e bloqueados
       if (v.originalResponsavel !== responsavelAfast) return true;
       const dtVinculo = new Date(ano, mes - 1, v.dia);
       const eraDestePeriodo = dentroDoPeriodo(dtVinculo, afastamentoRemovido.inicio, afastamentoRemovido.fim);
@@ -1792,6 +1792,8 @@ function gerarEscala() {
   let s = parseInt($('inicioEscala').value, 10) || 1;
   let f = parseInt($('fimDaEscala').value, 10) || 0;
   const dMax = new Date(a, m, 0).getDate();
+  // Se fimDaEscala estiver vazio, usa o último dia do mês (não 0)
+  if (!f) f = dMax;
   s = Math.max(1, Math.min(s, dMax));
   f = Math.max(1, Math.min(f, dMax));
   if (f < s) f = s;
@@ -1863,6 +1865,8 @@ function buildEscalaAC4HTML() {
   let s = parseInt($('inicioEscala').value, 10) || 1;
   let f = parseInt($('fimDaEscala').value, 10) || 0;
   const dMax = new Date(a, m, 0).getDate();
+  // Se fimDaEscala estiver vazio, usa o último dia do mês (não 0)
+  if (!f) f = dMax;
   s = Math.max(1, Math.min(s, dMax));
   f = Math.max(1, Math.min(f, dMax));
   if (f < s) f = s;
@@ -1925,6 +1929,8 @@ function buildEscalaAC4HTML() {
 
 
 function calcularCusto(data, hIni, hFim) {
+  // ✅ Intencional: quando hFim <= hIni (incluindo hFim === hIni), representa plantão de 24h.
+  // Ex: início 8h fim 8h = 24h de trabalho. É o comportamento esperado para escalas de plantão.
   let total = 0, d1 = new Date(data), d2 = new Date(d1);
   if (hFim <= hIni) d2.setDate(d2.getDate() + 1);
   function getTaxa(d, h) {
