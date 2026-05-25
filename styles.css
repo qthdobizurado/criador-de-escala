@@ -87,14 +87,14 @@ button:first-child { margin-left: 0; }
   display: flex;
   align-items: flex-end;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 6px;
   margin-top: 8px;
 }
 .afastamento-field { display: flex; flex-direction: column; }
 .afastamento-field label { font-size: 13px; margin-bottom: 3px; white-space: nowrap; }
 .afastamento-field input[type="date"],
 .afastamento-field input[type="number"] { width: auto; margin-top: 0; }
-.afastamento-field-resp { min-width: 260px; }
+.afastamento-field-resp { min-width: 340px; max-width: 400px; flex: 1 1 340px; }
 
 /* ── ACTION BARS (backup / nuvem) ── */
 .action-bar {
@@ -315,4 +315,4 @@ table .cs-wrapper { width: 220px; }
 
 /* cs-wrapper específico para afastamento */
 #afastamento-responsavel ~ .cs-wrapper,
-.afastamento-field-resp .cs-wrapper { width: 100%; min-width: 260px; }
+.afastamento-field-resp .cs-wrapper { width: 100%; min-width: 320px; }
