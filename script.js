@@ -1344,7 +1344,8 @@ function gerarVagasDisponiveis() {
     const _spanData1 = cols[0].querySelector('.data-dia');
     const [dStr] = (_spanData1 ? _spanData1.textContent : cols[0].textContent).split('/');
     const diaRow = parseInt(dStr, 10);
-    if (diaRow < inicioFiltro || diaRow > fimFiltro) return;
+    if (isNaN(diaRow) || diaRow < inicioFiltro || diaRow > fimFiltro) return;
+    if (!cols[2]) return; // linha do total mensal não tem cols[2] acessível normalmente
     const divs = cols[2].querySelectorAll('div[id^="funcao-"]');
     divs.forEach(dv => {
       const funcaoElement = dv.querySelector('.linha-funcao strong');
@@ -1479,10 +1480,20 @@ function recalcularTotalDiario(d, a) {
   if (cell) cell.textContent = "R$ " + formatarMoeda(total);
 }
 function recalcularTotalMensal() {
-  const t = Array.from({ length: new Date(parseInt($('ano').value), parseInt($('mes').value), 0).getDate() },
-    (_, d) => { const txt = $(`total-diario-${d + 1}`)?.textContent || '0'; return parseFloat(txt.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0; }
-  ).reduce((sum, v) => sum + v, 0);
-  $('total-mensal').innerHTML = `<strong>R$ ${formatarMoeda(t)}</strong>`;
+  const totalMensalEl = $('total-mensal');
+  if (!totalMensalEl) return; // calendário ainda não gerado
+  const ano = parseInt($('ano').value);
+  const mes = parseInt($('mes').value);
+  if (!ano || !mes) return;
+  const totalDias = new Date(ano, mes, 0).getDate();
+  if (!totalDias || isNaN(totalDias)) return;
+  const t = Array.from({ length: totalDias }, (_, d) => {
+    const el = $(`total-diario-${d + 1}`);
+    if (!el) return 0;
+    const txt = el.textContent || '0';
+    return parseFloat(txt.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0;
+  }).reduce((sum, v) => sum + v, 0);
+  totalMensalEl.innerHTML = `<strong>R$ ${formatarMoeda(t)}</strong>`;
 }
 function adicionarFuncaoNoCalendario(d, a) {
   let f = $(`nova-funcao-${d}-${a}`).value.trim();
@@ -1698,7 +1709,8 @@ function gerarResumoResponsaveis() {
     if (!cols[0]) return;
     const _spanData2 = cols[0].querySelector('.data-dia');
     const [dia, mes, ano] = (_spanData2 ? _spanData2.textContent : cols[0].textContent).split('/').map(Number);
-    if (dia < inicioFiltro || dia > fimFiltro) return;
+    if (isNaN(dia) || dia < inicioFiltro || dia > fimFiltro) return;
+    if (!cols[2]) return; // linha do total mensal
     const data = new Date(ano, mes - 1, dia);
     const weekday = data.toLocaleDateString('pt-BR', { weekday: 'long' }).toLowerCase();
     cols[2].querySelectorAll('div[id^="funcao-"]').forEach(div => {
