@@ -993,19 +993,31 @@ Função com responsável definido no vínculo geral</div>`;
 ${func.bloqueada ? '🔓 Desbloquear Modificaçoes' : '🔒 Bloquear Modificaçoes'}
 </button>
 </div>
-<div class="linha" style="justify-content: center;">
-<label>Responsável:</label>
-<select data-role="responsavel-calendario" id="responsavel-${dia}-${ala}-${func.funcao}" class="${selectDisabledClass}" style="width:300px;"${disabledAttr} onchange="atualizarRespCal('${ala}','${func.funcao}',this.value,${dia})">
+<div class="linha" style="justify-content: center; align-items: flex-end;">
+<div class="campo-vertical">
+<label>Nome</label>
+<select data-role="responsavel-calendario" id="responsavel-${dia}-${ala}-${func.funcao}" class="${selectDisabledClass}" style="width:460px;"${disabledAttr} onchange="atualizarRespCal('${ala}','${func.funcao}',this.value,${dia})">
 <option value="">Selecione um responsável</option>
 ${responsaveis.map(r => `<option value="${r}" ${r === func.responsavel ? 'selected' : ''}>${r}${isResponsavelAfastado(r, dt) ? ' (Afastado)' : ''}</option>`).join('')}
 </select>
-<label>Hora Início:</label>
+</div>
+<div class="campo-vertical">
+<label>Hora</label>
+<label>Início</label>
 <input type="number" id="${hi}" class="input-hora${disabledClass}" value="${hI}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
-<label>Hora Fim:</label>
+</div>
+<div class="campo-vertical">
+<label>Hora</label>
+<label>Fim</label>
 <input type="number" id="${hf}" class="input-hora${disabledClass}" value="${hF}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
-${dia === dMax ? `<label>Hora Fim na Escala:</label>
-<input type="number" id="hora-fim-escala-${dia}-${ala}-${func.funcao}" class="input-hora${disabledClass}" value="${hFE}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},'${ala}','${func.funcao}')">` : ``}
-<label>Remuneração:</label>
+</div>
+${dia === dMax ? `<div class="campo-vertical">
+<label>Hora Fim</label>
+<label>Escala</label>
+<input type="number" id="hora-fim-escala-${dia}-${ala}-${func.funcao}" class="input-hora${disabledClass}" value="${hFE}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},'${ala}','${func.funcao}')">
+</div>` : ``}
+<div class="campo-vertical">
+<label>Remuneração</label>
 <select id="${rm}" class="${selectDisabledClass}"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
 <option value="AC4" ${rS==='AC4' ? 'selected' : ''}>AC4</option>
 <option value="AC4 - Regência" ${rS==='AC4 - Regência' ? 'selected' : ''}>AC4 - Regência</option>
@@ -1015,9 +1027,13 @@ ${dia === dMax ? `<label>Hora Fim na Escala:</label>
 <option value="..." ${rS==='...' ? 'selected' : ''}>...</option>
 <option value="Troca com a SOP" ${rS==='Troca com a SOP' ? 'selected' : ''}>Troca com a SOP</option>
 </select>
-<span id="${c}">Custo R$: ${formatarMoeda(cIni)}</span>
+</div>
+<div class="campo-vertical">
+<label>Custo</label>
+<span id="${c}" class="custo-valor">R$ ${formatarMoeda(cIni)}</span>
+</div>
 <button${disabledAttr} onclick="removerFuncaoCalendario('${ala}','${func.funcao}',${dia})">Remover</button>
-${dia === 1 ? `<label><input type="checkbox" id="ocultar-${dia}-${ala}-${func.funcao}"${disabledAttr} onchange="toggleOcultar(${dia},'${ala}','${func.funcao}',this.checked)" ${func.ocultar ? 'checked' : ''}> Ocultar da escala</label>` : ``}
+${dia === 1 ? `<label style="align-self:flex-end;"><input type="checkbox" id="ocultar-${dia}-${ala}-${func.funcao}"${disabledAttr} onchange="toggleOcultar(${dia},'${ala}','${func.funcao}',this.checked)" ${func.ocultar ? 'checked' : ''}> Ocultar da escala</label>` : ``}
 </div>${alertaHtml}</div>`;
     });
     html += `<tr class="${dia % 2 === 0 ? 'linha-par' : 'linha-impar'}">
@@ -1452,7 +1468,7 @@ function atualizarCusto(d, a, funcao) {
   }
   // ✅ Inclui "..." como isento
   const val = r !== 'Extra não remunerado' && r !== 'Normal' && r !== '...' && r !== 'Troca com a SOP' ? calcularCusto(dt, hI, hF) : 0;
-  $(c).textContent = `Custo R$: ${formatarMoeda(val)}`;
+  $(c).textContent = `R$ ${formatarMoeda(val)}`;
   recalcularTotalDiario(d, a);
   recalcularTotalMensal();
   gerarResumoResponsaveis();
@@ -1721,7 +1737,7 @@ function gerarResumoResponsaveis() {
       const hi = parseInt(hiInput.value, 10) || 0;
       const hf = parseInt(hfInput.value, 10) || 0;
       const horasTrabalhadas = hi === hf ? 24 : hf > hi ? hf - hi : 24 - hi + hf;
-      const custo = parseFloat(custoSpan.textContent.replace('Custo R$: ', '').replace('.', '').replace(',', '.')) || 0;
+      const custo = parseFloat(custoSpan.textContent.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0;
       if (!rs[resp]) {
         rs[resp] = {
           gastoAC4: 0, gastoAC42: 0, gastoExtra: 0,
