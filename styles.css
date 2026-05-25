@@ -70,9 +70,9 @@ button:first-child { margin-left: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 4px;
+  flex-wrap: nowrap;
 }
 
 /* Inputs e selects dentro de .linha NÃO devem esticar para 100% */
