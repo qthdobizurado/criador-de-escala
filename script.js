@@ -938,32 +938,24 @@ function exibirVinculos() {
     const funcoesGlobais = arr.filter(v => !v.apenasAla);
     const funcoesExclusivas = arr.filter(v => v.apenasAla);
 
-    const tabelaGlobal = funcoesGlobais.length ? `
+    const todasFuncoes = [...funcoesGlobais, ...funcoesExclusivas];
+    const tabelaGlobal = todasFuncoes.length ? `
 <table>
-<tr><th>Função</th><th>Responsável</th><th></th></tr>
-${funcoesGlobais.map(it => `<tr>
+<tr><th>Função</th><th>Responsável</th><th>Tipo</th></tr>
+${todasFuncoes.map(it => `<tr>
 <td>${it.funcao}</td>
 <td><select data-role="responsavel-vinculo" onchange="editarResponsavel('${a}','${it.funcao}',this.value)">
 <option value="">Selecione um responsável</option>
 ${responsaveis.map(r => `<option value="${r}" ${r === it.responsavel ? 'selected' : ''}>${r}</option>`).join('')}
 </select></td>
-<td></td>
+<td>${it.apenasAla
+  ? `<span class="tag-funcao-exclusiva">Função específica da ala</span><br><button class="btn-remover-funcao-ala" onclick="removerFuncaoExclusivaAla('${a}','${it.funcao.replace(/'/g, "\\'")}')">🗑 Remover</button>`
+  : `<span class="tag-funcao-geral">Função geral</span>`
+}</td>
 </tr>`).join('')}
 </table>` : '';
 
-    const tabelaExclusiva = funcoesExclusivas.length ? `
-<div class="vinculos-exclusivos-titulo">📌 Funções exclusivas desta ala:</div>
-<table>
-<tr><th>Função</th><th>Responsável</th><th>Ação</th></tr>
-${funcoesExclusivas.map(it => `<tr>
-<td>${it.funcao}</td>
-<td><select data-role="responsavel-vinculo" onchange="editarResponsavel('${a}','${it.funcao}',this.value)">
-<option value="">Selecione um responsável</option>
-${responsaveis.map(r => `<option value="${r}" ${r === it.responsavel ? 'selected' : ''}>${r}</option>`).join('')}
-</select></td>
-<td><button class="btn-remover-funcao-ala" onclick="removerFuncaoExclusivaAla('${a}','${it.funcao}')" title="Remover função desta ala">🗑 Remover</button></td>
-</tr>`).join('')}
-</table>` : '';
+    const tabelaExclusiva = '';
 
     const escapedA = a.replace(/'/g, "\\'");
     const painel = `
