@@ -428,9 +428,13 @@ function _atualizarIndicadorAutoSave() {
   if (_slotAutoSave) {
     ind.textContent = `🔄 Auto-save ativo: "${_slotAutoSave}"`;
     ind.style.color = '#1565c0';
+    ind.style.fontSize = '12px';
+    ind.style.fontWeight = 'normal';
   } else {
-    ind.textContent = 'Auto-save desativado.';
-    ind.style.color = '#888';
+    ind.textContent = '⚠ Atenção: Auto-save desativado.';
+    ind.style.color = '#c62828';
+    ind.style.fontSize = '15px';
+    ind.style.fontWeight = '700';
   }
 }
 
@@ -450,6 +454,15 @@ async function _autoSaveNuvem() {
   // Verifica se o slot ainda existe
   const existe = _slotsCache.some(s => s.nome === _slotAutoSave);
   if (!existe) return;
+  // Mostra notificação de "Salvando..." para avisar o usuário que não feche a página
+  const ind = $('indicadorAutoSave');
+  if (ind) {
+    ind.textContent = '💾 Salvando na nuvem...';
+    ind.style.color = '#e65100';
+    ind.style.fontSize = '13px';
+    ind.style.fontWeight = '600';
+    ind.classList.add('salvando');
+  }
   try {
     await fetch(SHEETS_URL, {
       method: 'POST',
@@ -462,8 +475,14 @@ async function _autoSaveNuvem() {
         dados: coletarDadosParaSalvar()
       })
     });
+    // Restaura o indicador normal após salvar
+    if (ind) ind.classList.remove('salvando');
+    _atualizarIndicadorAutoSave();
   } catch (err) {
     console.warn('Auto-save falhou:', err);
+    // Mesmo com erro, restaura o indicador
+    if (ind) ind.classList.remove('salvando');
+    _atualizarIndicadorAutoSave();
   }
 }
 
