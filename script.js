@@ -999,23 +999,13 @@ ${func.bloqueada ? '🔓 Desbloquear Modificaçoes' : '🔒 Bloquear Modificaço
 <option value="">Selecione um responsável</option>
 ${responsaveis.map(r => `<option value="${r}" ${r === func.responsavel ? 'selected' : ''}>${r}${isResponsavelAfastado(r, dt) ? ' (Afastado)' : ''}</option>`).join('')}
 </select>
-<div class="campo-vertical">
-<label>Hora</label>
-<label>Início</label>
+<label class="label-inline">H.Início:</label>
 <input type="number" id="${hi}" class="input-hora${disabledClass}" value="${hI}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
-</div>
-<div class="campo-vertical">
-<label>Hora</label>
-<label>Fim</label>
+<label class="label-inline">H.Fim:</label>
 <input type="number" id="${hf}" class="input-hora${disabledClass}" value="${hF}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
-</div>
-${dia === dMax ? `<div class="campo-vertical">
-<label>Hora Fim</label>
-<label>Escala</label>
-<input type="number" id="hora-fim-escala-${dia}-${ala}-${func.funcao}" class="input-hora${disabledClass}" value="${hFE}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},'${ala}','${func.funcao}')">
-</div>` : ``}
-<div class="campo-vertical">
-<label>Remuneração</label>
+${dia === dMax ? `<label class="label-inline">H.Fim Escala:</label>
+<input type="number" id="hora-fim-escala-${dia}-${ala}-${func.funcao}" class="input-hora${disabledClass}" value="${hFE}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},'${ala}','${func.funcao}')">` : ``}
+<label class="label-inline">Remuneração:</label>
 <select id="${rm}" class="${selectDisabledClass}"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
 <option value="AC4" ${rS==='AC4' ? 'selected' : ''}>AC4</option>
 <option value="AC4 - Regência" ${rS==='AC4 - Regência' ? 'selected' : ''}>AC4 - Regência</option>
@@ -1025,11 +1015,8 @@ ${dia === dMax ? `<div class="campo-vertical">
 <option value="..." ${rS==='...' ? 'selected' : ''}>...</option>
 <option value="Troca com a SOP" ${rS==='Troca com a SOP' ? 'selected' : ''}>Troca com a SOP</option>
 </select>
-</div>
-<div class="campo-vertical">
-<label>Custo</label>
+<label class="label-inline">Custo:</label>
 <span id="${c}" class="custo-valor">R$ ${formatarMoeda(cIni)}</span>
-</div>
 <button${disabledAttr} onclick="removerFuncaoCalendario('${ala}','${func.funcao}',${dia})">Remover</button>
 ${dia === 1 ? `<label><input type="checkbox" id="ocultar-${dia}-${ala}-${func.funcao}"${disabledAttr} onchange="toggleOcultar(${dia},'${ala}','${func.funcao}',this.checked)" ${func.ocultar ? 'checked' : ''}> Ocultar da escala</label>` : ``}
 </div>${alertaHtml}</div>`;

@@ -889,36 +889,13 @@ table .cs-wrapper {
   width: 70px;
 }
 
-/* ========== CAMPO VERTICAL (label em cima, input embaixo) ========== */
-.campo-vertical {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-}
-
-.campo-vertical label {
-  font-size: 11px;
-  color: #555;
-  white-space: nowrap;
-  line-height: 1.2;
-  margin: 0;
-}
-
-.campo-vertical input,
-.campo-vertical select {
-  margin-top: 0;
-  width: auto;
-}
-
-/* Custo valor — alinhado como os outros campos verticais */
+/* Custo valor inline */
 .custo-valor {
   display: inline-block;
   font-size: 13px;
   font-weight: 600;
   color: #1a3c7a;
   white-space: nowrap;
-  padding: 4px 2px;
 }
 
 
