@@ -959,3 +959,21 @@ table .cs-wrapper {
 .linha-funcao-campos .cs-input {
   width: 100%;
 }
+
+/* ========== DATA DO CALENDÁRIO (data em cima, dia da semana embaixo) ========== */
+.td-data {
+  white-space: nowrap;
+  min-width: 70px;
+}
+
+.data-dia {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.data-dw {
+  display: block;
+  font-size: 11px;
+  color: #666;
+}

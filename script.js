@@ -1022,7 +1022,7 @@ ${dia === 1 ? `<label><input type="checkbox" id="ocultar-${dia}-${ala}-${func.fu
 </div>${alertaHtml}</div>`;
     });
     html += `<tr class="${dia % 2 === 0 ? 'linha-par' : 'linha-impar'}">
-<td>${dia}/${m}/${a} (${dw})</td>
+<td class="td-data"><span class="data-dia">${dia}/${m}/${a}</span><span class="data-dw">(${dw})</span></td>
 <td>${ala}</td>
 <td id="container-funcoes-${dia}-${ala}" class="sortable-container">
 <div class="funcoes-container">
