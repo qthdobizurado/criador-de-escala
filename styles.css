@@ -921,10 +921,7 @@ table .cs-wrapper {
   padding: 4px 2px;
 }
 
-/* Campo de pesquisa Nome no calendário: mesma largura do select (460px) */
-.linha .cs-wrapper {
-  width: 460px;
-}
+
 
 /* ========== AFASTAMENTO DIAS — centralizado ========== */
 .afastamento-field-dias {
@@ -948,4 +945,40 @@ table .cs-wrapper {
   width: 70px;
   margin-top: 0;
   text-align: center;
+}
+
+/* ========== LINHA DE CAMPOS DAS FUNÇÕES ========== */
+
+/* A linha que contém Nome: + campos empilhados */
+.linha-funcao-campos {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 6px;
+  width: 100%;
+  justify-content: flex-start !important;
+}
+
+/* "Nome:" fica inline, à esquerda do campo */
+.label-inline {
+  font-size: 13px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* O select (hidden) e o cs-wrapper crescem para preencher o espaço restante */
+.select-nome-funcao {
+  flex: 1 1 auto;
+  min-width: 200px;
+}
+
+/* O cs-wrapper do select-nome-funcao também estica */
+.linha-funcao-campos .cs-wrapper {
+  flex: 1 1 auto;
+  min-width: 200px;
+  width: auto !important;
+}
+
+.linha-funcao-campos .cs-input {
+  width: 100%;
 }

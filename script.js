@@ -993,14 +993,12 @@ Função com responsável definido no vínculo geral</div>`;
 ${func.bloqueada ? '🔓 Desbloquear Modificaçoes' : '🔒 Bloquear Modificaçoes'}
 </button>
 </div>
-<div class="linha" style="justify-content: center; align-items: flex-end;">
-<div class="campo-vertical">
-<label>Nome</label>
-<select data-role="responsavel-calendario" id="responsavel-${dia}-${ala}-${func.funcao}" class="${selectDisabledClass}" style="width:460px;"${disabledAttr} onchange="atualizarRespCal('${ala}','${func.funcao}',this.value,${dia})">
+<div class="linha linha-funcao-campos" style="justify-content: center; align-items: center;">
+<label class="label-inline">Nome:</label>
+<select data-role="responsavel-calendario" id="responsavel-${dia}-${ala}-${func.funcao}" class="${selectDisabledClass} select-nome-funcao"${disabledAttr} onchange="atualizarRespCal('${ala}','${func.funcao}',this.value,${dia})">
 <option value="">Selecione um responsável</option>
 ${responsaveis.map(r => `<option value="${r}" ${r === func.responsavel ? 'selected' : ''}>${r}${isResponsavelAfastado(r, dt) ? ' (Afastado)' : ''}</option>`).join('')}
 </select>
-</div>
 <div class="campo-vertical">
 <label>Hora</label>
 <label>Início</label>
@@ -1033,7 +1031,7 @@ ${dia === dMax ? `<div class="campo-vertical">
 <span id="${c}" class="custo-valor">R$ ${formatarMoeda(cIni)}</span>
 </div>
 <button${disabledAttr} onclick="removerFuncaoCalendario('${ala}','${func.funcao}',${dia})">Remover</button>
-${dia === 1 ? `<label style="align-self:flex-end;"><input type="checkbox" id="ocultar-${dia}-${ala}-${func.funcao}"${disabledAttr} onchange="toggleOcultar(${dia},'${ala}','${func.funcao}',this.checked)" ${func.ocultar ? 'checked' : ''}> Ocultar da escala</label>` : ``}
+${dia === 1 ? `<label><input type="checkbox" id="ocultar-${dia}-${ala}-${func.funcao}"${disabledAttr} onchange="toggleOcultar(${dia},'${ala}','${func.funcao}',this.checked)" ${func.ocultar ? 'checked' : ''}> Ocultar da escala</label>` : ``}
 </div>${alertaHtml}</div>`;
     });
     html += `<tr class="${dia % 2 === 0 ? 'linha-par' : 'linha-impar'}">
