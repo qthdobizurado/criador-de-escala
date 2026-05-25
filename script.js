@@ -2,7 +2,7 @@
 // CONFIGURAÇÃO - Altere a URL abaixo para a URL do seu
 // Google Apps Script implantado como "Web App"
 // ============================================================
-const SHEETS_URL = 'https://script.google.com/macros/s/SEU_ID_AQUI/exec';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxN0e8H7u-5eMRasYqnnGturWdpHc_q4mAvmipBtvjBs25LGBoGgkJ4EXzc94rPwxiFfg/exec';
 // ============================================================
 
 const alas = ['Alpha', 'Bravo', 'Charlie', 'Delta'];
