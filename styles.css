@@ -845,14 +845,6 @@ table .cs-wrapper {
   padding: 0 1px;
 }
 
-/* Fim de afastamento (readonly/calculado) */
-#afastamento-fim[readonly] {
-  background: #f0f4ff;
-  color: #444;
-  cursor: not-allowed;
-  border-color: #c2d4f8;
-}
-
 #afastamento-dias {
   width: 65px !important;
 }

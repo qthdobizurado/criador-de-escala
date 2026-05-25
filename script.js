@@ -1554,20 +1554,42 @@ function dentroDoPeriodo(data, inicioISO, fimISO) {
 }
 function calcularFimAfastamento() {
   const inicio = $('afastamento-inicio').value;
-  const dias = parseInt($('afastamento-dias').value, 10);
-  if (!inicio || isNaN(dias) || dias < 1) {
-    $('afastamento-fim').value = '';
-    return;
-  }
+  const diasVal = $('afastamento-dias').value;
+  const dias = parseInt(diasVal, 10);
+
+  // Se o campo dias estiver vazio, não faz nada no fim
+  if (!diasVal || isNaN(dias) || dias < 1) return;
+
+  if (!inicio) return;
+
   const dataInicio = normalizarData(inicio);
-  // Fim = início + (dias - 1), pois o próprio dia de início já conta
   const dataFim = new Date(dataInicio);
   dataFim.setDate(dataFim.getDate() + dias - 1);
-  // Formata para YYYY-MM-DD
   const ano = dataFim.getFullYear();
   const mes = String(dataFim.getMonth() + 1).padStart(2, '0');
   const dia = String(dataFim.getDate()).padStart(2, '0');
   $('afastamento-fim').value = `${ano}-${mes}-${dia}`;
+}
+
+function onFimAfastamentoEditado() {
+  const inicio = $('afastamento-inicio').value;
+  const fim = $('afastamento-fim').value;
+  const diasVal = $('afastamento-dias').value;
+  if (!diasVal) return; // campo dias já vazio, nada a fazer
+
+  // Recalcula quantos dias seriam e compara com o campo
+  if (inicio && fim) {
+    const di = normalizarData(inicio);
+    const df = normalizarData(fim);
+    const diffMs = df - di;
+    const diffDias = Math.round(diffMs / 86400000) + 1; // conta o dia de início
+    const diasAtual = parseInt(diasVal, 10);
+    if (isNaN(diasAtual) || diffDias !== diasAtual) {
+      $('afastamento-dias').value = '';
+    }
+  } else {
+    $('afastamento-dias').value = '';
+  }
 }
 
 function adicionarAfastamento() {

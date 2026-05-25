@@ -84,12 +84,12 @@
       <input type="date" id="afastamento-inicio" onchange="calcularFimAfastamento()">
     </div>
     <div class="input-inline">
-      <label for="afastamento-dias">Dias:</label>
-      <input type="number" id="afastamento-dias" min="1" value="1" style="width:65px;" onchange="calcularFimAfastamento()" oninput="calcularFimAfastamento()">
+      <label for="afastamento-dias">Quantidade de dias para calcular o fim (opcional):</label>
+      <input type="number" id="afastamento-dias" min="1" placeholder="—" style="width:70px;" oninput="calcularFimAfastamento()">
     </div>
     <div class="input-inline">
-      <label for="afastamento-fim">Fim (calculado):</label>
-      <input type="date" id="afastamento-fim" readonly style="background:#f0f4ff;cursor:not-allowed;">
+      <label for="afastamento-fim">Fim:</label>
+      <input type="date" id="afastamento-fim" onchange="onFimAfastamentoEditado()">
     </div>
     <button onclick="adicionarAfastamento()">Adicionar Afastamento</button>
     <div id="afastamentos"></div>
