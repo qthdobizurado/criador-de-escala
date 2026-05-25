@@ -1190,6 +1190,7 @@ function gerarCalendarioInterno(mantemEd) {
       idx = ((Math.floor((dt - new Date(2024, 2, 21)) / 86400000)) % alas.length + alas.length) % alas.length,
       ala = alas[idx];
     let td = 0;
+    // ── Funções globais ──
     funcoes.forEach(funcao => {
       const geral = vinculos[ala].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
       if (!geral) return;
@@ -1204,8 +1205,6 @@ function gerarCalendarioInterno(mantemEd) {
       const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.geradoAutomaticamente);
       if (excluida || jaExisteManual) return;
       if (!jaExisteAutomatica) {
-        // ✅ Intencional: ocultar é definido globalmente no dia 1 e propagado via geral.ocultar
-        // Nos outros dias gerados automaticamente, ocultar segue o vínculo geral (checkbox só aparece no dia 1)
         let ocultarValue = false;
         if (dia === 1) ocultarValue = geral.hasOwnProperty('ocultar') ? geral.ocultar : false;
         vinculos[ala].push({
@@ -1220,6 +1219,39 @@ function gerarCalendarioInterno(mantemEd) {
           originalResponsavel: geral.responsavel,
           ocultar: ocultarValue,
           ordemOriginal: funcoes.indexOf(funcao)
+        });
+      }
+    });
+
+    // ── Funções exclusivas desta ala (apenasAla) ──
+    vinculos[ala].filter(v => v.apenasAla && !v.hasOwnProperty('dia')).forEach(geral => {
+      const funcao = geral.funcao;
+      let responsavel = geral.responsavel;
+      let remuneracao = geral.remuneracao || 'Normal';
+      if (responsavel === 'Indeterminado' || isResponsavelAfastado(responsavel, dt)) {
+        responsavel = 'Indeterminado';
+        remuneracao = 'AC4';
+      }
+      const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].includes(funcao);
+      const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && !v.geradoAutomaticamente);
+      const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.geradoAutomaticamente);
+      if (excluida || jaExisteManual) return;
+      if (!jaExisteAutomatica) {
+        let ocultarValue = false;
+        if (dia === 1) ocultarValue = geral.hasOwnProperty('ocultar') ? geral.ocultar : false;
+        vinculos[ala].push({
+          funcao: funcao,
+          responsavel: responsavel,
+          dia: dia,
+          horaInicio: 8,
+          horaFim: 8,
+          horaFimEscala: 8,
+          remuneracao: remuneracao,
+          geradoAutomaticamente: true,
+          originalResponsavel: geral.responsavel,
+          ocultar: ocultarValue,
+          apenasAla: true,
+          ordemOriginal: funcoes.length + vinculos[ala].filter(v => v.apenasAla && !v.hasOwnProperty('dia')).indexOf(geral)
         });
       }
     });
