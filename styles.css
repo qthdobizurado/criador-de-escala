@@ -734,3 +734,125 @@ select:focus {
   font-size: 13px;
   padding: 5px 8px;
 }
+
+/* ========== CUSTOM SELECT COM PESQUISA ========== */
+.cs-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 300px;
+}
+
+/* No contexto de vínculos (tabela), menor */
+table .cs-wrapper {
+  width: 220px;
+}
+
+/* No contexto de afastamento */
+#afastamento-responsavel + .cs-wrapper,
+.cs-wrapper:has(#afastamento-responsavel) {
+  width: 250px;
+}
+
+.cs-input {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat right 10px center;
+  background-size: 14px;
+  padding-right: 30px;
+  box-sizing: border-box;
+  margin-top: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cs-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
+  outline: none;
+}
+
+.cs-input.input-disabled {
+  background-color: #f0f0f0 !important;
+  color: #888 !important;
+  cursor: not-allowed !important;
+}
+
+.cs-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  width: 100%;
+  min-width: 220px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #c2c2c2;
+  border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  z-index: 9000;
+  scrollbar-width: thin;
+}
+
+.cs-dropdown.cs-open {
+  display: block;
+}
+
+.cs-option {
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #333;
+  transition: background 0.12s;
+  user-select: none;
+}
+
+.cs-option:hover {
+  background: #e8f0fe;
+  color: #1a3c7a;
+}
+
+.cs-option.cs-selected {
+  background: #dbeafe;
+  font-weight: 600;
+  color: #1565c0;
+}
+
+.cs-option-clear {
+  color: #888;
+  font-style: italic;
+  border-bottom: 1px solid #eee;
+}
+
+.cs-option-clear:hover {
+  background: #f5f5f5;
+  color: #555;
+}
+
+.cs-option.cs-empty {
+  color: #aaa;
+  font-style: italic;
+  cursor: default;
+}
+
+.cs-option mark {
+  background: #fff3cd;
+  color: #333;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* Fim de afastamento (readonly/calculado) */
+#afastamento-fim[readonly] {
+  background: #f0f4ff;
+  color: #444;
+  cursor: not-allowed;
+  border-color: #c2d4f8;
+}
+
+#afastamento-dias {
+  width: 65px !important;
+}

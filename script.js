@@ -784,6 +784,7 @@ ${responsaveis.map(r => `<option value="${r}" ${r === it.responsavel ? 'selected
 </tr>`).join('')}
 </table>`;
   }).join('');
+  setTimeout(ativarTodosCustomSelects, 0);
 }
 
 // ✅ CORREÇÃO PRINCIPAL: Verificação por responsável em QUALQUER função em outra ala
@@ -1041,6 +1042,7 @@ ${funHtml}
   $('calendario').innerHTML = html;
   calendarioGerado = true;
   inicializarDragAndDrop();
+  setTimeout(ativarTodosCustomSelects, 0);
   gerarResumoResponsaveis();
   gerarVagasDisponiveis();
   gerarEscala();
@@ -1550,6 +1552,24 @@ function dentroDoPeriodo(data, inicioISO, fimISO) {
   const df = normalizarData(fimISO);
   return compararDatas(dataVerificar, di) >= 0 && compararDatas(dataVerificar, df) <= 0;
 }
+function calcularFimAfastamento() {
+  const inicio = $('afastamento-inicio').value;
+  const dias = parseInt($('afastamento-dias').value, 10);
+  if (!inicio || isNaN(dias) || dias < 1) {
+    $('afastamento-fim').value = '';
+    return;
+  }
+  const dataInicio = normalizarData(inicio);
+  // Fim = início + (dias - 1), pois o próprio dia de início já conta
+  const dataFim = new Date(dataInicio);
+  dataFim.setDate(dataFim.getDate() + dias - 1);
+  // Formata para YYYY-MM-DD
+  const ano = dataFim.getFullYear();
+  const mes = String(dataFim.getMonth() + 1).padStart(2, '0');
+  const dia = String(dataFim.getDate()).padStart(2, '0');
+  $('afastamento-fim').value = `${ano}-${mes}-${dia}`;
+}
+
 function adicionarAfastamento() {
   const r = $('afastamento-responsavel').value,
     i = $('afastamento-inicio').value,
@@ -1877,3 +1897,175 @@ function calcularCusto(data, hIni, hFim) {
   horas.forEach(e => total += getTaxa(e.d, e.h));
   return total;
 }
+
+// ============================================================
+// SELETOR COM PESQUISA (CustomSelect)
+// Substitui <select data-role="responsavel-*"> por um widget
+// de input com dropdown filtrável.
+// ============================================================
+
+// Fecha todos os dropdowns abertos ao clicar fora
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.cs-wrapper')) {
+    document.querySelectorAll('.cs-dropdown.cs-open').forEach(d => d.classList.remove('cs-open'));
+  }
+});
+
+/**
+ * Converte um <select data-role="responsavel-*"> em CustomSelect.
+ * Preserva o <select> original oculto para compatibilidade com o
+ * código existente (onchange, value, etc.).
+ */
+function ativarCustomSelect(sel) {
+  if (sel._csAtivado) return;
+  sel._csAtivado = true;
+  sel.style.display = 'none';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'cs-wrapper';
+  sel.parentNode.insertBefore(wrapper, sel);
+  wrapper.appendChild(sel);
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'cs-input';
+  input.placeholder = 'Pesquisar responsável...';
+  if (sel.disabled) { input.disabled = true; input.classList.add('input-disabled'); }
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'cs-dropdown';
+
+  wrapper.appendChild(input);
+  wrapper.appendChild(dropdown);
+
+  // Sincroniza o texto do input com o valor atual do select
+  function sincronizarInput() {
+    const opt = sel.options[sel.selectedIndex];
+    input.value = (opt && opt.value) ? opt.text : '';
+  }
+  sincronizarInput();
+
+  function renderOpcoes(filtro) {
+    filtro = (filtro || '').toLowerCase();
+    dropdown.innerHTML = '';
+
+    // Opção "limpar"
+    const limpar = document.createElement('div');
+    limpar.className = 'cs-option cs-option-clear';
+    limpar.textContent = '— Nenhum —';
+    limpar.addEventListener('mousedown', e => {
+      e.preventDefault();
+      sel.value = '';
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+      input.value = '';
+      dropdown.classList.remove('cs-open');
+    });
+    dropdown.appendChild(limpar);
+
+    let count = 0;
+    Array.from(sel.options).forEach(opt => {
+      if (!opt.value) return; // pula o placeholder
+      if (filtro && !opt.text.toLowerCase().includes(filtro)) return;
+      count++;
+      const div = document.createElement('div');
+      div.className = 'cs-option';
+      if (opt.value === sel.value) div.classList.add('cs-selected');
+
+      // Destaque do trecho encontrado
+      if (filtro) {
+        const idx = opt.text.toLowerCase().indexOf(filtro);
+        div.innerHTML =
+          _esc(opt.text.slice(0, idx)) +
+          '<mark>' + _esc(opt.text.slice(idx, idx + filtro.length)) + '</mark>' +
+          _esc(opt.text.slice(idx + filtro.length));
+      } else {
+        div.textContent = opt.text;
+      }
+
+      div.addEventListener('mousedown', e => {
+        e.preventDefault();
+        sel.value = opt.value;
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+        input.value = opt.text;
+        dropdown.classList.remove('cs-open');
+      });
+      dropdown.appendChild(div);
+    });
+
+    if (count === 0 && filtro) {
+      const vazio = document.createElement('div');
+      vazio.className = 'cs-option cs-empty';
+      vazio.textContent = 'Nenhum resultado para "' + filtro + '"';
+      dropdown.appendChild(vazio);
+    }
+  }
+
+  input.addEventListener('focus', () => {
+    // Fecha outros abertos
+    document.querySelectorAll('.cs-dropdown.cs-open').forEach(d => {
+      if (d !== dropdown) d.classList.remove('cs-open');
+    });
+    renderOpcoes(input.value === (sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].value ? sel.options[sel.selectedIndex].text : '') ? '' : input.value);
+    dropdown.classList.add('cs-open');
+  });
+
+  input.addEventListener('input', () => {
+    renderOpcoes(input.value);
+    dropdown.classList.add('cs-open');
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { dropdown.classList.remove('cs-open'); input.blur(); }
+    if (e.key === 'Enter') {
+      const first = dropdown.querySelector('.cs-option:not(.cs-option-clear):not(.cs-empty)');
+      if (first) first.dispatchEvent(new MouseEvent('mousedown'));
+    }
+  });
+
+  // Quando o <select> muda externamente, sincroniza o input
+  sel.addEventListener('change', sincronizarInput);
+
+  // Observa mudanças no disabled
+  const obs = new MutationObserver(() => {
+    input.disabled = sel.disabled;
+    input.classList.toggle('input-disabled', sel.disabled);
+  });
+  obs.observe(sel, { attributes: true, attributeFilter: ['disabled'] });
+
+  // Guarda referência para resinc externa
+  sel._csSync = sincronizarInput;
+}
+
+function _esc(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/**
+ * Reativa todos os selects de responsável na página.
+ * Chamada após gerarCalendario, exibirVinculos, etc.
+ */
+function ativarTodosCustomSelects() {
+  document.querySelectorAll(
+    'select[data-role="responsavel-vinculo"], select[data-role="responsavel-calendario"], #afastamento-responsavel'
+  ).forEach(sel => ativarCustomSelect(sel));
+}
+
+// ── Monkey-patch em atualizarSelectResponsaveis para reativar após rebuild ──
+const _origAtualizarSelectResponsaveis = atualizarSelectResponsaveis;
+atualizarSelectResponsaveis = function() {
+  _origAtualizarSelectResponsaveis.apply(this, arguments);
+  // Após rebuild do innerHTML, reativa e sincroniza
+  setTimeout(() => {
+    document.querySelectorAll(
+      'select[data-role="responsavel-vinculo"], select[data-role="responsavel-calendario"], #afastamento-responsavel'
+    ).forEach(sel => {
+      if (sel._csAtivado && sel._csSync) sel._csSync();
+      else ativarCustomSelect(sel);
+    });
+  }, 0);
+};
+
+// Ativa após DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(ativarTodosCustomSelects, 300);
+});
