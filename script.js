@@ -278,7 +278,7 @@ async function confirmarSalvarNuvem() {
     return;
   }
 
-  const dados = coletarDadosParaSalvar();
+  const dados = coletarDadosParaNuvem();
   $('nuvemSalvarStatus').textContent = 'Salvando...';
   $('nuvemSalvarStatus').style.color = '#555';
   try {
@@ -484,7 +484,7 @@ async function _autoSaveNuvem() {
         senha: senhaAtual,
         nomeSlot: _slotAutoSave,
         substituir: _slotAutoSave,
-        dados: coletarDadosParaSalvar()
+        dados: coletarDadosParaNuvem()
       })
     });
     _mostrarToastAutoSave('ok');
@@ -529,15 +529,22 @@ function fecharModalNuvem(id) {
 // DADOS PERSISTENTES (localStorage como cache local)
 // ============================================================
 function coletarDadosParaSalvar() {
+  // HTMLs gerados (resumo, vagas, escala, escalaAC4) são omitidos intencionalmente:
+  // são regenerados automaticamente via gerarCalendario(true) ao carregar.
+  // JSONs antigos que contenham esses campos são aceitos sem erro (ignorados em aplicarDados).
   return {
     funcoes, responsaveis, vinculos, afastamentos,
     calendarioGerado, exclusoesDiarias,
     mes: $('mes').value,
     ano: $('ano').value,
     inicioEscala: $('inicioEscala').value,
-    fimDaEscala: $('fimDaEscala').value,
-    resumoHTML, vagasHTML, escalaHTML, escalaAC4HTML
+    fimDaEscala: $('fimDaEscala').value
   };
+}
+
+// coletarDadosParaNuvem aponta para coletarDadosParaSalvar — ambos omitem HTMLs
+function coletarDadosParaNuvem() {
+  return coletarDadosParaSalvar();
 }
 
 function aplicarDados(dados) {
@@ -561,10 +568,12 @@ function aplicarDados(dados) {
   if (dados.ano) $('ano').value = dados.ano;
   if (dados.inicioEscala) $('inicioEscala').value = dados.inicioEscala;
   if (dados.fimDaEscala) $('fimDaEscala').value = dados.fimDaEscala;
-  resumoHTML = dados.resumoHTML || '';
-  vagasHTML = dados.vagasHTML || '';
-  escalaHTML = dados.escalaHTML || '';
-  escalaAC4HTML = dados.escalaAC4HTML || '';
+  // HTMLs não são mais salvos no JSON. Se vier de backup antigo, ignora silenciosamente.
+  // O calendário será regenerado por gerarCalendario(true) abaixo, que recriarará tudo.
+  resumoHTML = '';
+  vagasHTML = '';
+  escalaHTML = '';
+  escalaAC4HTML = '';
   $('funcoes').value = funcoes.join('\n');
   $('responsaveis').value = responsaveis.join('\n');
   exibirVinculos();
