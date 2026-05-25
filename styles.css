@@ -1,0 +1,649 @@
+/* ========== ESTILOS GERAIS ========== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 20px;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* Estilos para tabelas em GERAL (exceto calendário) */
+table:not(#calendario table) {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Para tabelas gerais (exceto calendário) */
+table:not(#calendario table) th,
+table:not(#calendario table) td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+table:not(#calendario table) th {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+table:not(#calendario table) tbody tr:nth-child(odd) {
+  background-color: #f8f9fa;
+}
+
+table:not(#calendario table) tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+table:not(#calendario table) tbody tr:hover {
+  background-color: #e9ecef;
+  transition: background-color 0.3s ease;
+}
+
+table:not(#calendario table) td {
+  border-right: 1px solid #e0e0e0;
+}
+
+table:not(#calendario table) td:last-child {
+  border-right: none;
+}
+
+table:not(#calendario table) th:first-child {
+  border-top-left-radius: 8px;
+}
+
+table:not(#calendario table) th:last-child {
+  border-top-right-radius: 8px;
+}
+
+table:not(#calendario table) tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ========== ESTILOS ESPECÍFICOS PARA CALENDÁRIO ========== */
+#calendario {
+  margin: 20px 0 0 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  width: 100%;
+}
+
+#calendario table {
+  width: 100%;
+  border-collapse: collapse !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: transparent;
+  border: none;
+  border-spacing: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+#calendario th,
+#calendario td {
+  padding: 8px 10px;
+  text-align: center;
+  border: 1px solid #ddd !important;
+  vertical-align: middle;
+}
+
+#calendario td:nth-child(3) {
+  vertical-align: top;
+}
+
+#calendario th {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+#calendario tbody tr:nth-child(odd) {
+  background-color: #f8f9fa;
+}
+
+#calendario tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+#calendario tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+#calendario .sortable-container,
+#calendario .funcoes-container,
+#calendario .input-container {
+  margin: 0 !important;
+  padding: 5px !important;
+  min-width: 0;
+}
+
+#calendario td:first-child,
+#calendario th:first-child {
+  border-left: none !important;
+}
+
+#calendario td:last-child,
+#calendario th:last-child {
+  border-right: none !important;
+}
+
+#calendario .linha {
+  margin: 3px 0 !important;
+  padding: 2px 0 !important;
+  gap: 5px;
+}
+
+#calendario .linha-funcao {
+  margin: 2px 0 !important;
+  padding: 0 !important;
+}
+
+#calendario button {
+  margin: 0 2px !important;
+  padding: 4px 8px !important;
+}
+
+#calendario td {
+  vertical-align: middle;
+  min-width: 0;
+}
+
+#calendario td:first-child,
+#calendario td:nth-child(2),
+#calendario td:nth-child(4) {
+  min-height: 50px;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+/* ========== ELEMENTOS GERAIS ========== */
+textarea,
+input,
+select,
+button {
+  width: 100%;
+  margin-top: 5px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+button {
+  width: auto;
+  padding: 8px 16px;
+  margin-left: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+}
+
+.input-hora {
+  width: 35px;
+}
+
+.linha {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 3px;
+  align-items: center;
+  text-align: center;
+}
+
+select {
+  width: 200px;
+}
+
+input[type="date"] {
+  width: auto;
+  max-width: 120px;
+}
+
+.afastamentos {
+  margin-top: 20px;
+}
+
+.input-inline {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.input-inline input,
+.input-inline select {
+  width: 120px;
+}
+
+.input-inline button {
+  width: auto;
+}
+
+.input-inline label {
+  margin-right: 5px;
+}
+
+#afastamento-responsavel {
+  width: 250px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content button {
+  margin: 5px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content button#confirmBtn {
+  background-color: #28a745;
+  color: white;
+}
+
+.modal-content button#confirmBtn:hover {
+  background-color: #218838;
+}
+
+.modal-content button#cancelBtn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-content button#cancelBtn:hover {
+  background-color: #c82333;
+}
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #007bff;
+  color: white;
+  border-top: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+footer p {
+  margin: 0;
+  font-size: 14px;
+}
+
+textarea,
+input,
+select {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+textarea:focus,
+input:focus,
+select:focus {
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
+
+#calendarioError {
+  color: #dc3545;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+#resumoResponsaveisSection {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.draggable-funcao {
+  cursor: move;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.draggable-funcao:hover {
+  background-color: #e9ecef;
+}
+
+.draggable-funcao.dragging {
+  opacity: 0.5;
+  background-color: #d4edda;
+}
+
+.sortable-container {
+  min-height: 50px;
+}
+
+.linha-funcao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.linha-funcao strong {
+  text-align: center;
+  display: inline-block;
+}
+
+.btn-mover-funcao {
+  padding: 4px 8px;
+  font-size: 12px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.btn-mover-funcao:hover {
+  background-color: #5a6268;
+}
+
+.btn-editar-funcao {
+  padding: 4px 8px;
+  font-size: 12px;
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.btn-editar-funcao:hover {
+  background-color: #138496;
+}
+
+.funcoes-container {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.input-container {
+  margin-top: 10px;
+  text-align: center;
+  border-top: 1px dashed #ddd;
+  padding-top: 10px;
+}
+
+/* ========== LOGIN OVERLAY ========== */
+#loginOverlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #1976d2 100%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#loginBox {
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+#loginBox h1 {
+  font-size: 22px;
+  color: #1565c0;
+  margin: 0 0 6px 0;
+}
+
+#loginBox p {
+  color: #666;
+  font-size: 14px;
+  margin: 0 0 24px 0;
+}
+
+.login-field {
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.login-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 4px;
+}
+
+.login-field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  margin-top: 0;
+}
+
+.login-field input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25,118,210,0.15);
+  outline: none;
+}
+
+#btnLogin {
+  width: 100%;
+  padding: 12px;
+  background: #1565c0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  margin-left: 0;
+  transition: background 0.2s;
+}
+
+#btnLogin:hover {
+  background: #0d47a1;
+}
+
+#btnLogin:disabled {
+  background: #90caf9;
+  cursor: not-allowed;
+}
+
+#loginErro {
+  color: #c62828;
+  font-size: 13px;
+  min-height: 18px;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+#loginStatus {
+  color: #555;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+/* ========== TOP BAR (usuário logado) ========== */
+#topBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 8px 0 12px 0;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
+#usuarioLogado {
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+
+.btn-logout {
+  background: #dc3545;
+  color: white;
+  padding: 5px 14px;
+  font-size: 13px;
+  border-radius: 4px;
+  margin-left: 0;
+}
+
+.btn-logout:hover {
+  background: #b02a37;
+}
+
+/* ========== ACTION BAR (backup / nuvem) ========== */
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  background: #e8f0fe;
+  border-radius: 6px;
+  border: 1px solid #c2d4f8;
+}
+
+.action-bar strong {
+  font-size: 13px;
+  color: #1a3c7a;
+  min-width: 100px;
+}
+
+.action-bar button {
+  margin-left: 0;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+/* ========== MODAL NUVEM ========== */
+.modal-nuvem {
+  max-width: 560px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-nuvem h3 {
+  margin-top: 0;
+  color: #1565c0;
+}
+
+.nuvem-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.nuvem-form label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+}
+
+.nuvem-form input,
+.nuvem-form select {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 0;
+}
+
+.slot-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.slot-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #f0f4ff;
+  border: 1px solid #c2d4f8;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.slot-item span {
+  font-weight: 600;
+  color: #1a3c7a;
+}
+
+.slot-item button {
+  margin-left: 0;
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.sem-slots {
+  color: #888;
+  font-style: italic;
+  font-size: 13px;
+}
