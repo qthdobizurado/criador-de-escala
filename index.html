@@ -45,17 +45,13 @@
       <input type="file" id="inputImportarBackup" accept=".json" style="display:none;" onchange="processarImportacao(event)">
     </div>
 
-    <!-- Botões de Nuvem -->
+    <!-- Botões de Nuvem + Auto-save -->
     <div class="action-bar">
       <strong>Nuvem:</strong>
       <button onclick="abrirModalSalvarNuvem()">☁ Salvar na Nuvem</button>
       <button onclick="abrirModalCarregarNuvem()">☁ Carregar / Gerenciar</button>
-    </div>
-
-    <!-- Auto-save -->
-    <div class="action-bar action-bar-autosave">
-      <strong>Auto-save:</strong>
-      <select id="selectAutoSave" onchange="onChangeAutoSave()" style="width:220px;">
+      <strong style="margin-left:12px;">Auto-save:</strong>
+      <select id="selectAutoSave" onchange="onChangeAutoSave()" style="width:200px;margin-top:0;">
         <option value="">-- Desativado --</option>
       </select>
       <span id="indicadorAutoSave" style="font-size:12px;color:#888;">Auto-save desativado.</span>
@@ -73,25 +69,29 @@
     <div id="vinculos"></div>
 
     <h2>4. Afastamentos</h2>
-    <div class="input-inline">
-      <label for="afastamento-responsavel">Responsável:</label>
-      <select id="afastamento-responsavel">
-        <option value="">Selecione um responsável</option>
-      </select>
+    <div class="afastamento-row">
+      <div class="afastamento-field afastamento-field-resp">
+        <label for="afastamento-responsavel">Responsável:</label>
+        <select id="afastamento-responsavel">
+          <option value="">Selecione um responsável</option>
+        </select>
+      </div>
+      <div class="afastamento-field">
+        <label for="afastamento-inicio">Início:</label>
+        <input type="date" id="afastamento-inicio" onchange="calcularFimAfastamento()">
+      </div>
+      <div class="afastamento-field">
+        <label for="afastamento-dias">Quantidade de dias para calcular o fim (opcional):</label>
+        <input type="number" id="afastamento-dias" min="1" placeholder="—" style="width:70px;" oninput="calcularFimAfastamento()">
+      </div>
+      <div class="afastamento-field">
+        <label for="afastamento-fim">Fim:</label>
+        <input type="date" id="afastamento-fim" onchange="onFimAfastamentoEditado()">
+      </div>
+      <div class="afastamento-field">
+        <button onclick="adicionarAfastamento()" style="margin-top:20px;">Adicionar Afastamento</button>
+      </div>
     </div>
-    <div class="input-inline">
-      <label for="afastamento-inicio">Início:</label>
-      <input type="date" id="afastamento-inicio" onchange="calcularFimAfastamento()">
-    </div>
-    <div class="input-inline">
-      <label for="afastamento-dias">Quantidade de dias para calcular o fim (opcional):</label>
-      <input type="number" id="afastamento-dias" min="1" placeholder="—" style="width:70px;" oninput="calcularFimAfastamento()">
-    </div>
-    <div class="input-inline">
-      <label for="afastamento-fim">Fim:</label>
-      <input type="date" id="afastamento-fim" onchange="onFimAfastamentoEditado()">
-    </div>
-    <button onclick="adicionarAfastamento()">Adicionar Afastamento</button>
     <div id="afastamentos"></div>
 
     <h2>5. Preencher calendário de funções sem responsáveis</h2>
@@ -124,8 +124,8 @@
     <div id="calendario"></div>
 
     <!-- Botões para visualizar em nova janela -->
-    <button id="botao-imprimir-resumo" style="display:none;" onclick="abrirResumoNoNavegador()">Abrir Resumo no Navegador</button>
-    <button id="botao-imprimir-vagas" style="display:none;" onclick="abrirVagasNoNavegador()">Abrir Vagas no Navegador</button>
+    <button id="botao-imprimir-resumo" style="display:none;" onclick="abrirResumoNoNavegador()">Abrir Resumo dos Responsáveis</button>
+    <button id="botao-imprimir-vagas" style="display:none;" onclick="abrirVagasNoNavegador()">Abrir Vagas Disponíveis</button>
 
     <h2>6. Escala</h2>
     <div class="input-inline">
@@ -135,8 +135,8 @@
       <input type="number" id="fimDaEscala" style="width:60px;">
     </div>
 
-    <button id="botao-imprimir-escala" style="display:none;" onclick="abrirEscalaNoNavegador()">Abrir Escala no Navegador</button>
-    <button id="botao-imprimir-escala-ac4" style="display:none;" onclick="abrirEscalaAC4NoNavegador()">Abrir Somente Escala de AC4 no Navegador</button>
+    <button id="botao-imprimir-escala" style="display:none;" onclick="abrirEscalaNoNavegador()">Abrir Escala</button>
+    <button id="botao-imprimir-escala-ac4" style="display:none;" onclick="abrirEscalaAC4NoNavegador()">Abrir Somente Escala de AC4</button>
 
     <footer>
       <p id="rodapeTexto">© 2025 - Desenvolvido por BM Fernandes 04032.</p>
