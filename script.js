@@ -542,9 +542,15 @@ function coletarDadosParaSalvar() {
   };
 }
 
-// coletarDadosParaNuvem aponta para coletarDadosParaSalvar — ambos omitem HTMLs
+// coletarDadosParaNuvem: garante explicitamente que nenhum HTML entre no payload da nuvem
 function coletarDadosParaNuvem() {
-  return coletarDadosParaSalvar();
+  const d = coletarDadosParaSalvar();
+  // Segurança dupla: remove os campos HTML caso existam (ex: dados de sessão antiga)
+  delete d.resumoHTML;
+  delete d.vagasHTML;
+  delete d.escalaHTML;
+  delete d.escalaAC4HTML;
+  return d;
 }
 
 function aplicarDados(dados) {
