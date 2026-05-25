@@ -834,10 +834,8 @@ table .cs-wrapper {
 
 .cs-dropdown {
   display: none;
-  position: absolute;
-  top: calc(100% + 2px);
-  left: 0;
-  width: 100%;
+  position: fixed;
+  width: 220px;
   min-width: 220px;
   max-height: 220px;
   overflow-y: auto;
@@ -845,7 +843,7 @@ table .cs-wrapper {
   border: 1px solid #c2c2c2;
   border-radius: 6px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  z-index: 9000;
+  z-index: 9999;
   scrollbar-width: thin;
 }
 
@@ -917,7 +915,7 @@ table .cs-wrapper {
   margin-top: 12px;
   border: 1px dashed #007bff;
   border-radius: 6px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .painel-adicionar-funcao-ala-titulo {

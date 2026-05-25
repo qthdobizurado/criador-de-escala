@@ -2274,7 +2274,15 @@ function ativarCustomSelect(sel) {
   dropdown.className = 'cs-dropdown';
 
   wrapper.appendChild(input);
-  wrapper.appendChild(dropdown);
+  // Anexa o dropdown ao body para escapar de qualquer overflow:hidden ancestral
+  document.body.appendChild(dropdown);
+
+  function posicionarDropdown() {
+    const rect = input.getBoundingClientRect();
+    dropdown.style.top = (rect.bottom + 2) + 'px';
+    dropdown.style.left = rect.left + 'px';
+    dropdown.style.width = rect.width + 'px';
+  }
 
   // Sincroniza o texto do input com o valor atual do select
   function sincronizarInput() {
@@ -2344,11 +2352,13 @@ function ativarCustomSelect(sel) {
       if (d !== dropdown) d.classList.remove('cs-open');
     });
     renderOpcoes(input.value === (sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].value ? sel.options[sel.selectedIndex].text : '') ? '' : input.value);
+    posicionarDropdown();
     dropdown.classList.add('cs-open');
   });
 
   input.addEventListener('input', () => {
     renderOpcoes(input.value);
+    posicionarDropdown();
     dropdown.classList.add('cs-open');
   });
 
@@ -2359,6 +2369,20 @@ function ativarCustomSelect(sel) {
       if (first) first.dispatchEvent(new MouseEvent('mousedown'));
     }
   });
+
+  // Reposiciona ao rolar a página
+  const onScroll = () => { if (dropdown.classList.contains('cs-open')) posicionarDropdown(); };
+  window.addEventListener('scroll', onScroll, true);
+
+  // Remove o dropdown do body quando o wrapper for removido do DOM
+  const cleanupObs = new MutationObserver(() => {
+    if (!document.body.contains(wrapper)) {
+      dropdown.remove();
+      window.removeEventListener('scroll', onScroll, true);
+      cleanupObs.disconnect();
+    }
+  });
+  cleanupObs.observe(document.body, { childList: true, subtree: true });
 
   // Quando o <select> muda externamente, sincroniza o input
   sel.addEventListener('change', sincronizarInput);
