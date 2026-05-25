@@ -227,8 +227,7 @@ function _renderModalSalvar(statusMsg, carregando) {
     $('nuvemSalvarStatus').style.color = cheio ? '#c62828' : '#555';
   }
 
-  // Modos: Criar Novo / Substituir
-  const modoAtual = $('radioModoNovo').checked ? 'novo' : 'substituir';
+  // Modos: Criar Novo / Substituir — modoAtual lido diretamente onde necessário
 
   // Botão "Criar Novo" desabilitado se cheio
   $('radioModoNovo').disabled = cheio;
@@ -889,7 +888,7 @@ function gerarCalendario(mantemEd = false) {
 function gerarCalendarioInterno(mantemEd) {
   $('calendarioError').textContent = "";
   const m = parseInt($('mes').value), a = parseInt($('ano').value);
-  if (!a || a < 2025) { openWarningModal("Selecione corretamente o ano"); return; }
+  if (!a || a < 2000) { openWarningModal("Selecione corretamente o ano"); return; }
   if (!m) { openWarningModal("Selecione corretamente o mês."); return; }
   const dMax = new Date(a, m, 0).getDate();
   let totMes = 0, html = `<table><thead><tr><th>Data</th><th>Ala</th><th>Funções e Responsáveis</th><th>Valores</th></tr></thead><tbody>`;
@@ -1297,7 +1296,9 @@ function toggleBloqueioFuncao(ala, funcao, dia, requerConfirmacao = false) {
 // ✅ CORREÇÃO FINAL: Aceita 0 como valor válido para Hora Fim na Escala
 function atualizarHoraFimEscala(dia, ala, funcao) {
   const vinculoDia = vinculos[ala].find(v => v.funcao === funcao && v.dia === dia);
-  if (vinculoDia && vinculoDia.bloqueada) {
+  // Verifica existência antes de qualquer outra operação
+  if (!vinculoDia) return;
+  if (vinculoDia.bloqueada) {
     openWarningModal("Edição bloqueada para esta função.");
     return;
   }
@@ -1308,7 +1309,6 @@ function atualizarHoraFimEscala(dia, ala, funcao) {
   const parsed = parseInt(inputElem.value, 10);
   const novoValor = isNaN(parsed) ? 8 : parsed;
 
-  if (!vinculoDia) return;
   vinculoDia.horaFimEscala = novoValor;
   gerarEscala();
   salvarDadosPersistentes();
@@ -1336,35 +1336,33 @@ function gerarVagasDisponiveis() {
   fimFiltro = Math.max(1, Math.min(fimFiltro, totalDias));
   if (fimFiltro < inicioFiltro) fimFiltro = inicioFiltro;
   const diasVagas = {};
-  for (let dia = inicioFiltro; dia <= fimFiltro; dia++) {
-    const rows = document.querySelectorAll('#calendario tbody tr');
-    rows.forEach(row => {
-      const cols = row.querySelectorAll('td');
-      if (!cols[0]) return;
-      const _spanData1 = cols[0].querySelector('.data-dia');
-      const [dStr] = (_spanData1 ? _spanData1.textContent : cols[0].textContent).split('/');
-      const diaRow = parseInt(dStr, 10);
-      if (diaRow === dia) {
-        const divs = cols[2].querySelectorAll('div[id^="funcao-"]');
-        divs.forEach(dv => {
-          const funcaoElement = dv.querySelector('.linha-funcao strong');
-          if (!funcaoElement) return;
-          const funcao = funcaoElement.textContent.replace(':', '').trim();
-          const ala = row.querySelector('td:nth-child(2)').textContent.trim();
-          if (exclusoesDiarias[ala] && exclusoesDiarias[ala][diaRow] &&
-            exclusoesDiarias[ala][diaRow].includes(funcao)) return;
-          const responsavel = dv.querySelector('select[data-role="responsavel-calendario"]').value;
-          const remuneracao = dv.querySelector('select[id^="remuneracao-"]').value;
-          const horaInicio = parseInt(dv.querySelector('input[id^="hora-inicio-"]').value, 10) || 0;
-          const horaFim = parseInt(dv.querySelector('input[id^="hora-fim-"]').value, 10) || 0;
-          if (!responsavel && (remuneracao === 'AC4' || remuneracao === 'AC4-2' || remuneracao === 'AC4 - Regência')) {
-            diasVagas[diaRow] = diasVagas[diaRow] || [];
-            diasVagas[diaRow].push({ funcao, horaInicio, horaFim, remuneracao });
-          }
-        });
+  // Percorre as linhas uma única vez (eficiente) em vez de uma varredura por dia
+  const rows = document.querySelectorAll('#calendario tbody tr');
+  rows.forEach(row => {
+    const cols = row.querySelectorAll('td');
+    if (!cols[0]) return;
+    const _spanData1 = cols[0].querySelector('.data-dia');
+    const [dStr] = (_spanData1 ? _spanData1.textContent : cols[0].textContent).split('/');
+    const diaRow = parseInt(dStr, 10);
+    if (diaRow < inicioFiltro || diaRow > fimFiltro) return;
+    const divs = cols[2].querySelectorAll('div[id^="funcao-"]');
+    divs.forEach(dv => {
+      const funcaoElement = dv.querySelector('.linha-funcao strong');
+      if (!funcaoElement) return;
+      const funcao = funcaoElement.textContent.replace(':', '').trim();
+      const ala = row.querySelector('td:nth-child(2)').textContent.trim();
+      if (exclusoesDiarias[ala] && exclusoesDiarias[ala][diaRow] &&
+        exclusoesDiarias[ala][diaRow].includes(funcao)) return;
+      const responsavel = dv.querySelector('select[data-role="responsavel-calendario"]').value;
+      const remuneracao = dv.querySelector('select[id^="remuneracao-"]').value;
+      const horaInicio = parseInt(dv.querySelector('input[id^="hora-inicio-"]').value, 10) || 0;
+      const horaFim = parseInt(dv.querySelector('input[id^="hora-fim-"]').value, 10) || 0;
+      if (!responsavel && (remuneracao === 'AC4' || remuneracao === 'AC4-2' || remuneracao === 'AC4 - Regência')) {
+        diasVagas[diaRow] = diasVagas[diaRow] || [];
+        diasVagas[diaRow].push({ funcao, horaInicio, horaFim, remuneracao });
       }
     });
-  }
+  });
   let dayIndex = 0;
   let html = `<table border="1" style="border-collapse:collapse; width:100%;">
 <thead><tr><th>Dia</th><th>Função</th><th>Hora</th><th>Tipo de Remuneração</th></tr></thead><tbody>`;
@@ -1482,13 +1480,13 @@ function recalcularTotalDiario(d, a) {
 }
 function recalcularTotalMensal() {
   const t = Array.from({ length: new Date(parseInt($('ano').value), parseInt($('mes').value), 0).getDate() },
-    (_, d) => parseFloat($(`total-diario-${d + 1}`)?.textContent.replace('R$ ', '').replace('.', '').replace(',', '.') || 0)
+    (_, d) => { const txt = $(`total-diario-${d + 1}`)?.textContent || '0'; return parseFloat(txt.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0; }
   ).reduce((sum, v) => sum + v, 0);
   $('total-mensal').innerHTML = `<strong>R$ ${formatarMoeda(t)}</strong>`;
 }
 function adicionarFuncaoNoCalendario(d, a) {
   let f = $(`nova-funcao-${d}-${a}`).value.trim();
-  f = f.replace(/\\/g, '|');
+  f = f.replace(/\\/g, '|'); // ✅ Intencional: previne quebra de onclick ao gerar HTML
   if (!f) return;
   if (exclusoesDiarias[a] && exclusoesDiarias[a][d] && exclusoesDiarias[a][d].includes(f)) {
     exclusoesDiarias[a][d] = exclusoesDiarias[a][d].filter(func => func !== f);
@@ -1880,7 +1878,7 @@ function buildEscalaAC4HTML() {
         // ✅ Inclui "AC4 - Regência" como AC4
         if (v.remuneracao === 'AC4' || v.remuneracao === 'AC4-2' || v.remuneracao === 'AC4 - Regência') {
           const hI = v.horaInicio ?? 8;
-          const hF = v.horaFim ?? 8;
+          const hF = v.horaFim ?? 8; // ✅ Intencional: escala AC4 usa sempre horaFim (não horaFimEscala)
           const valor = calcularCusto(dt, hI, hF);
           linhasAC4.push({ dt, func: v.funcao, resp: v.responsavel, hI, hF, valor });
           valorTotal += valor;
