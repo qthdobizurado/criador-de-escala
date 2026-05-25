@@ -17,7 +17,6 @@ table:not(#calendario table) {
   overflow: hidden;
 }
 
-/* Para tabelas gerais (exceto calendário) */
 table:not(#calendario table) th,
 table:not(#calendario table) td {
   padding: 12px;
@@ -167,7 +166,7 @@ table:not(#calendario table) tbody tr:last-child td {
   vertical-align: middle;
 }
 
-/* ========== ELEMENTOS GERAIS ========== */
+/* ========== INPUTS, SELECTS, TEXTAREAS ========== */
 textarea,
 input,
 select,
@@ -221,7 +220,7 @@ select {
 
 input[type="date"] {
   width: auto;
-  max-width: 120px;
+  max-width: 150px;
 }
 
 .afastamentos {
@@ -251,6 +250,40 @@ input[type="date"] {
   width: 250px;
 }
 
+/* ========== AFASTAMENTO ROW ========== */
+.afastamento-row {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.afastamento-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.afastamento-field label {
+  font-size: 13px;
+  margin-bottom: 3px;
+  white-space: nowrap;
+}
+
+.afastamento-field input[type="date"],
+.afastamento-field input[type="number"] {
+  width: auto;
+  margin-top: 0;
+}
+
+/* Campo de pesquisa do responsável: mais largo e sem espaço excessivo */
+.afastamento-field-resp {
+  min-width: 280px;
+  max-width: 420px;
+  flex: 1 1 280px;
+}
+
+/* ========== MODAIS ========== */
 .modal {
   display: none;
   position: fixed;
@@ -305,6 +338,7 @@ input[type="date"] {
   background-color: #c82333;
 }
 
+/* ========== FOOTER ========== */
 footer {
   text-align: center;
   margin-top: 40px;
@@ -320,6 +354,7 @@ footer p {
   font-size: 14px;
 }
 
+/* ========== FOCUS ========== */
 textarea,
 input,
 select {
@@ -348,6 +383,7 @@ select:focus {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* ========== DRAG & DROP ========== */
 .draggable-funcao {
   cursor: move;
   margin-bottom: 10px;
@@ -414,6 +450,25 @@ select:focus {
   background-color: #138496;
 }
 
+.btn-small {
+  font-size: 11px;
+  padding: 2px 6px;
+  margin-left: 4px;
+  min-width: 120px;
+}
+
+.input-disabled {
+  background-color: #f0f0f0 !important;
+  color: #888 !important;
+  cursor: not-allowed !important;
+}
+
+.select-disabled {
+  background-color: #f0f0f0 !important;
+  color: #888 !important;
+  cursor: not-allowed !important;
+}
+
 .funcoes-container {
   margin-bottom: 15px;
   text-align: center;
@@ -443,7 +498,7 @@ select:focus {
   padding: 40px 36px;
   width: 100%;
   max-width: 380px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   text-align: center;
 }
 
@@ -484,7 +539,7 @@ select:focus {
 
 .login-field input:focus {
   border-color: #1976d2;
-  box-shadow: 0 0 0 3px rgba(25,118,210,0.15);
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
   outline: none;
 }
 
@@ -526,7 +581,7 @@ select:focus {
   margin-top: 8px;
 }
 
-/* ========== TOP BAR (usuário logado) ========== */
+/* ========== TOP BAR ========== */
 #topBar {
   display: flex;
   align-items: center;
@@ -572,13 +627,24 @@ select:focus {
 .action-bar strong {
   font-size: 13px;
   color: #1a3c7a;
-  min-width: 100px;
 }
 
 .action-bar button {
   margin-left: 0;
   padding: 6px 14px;
   font-size: 13px;
+}
+
+.action-bar select {
+  width: auto;
+  margin-top: 0;
+  font-size: 13px;
+  padding: 5px 8px;
+}
+
+#indicadorAutoSave {
+  font-size: 12px;
+  color: #888;
 }
 
 /* ========== MODAL NUVEM ========== */
@@ -636,10 +702,39 @@ select:focus {
   color: #1a3c7a;
 }
 
-.slot-item button {
-  margin-left: 0;
+.slot-acoes {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-carregar-slot {
+  background: #1565c0;
+  color: white;
   padding: 4px 12px;
   font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  margin-left: 0;
+}
+
+.btn-carregar-slot:hover {
+  background: #0d47a1;
+}
+
+.btn-apagar-slot {
+  background: #c62828;
+  color: white;
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  margin-left: 0;
+}
+
+.btn-apagar-slot:hover {
+  background: #b71c1c;
 }
 
 .sem-slots {
@@ -676,65 +771,6 @@ select:focus {
   box-shadow: none;
 }
 
-.radio-label[style*="opacity"] {
-  color: #aaa;
-  cursor: not-allowed;
-}
-
-/* ========== SLOT ACTIONS (carregar + apagar) ========== */
-.slot-acoes {
-  display: flex;
-  gap: 6px;
-}
-
-.btn-carregar-slot {
-  background: #1565c0;
-  color: white;
-  padding: 4px 12px;
-  font-size: 12px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  margin-left: 0;
-}
-
-.btn-carregar-slot:hover {
-  background: #0d47a1;
-}
-
-.btn-apagar-slot {
-  background: #c62828;
-  color: white;
-  padding: 4px 12px;
-  font-size: 12px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  margin-left: 0;
-}
-
-.btn-apagar-slot:hover {
-  background: #b71c1c;
-}
-
-/* ========== AUTO-SAVE BAR ========== */
-.action-bar-autosave {
-  background: #e8f5e9;
-  border-color: #a5d6a7;
-}
-
-.action-bar-autosave strong {
-  color: #1b5e20;
-}
-
-.action-bar-autosave select {
-  margin-top: 0;
-  width: auto;
-  min-width: 180px;
-  font-size: 13px;
-  padding: 5px 8px;
-}
-
 /* ========== CUSTOM SELECT COM PESQUISA ========== */
 .cs-wrapper {
   position: relative;
@@ -742,35 +778,39 @@ select:focus {
   width: 300px;
 }
 
-/* No contexto de vínculos (tabela), menor */
+/* Dentro de tabela de vínculos */
 table .cs-wrapper {
   width: 220px;
 }
 
-/* No contexto de afastamento */
-#afastamento-responsavel + .cs-wrapper,
-.cs-wrapper:has(#afastamento-responsavel) {
-  width: 250px;
+/* Dentro do calendário */
+.linha .cs-wrapper {
+  width: 300px;
+}
+
+/* Campo de responsável no afastamento: mais largo */
+.afastamento-field-resp .cs-wrapper {
+  width: 100%;
+  min-width: 260px;
 }
 
 .cs-input {
   width: 100%;
-  padding: 7px 10px;
+  padding: 7px 30px 7px 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
   background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat right 10px center;
   background-size: 14px;
-  padding-right: 30px;
   box-sizing: border-box;
   margin-top: 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .cs-input:focus {
   border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
   outline: none;
 }
 
@@ -792,7 +832,7 @@ table .cs-wrapper {
   background: #fff;
   border: 1px solid #c2c2c2;
   border-radius: 6px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   z-index: 9000;
   scrollbar-width: thin;
 }
@@ -846,5 +886,5 @@ table .cs-wrapper {
 }
 
 #afastamento-dias {
-  width: 65px !important;
+  width: 70px;
 }

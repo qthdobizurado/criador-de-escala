@@ -563,11 +563,11 @@ function carregarDadosPersistentes() {
 // ============================================================
 function abrirHtmlNova(titulo, conteudo) {
   const baseStyle = '<style>table{width:100%;border-collapse:collapse}th,td{border:1px solid #000;padding:4px;text-align:left}</style>';
-  const html = `<html><head><title>${titulo}</title>${baseStyle}</head><body>${conteudo}</body></html>`;
-  const blob = new Blob([html], { type: 'text/html' });
+  const html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>' + titulo + '</title>' + baseStyle + '</head><body>' + conteudo + '</body></html>';
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   window.open(url, '_blank');
-  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  setTimeout(() => URL.revokeObjectURL(url), 15000);
 }
 
 function abrirResumoNoNavegador() {
@@ -1049,6 +1049,9 @@ ${funHtml}
   salvarDadosPersistentes();
 }
 function inicializarDragAndDrop() {
+  // Rastreia qual funcoesContainer originou o drag atual
+  let dragSourceContainer = null;
+
   const containers = document.querySelectorAll('.sortable-container');
   containers.forEach(container => {
     const funcoesContainer = container.querySelector('.funcoes-container');
@@ -1062,6 +1065,8 @@ function inicializarDragAndDrop() {
       handle.addEventListener('mousedown', (e) => {
         draggable.setAttribute('draggable', 'true');
         draggable.classList.add('dragging');
+        // Registra o container de origem
+        dragSourceContainer = funcoesContainer;
       });
       handle.addEventListener('mouseup', () => {
         draggable.setAttribute('draggable', 'false');
@@ -1072,10 +1077,13 @@ function inicializarDragAndDrop() {
       draggable.addEventListener('dragend', () => {
         draggable.classList.remove('dragging');
         draggable.setAttribute('draggable', 'false');
+        dragSourceContainer = null;
         atualizarOrdemFuncoesNoDia(container);
       });
     });
     funcoesContainer.addEventListener('dragover', e => {
+      // Só aceita o drag se vier do mesmo container (mesmo dia)
+      if (dragSourceContainer !== funcoesContainer) return;
       e.preventDefault();
       const afterElement = getDragAfterElement(funcoesContainer, e.clientY);
       const draggable = document.querySelector('.dragging');
