@@ -278,7 +278,14 @@ async function confirmarSalvarNuvem() {
     return;
   }
 
-  const dados = coletarDadosParaNuvem();
+  let dados;
+  try {
+    dados = await comprimirParaNuvem(coletarDadosParaNuvem());
+  } catch (err) {
+    $('nuvemSalvarStatus').textContent = '❌ ' + err.message;
+    $('nuvemSalvarStatus').style.color = '#c62828';
+    return;
+  }
   $('nuvemSalvarStatus').textContent = 'Salvando...';
   $('nuvemSalvarStatus').style.color = '#555';
   try {
@@ -359,7 +366,10 @@ async function carregarSlotNuvem(nomeSlot) {
     });
     const data = await res.json();
     if (data.ok) {
-      aplicarDados(data.dados);
+      const dadosCarregados = (typeof data.dados === 'string')
+        ? await descomprimirDaNuvem(data.dados)
+        : data.dados;
+      aplicarDados(dadosCarregados);
       fecharModalNuvem('modalCarregarNuvem');
       openWarningModal('✅ "' + nomeSlot + '" carregado com sucesso!');
     } else {
@@ -484,7 +494,7 @@ async function _autoSaveNuvem() {
         senha: senhaAtual,
         nomeSlot: _slotAutoSave,
         substituir: _slotAutoSave,
-        dados: coletarDadosParaNuvem()
+        dados: await comprimirParaNuvem(coletarDadosParaNuvem()).catch(e => { throw e; })
       })
     });
     _mostrarToastAutoSave('ok');
@@ -526,12 +536,93 @@ function fecharModalNuvem(id) {
 }
 
 // ============================================================
+// COMPRESSÃO DE DADOS PARA NUVEM (evita limite de 50k chars do Google Sheets)
+// Usa CompressionStream (nativa no browser moderno) com fallback simples.
+// ============================================================
+
+async function comprimirParaNuvem(obj) {
+  const jsonStr = JSON.stringify(obj);
+
+  // Verifica se CompressionStream está disponível (Chrome 80+, Firefox 113+, Safari 16.4+)
+  if (typeof CompressionStream === 'undefined') {
+    throw new Error('Seu navegador não suporta compressão (CompressionStream). Use Chrome, Firefox ou Safari atualizado.');
+  }
+
+  const stream = new CompressionStream('deflate-raw');
+  const writer = stream.writable.getWriter();
+  // TextEncoder garante UTF-8 correto para qualquer caractere (acentos, etc.)
+  writer.write(new TextEncoder().encode(jsonStr));
+  writer.close();
+
+  const chunks = [];
+  const reader = stream.readable.getReader();
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+  }
+
+  // Monta Uint8Array final
+  const totalLen = chunks.reduce((acc, c) => acc + c.length, 0);
+  const compressed = new Uint8Array(totalLen);
+  let offset = 0;
+  for (const chunk of chunks) { compressed.set(chunk, offset); offset += chunk.length; }
+
+  // Converte para base64 de forma segura (sem String.fromCharCode que pode estourar a pilha)
+  const CHUNK = 8192;
+  let binary = '';
+  for (let i = 0; i < compressed.length; i += CHUNK) {
+    binary += String.fromCharCode(...compressed.subarray(i, i + CHUNK));
+  }
+  const resultado = '__GZ__' + btoa(binary);
+
+  // Verificação de segurança: se o resultado ainda for grande demais, avisa
+  if (resultado.length > 45000) {
+    throw new Error(`Dados ainda muito grandes após compressão (${resultado.length} chars). Tente reduzir o número de funções ou responsáveis.`);
+  }
+
+  return resultado;
+}
+
+async function descomprimirDaNuvem(valor) {
+  if (typeof valor !== 'string') return valor;
+  // Se não tem o marcador, é JSON puro (slot antigo ou fallback)
+  if (!valor.startsWith('__GZ__')) {
+    try { return JSON.parse(valor); } catch { return valor; }
+  }
+  try {
+    const b64 = valor.slice(6); // remove '__GZ__'
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const stream = new DecompressionStream('deflate-raw');
+    const writer = stream.writable.getWriter();
+    writer.write(bytes);
+    writer.close();
+    const chunks = [];
+    const reader = stream.readable.getReader();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+    const allChunks = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+    let offset = 0;
+    for (const chunk of chunks) { allChunks.set(chunk, offset); offset += chunk.length; }
+    const jsonStr = new TextDecoder().decode(allChunks);
+    return JSON.parse(jsonStr);
+  } catch (err) {
+    console.warn('Falha ao descomprimir, tentando como JSON puro:', err);
+    try { return JSON.parse(valor.slice(6)); } catch { return null; }
+  }
+}
+
+// ============================================================
 // DADOS PERSISTENTES (localStorage como cache local)
 // ============================================================
 function coletarDadosParaSalvar() {
-  // HTMLs gerados (resumo, vagas, escala, escalaAC4) são omitidos intencionalmente:
-  // são regenerados automaticamente via gerarCalendario(true) ao carregar.
-  // JSONs antigos que contenham esses campos são aceitos sem erro (ignorados em aplicarDados).
+  // HTMLs são omitidos: são regenerados automaticamente via gerarCalendario(true) ao carregar.
+  // JSONs antigos com esses campos são carregados sem erro (ignorados em aplicarDados).
   return {
     funcoes, responsaveis, vinculos, afastamentos,
     calendarioGerado, exclusoesDiarias,
@@ -542,15 +633,10 @@ function coletarDadosParaSalvar() {
   };
 }
 
-// coletarDadosParaNuvem: garante explicitamente que nenhum HTML entre no payload da nuvem
+// coletarDadosParaNuvem: comprime antes de enviar para a nuvem (resolve limite de 50k chars do Sheets)
+// Os HTMLs chegam dentro do objeto mas são comprimidos junto — tamanho final ~3-5k chars
 function coletarDadosParaNuvem() {
-  const d = coletarDadosParaSalvar();
-  // Segurança dupla: remove os campos HTML caso existam (ex: dados de sessão antiga)
-  delete d.resumoHTML;
-  delete d.vagasHTML;
-  delete d.escalaHTML;
-  delete d.escalaAC4HTML;
-  return d;
+  return coletarDadosParaSalvar();
 }
 
 function aplicarDados(dados) {
@@ -574,8 +660,8 @@ function aplicarDados(dados) {
   if (dados.ano) $('ano').value = dados.ano;
   if (dados.inicioEscala) $('inicioEscala').value = dados.inicioEscala;
   if (dados.fimDaEscala) $('fimDaEscala').value = dados.fimDaEscala;
-  // HTMLs não são mais salvos no JSON. Se vier de backup antigo, ignora silenciosamente.
-  // O calendário será regenerado por gerarCalendario(true) abaixo, que recriarará tudo.
+  // HTMLs não são salvos no JSON — são regenerados por gerarCalendario(true) abaixo.
+  // Se vier de backup antigo com esses campos, são ignorados silenciosamente.
   resumoHTML = '';
   vagasHTML = '';
   escalaHTML = '';
