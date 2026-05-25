@@ -423,6 +423,8 @@ function _atualizarSelectAutoSave() {
 }
 
 function _atualizarIndicadorAutoSave() {
+  // Não sobrescreve o indicador enquanto um auto-save está em andamento
+  if (_autoSaveEmAndamento) return;
   const ind = $('indicadorAutoSave');
   if (!ind) return;
   if (_slotAutoSave) {
@@ -449,12 +451,21 @@ function onChangeAutoSave() {
   _atualizarIndicadorAutoSave();
 }
 
+// Flag que impede _atualizarIndicadorAutoSave de sobrescrever o status "Salvando..."
+let _autoSaveEmAndamento = false;
+
 async function _autoSaveNuvem() {
   if (!_slotAutoSave || !usuarioAtual) return;
   // Verifica se o slot ainda existe
   const existe = _slotsCache.some(s => s.nome === _slotAutoSave);
   if (!existe) return;
-  // Mostra notificação de "Salvando..." para avisar o usuário que não feche a página
+
+  _autoSaveEmAndamento = true;
+
+  // Mostra toast flutuante de "Salvando..." — mais visível que o indicador pequeno
+  _mostrarToastAutoSave('salvando');
+
+  // Atualiza também o indicador inline
   const ind = $('indicadorAutoSave');
   if (ind) {
     ind.textContent = '💾 Salvando na nuvem...';
@@ -463,6 +474,7 @@ async function _autoSaveNuvem() {
     ind.style.fontWeight = '600';
     ind.classList.add('salvando');
   }
+
   try {
     await fetch(SHEETS_URL, {
       method: 'POST',
@@ -475,14 +487,37 @@ async function _autoSaveNuvem() {
         dados: coletarDadosParaSalvar()
       })
     });
-    // Restaura o indicador normal após salvar
-    if (ind) ind.classList.remove('salvando');
-    _atualizarIndicadorAutoSave();
+    _mostrarToastAutoSave('ok');
   } catch (err) {
     console.warn('Auto-save falhou:', err);
-    // Mesmo com erro, restaura o indicador
+    _mostrarToastAutoSave('erro');
+  } finally {
+    _autoSaveEmAndamento = false;
     if (ind) ind.classList.remove('salvando');
     _atualizarIndicadorAutoSave();
+  }
+}
+
+function _mostrarToastAutoSave(estado) {
+  let toast = $('toastAutoSave');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toastAutoSave';
+    document.body.appendChild(toast);
+  }
+  if (estado === 'salvando') {
+    toast.textContent = '💾 Salvando na nuvem...';
+    toast.className = 'toast-autosave toast-salvando';
+    toast.style.display = 'block';
+    toast._clearTimer && clearTimeout(toast._clearTimer);
+  } else if (estado === 'ok') {
+    toast.textContent = '✅ Salvo na nuvem!';
+    toast.className = 'toast-autosave toast-ok';
+    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
+  } else {
+    toast.textContent = '❌ Auto-save falhou. Verifique a conexão.';
+    toast.className = 'toast-autosave toast-erro';
+    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 4000);
   }
 }
 

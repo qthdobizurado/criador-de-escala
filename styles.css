@@ -989,3 +989,38 @@ table .cs-wrapper {
   font-size: 11px;
   color: #666;
 }
+
+/* ========== TOAST AUTO-SAVE ========== */
+.toast-autosave {
+  display: none;
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 99999;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.toast-salvando {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffb74d;
+  animation: salvando-pulse 1s ease-in-out infinite;
+}
+
+.toast-ok {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.toast-erro {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+}
