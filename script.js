@@ -2,7 +2,7 @@
 // CONFIGURAÇÃO - Altere a URL abaixo para a URL do seu
 // Google Apps Script implantado como "Web App"
 // ============================================================
-const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxN0e8H7u-5eMRasYqnnGturWdpHc_q4mAvmipBtvjBs25LGBoGgkJ4EXzc94rPwxiFfg/exec';
+const SHEETS_URL = 'https://script.google.com/macros/s/SEU_ID_AQUI/exec';
 // ============================================================
 
 const alas = ['Alpha', 'Bravo', 'Charlie', 'Delta'];
@@ -297,8 +297,7 @@ async function confirmarSalvarNuvem() {
     const data = await res.json();
     if (data.ok) {
       // Atualiza auto-save se foi o slot monitorado
-      if (_slotAutoSave && substituir === _slotAutoSave) _slotAutoSave = nomeSlot;
-      if (_slotAutoSave === substituir && !modoNovo) _slotAutoSave = nomeSlot;
+      if (_slotAutoSave && substituir && substituir === _slotAutoSave) _slotAutoSave = nomeSlot;
       $('nuvemSalvarStatus').textContent = '✅ Salvo com sucesso!';
       $('nuvemSalvarStatus').style.color = '#2e7d32';
       await _listarSlots();
@@ -873,7 +872,7 @@ function limparCalendarioEResiduos() {
 function gerarCalendario(mantemEd = false) {
   const m = parseInt($('mes').value);
   const a = parseInt($('ano').value);
-  if (!m || !a || a < 2025) {
+  if (!m || !a || a < 2000) {
     openWarningModal("Selecione corretamente o mês e o ano antes de gerar o calendário.");
     return;
   }
@@ -1342,7 +1341,8 @@ function gerarVagasDisponiveis() {
     rows.forEach(row => {
       const cols = row.querySelectorAll('td');
       if (!cols[0]) return;
-      const [dStr] = cols[0].textContent.split(' ')[0].split('/');
+      const _spanData1 = cols[0].querySelector('.data-dia');
+      const [dStr] = (_spanData1 ? _spanData1.textContent : cols[0].textContent).split('/');
       const diaRow = parseInt(dStr, 10);
       if (diaRow === dia) {
         const divs = cols[2].querySelectorAll('div[id^="funcao-"]');
@@ -1429,7 +1429,7 @@ function atualizarRespCal(a, funcao, r, d) {
   salvarDadosPersistentes();
 }
 function atualizarCusto(d, a, funcao) {
-  const vinculoDia = vinculos[a].find(v => v.funcao === funcao && v.dia === d);
+  let vinculoDia = vinculos[a].find(v => v.funcao === funcao && v.dia === d);
   if (vinculoDia && vinculoDia.bloqueada) {
     openWarningModal("Edição bloqueada para esta função.");
     return;
@@ -1698,7 +1698,8 @@ function gerarResumoResponsaveis() {
     if (r.querySelector('#total-mensal')) return;
     const cols = r.querySelectorAll('td');
     if (!cols[0]) return;
-    const [dia, mes, ano] = cols[0].textContent.split(' ')[0].split('/').map(Number);
+    const _spanData2 = cols[0].querySelector('.data-dia');
+    const [dia, mes, ano] = (_spanData2 ? _spanData2.textContent : cols[0].textContent).split('/').map(Number);
     if (dia < inicioFiltro || dia > fimFiltro) return;
     const data = new Date(ano, mes - 1, dia);
     const weekday = data.toLocaleDateString('pt-BR', { weekday: 'long' }).toLowerCase();
