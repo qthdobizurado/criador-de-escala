@@ -1479,10 +1479,20 @@ function recalcularTotalDiario(d, a) {
   if (cell) cell.textContent = "R$ " + formatarMoeda(total);
 }
 function recalcularTotalMensal() {
-  const t = Array.from({ length: new Date(parseInt($('ano').value), parseInt($('mes').value), 0).getDate() },
-    (_, d) => { const txt = $(`total-diario-${d + 1}`)?.textContent || '0'; return parseFloat(txt.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0; }
-  ).reduce((sum, v) => sum + v, 0);
-  $('total-mensal').innerHTML = `<strong>R$ ${formatarMoeda(t)}</strong>`;
+  const totalMensalEl = $('total-mensal');
+  if (!totalMensalEl) return; // calendário ainda não gerado
+  const ano = parseInt($('ano').value);
+  const mes = parseInt($('mes').value);
+  if (!ano || !mes) return;
+  const totalDias = new Date(ano, mes, 0).getDate();
+  if (!totalDias || isNaN(totalDias)) return;
+  const t = Array.from({ length: totalDias }, (_, d) => {
+    const el = $(`total-diario-${d + 1}`);
+    if (!el) return 0;
+    const txt = el.textContent || '0';
+    return parseFloat(txt.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0;
+  }).reduce((sum, v) => sum + v, 0);
+  totalMensalEl.innerHTML = `<strong>R$ ${formatarMoeda(t)}</strong>`;
 }
 function adicionarFuncaoNoCalendario(d, a) {
   let f = $(`nova-funcao-${d}-${a}`).value.trim();
