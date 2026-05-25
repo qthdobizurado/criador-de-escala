@@ -49,7 +49,16 @@
     <div class="action-bar">
       <strong>Nuvem:</strong>
       <button onclick="abrirModalSalvarNuvem()">☁ Salvar na Nuvem</button>
-      <button onclick="abrirModalCarregarNuvem()">☁ Carregar da Nuvem</button>
+      <button onclick="abrirModalCarregarNuvem()">☁ Carregar / Gerenciar</button>
+    </div>
+
+    <!-- Auto-save -->
+    <div class="action-bar action-bar-autosave">
+      <strong>Auto-save:</strong>
+      <select id="selectAutoSave" onchange="onChangeAutoSave()" style="width:220px;">
+        <option value="">-- Desativado --</option>
+      </select>
+      <span id="indicadorAutoSave" style="font-size:12px;color:#888;">Auto-save desativado.</span>
     </div>
 
     <h1>Gerador de Escala</h1>
@@ -150,20 +159,38 @@
   <div id="modalSalvarNuvem" class="modal" style="display:none;">
     <div class="modal-content modal-nuvem">
       <h3>☁ Salvar na Nuvem</h3>
-      <div id="slotsExistentes">
-        <p>Carregando slots...</p>
+
+      <!-- Modo: Criar novo ou Substituir -->
+      <div class="nuvem-modo-select">
+        <label class="radio-label" id="labelModoNovo">
+          <input type="radio" name="modoSalvar" id="radioModoNovo" value="novo" checked
+            onchange="_atualizarVisibilidadeModoSalvar()">
+          Criar novo save
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="modoSalvar" id="radioModoSubstituir" value="substituir"
+            onchange="_atualizarVisibilidadeModoSalvar()">
+          Substituir existente
+        </label>
       </div>
-      <hr>
-      <div class="nuvem-form">
-        <label>Nome para este save:</label>
-        <input type="text" id="inputNomeNovoSlot" placeholder="Ex: Escala Junho 2025" maxlength="50">
-        <label id="labelSubstituir" style="display:none;">Substituir slot:</label>
-        <select id="selectSlotSubstituir" style="display:none;">
-          <option value="">-- Selecione o slot a substituir --</option>
+
+      <!-- Campo: Slot a substituir (só aparece no modo "substituir") -->
+      <div id="campoSubstituirSlot" class="nuvem-form" style="display:none;">
+        <label>Slot a substituir:</label>
+        <select id="selectSlotSubstituir">
+          <option value="">-- Selecione o slot --</option>
         </select>
       </div>
-      <div id="nuvemSalvarStatus" style="margin-top:8px;color:#555;"></div>
-      <div style="margin-top:12px;">
+
+      <!-- Campo: Nome do save -->
+      <div class="nuvem-form" style="margin-top:10px;">
+        <label id="labelNomeNovoSlot">Nome do novo save:</label>
+        <input type="text" id="inputNomeNovoSlot" placeholder="Ex: Escala Junho 2025" maxlength="50">
+      </div>
+
+      <div id="nuvemSalvarStatus" style="margin-top:10px;font-size:13px;"></div>
+
+      <div style="margin-top:14px;">
         <button onclick="confirmarSalvarNuvem()">💾 Salvar</button>
         <button onclick="fecharModalNuvem('modalSalvarNuvem')" style="background:#6c757d;">Cancelar</button>
       </div>
@@ -173,13 +200,13 @@
   <!-- ========== MODAL: CARREGAR DA NUVEM ========== -->
   <div id="modalCarregarNuvem" class="modal" style="display:none;">
     <div class="modal-content modal-nuvem">
-      <h3>☁ Carregar da Nuvem</h3>
+      <h3>☁ Carregar / Gerenciar Saves</h3>
       <div id="slotsParaCarregar">
         <p>Carregando slots...</p>
       </div>
-      <div id="nuvemCarregarStatus" style="margin-top:8px;color:#555;"></div>
-      <div style="margin-top:12px;">
-        <button onclick="fecharModalNuvem('modalCarregarNuvem')" style="background:#6c757d;">Cancelar</button>
+      <div id="nuvemCarregarStatus" style="margin-top:8px;color:#555;font-size:13px;"></div>
+      <div style="margin-top:14px;">
+        <button onclick="fecharModalNuvem('modalCarregarNuvem')" style="background:#6c757d;">Fechar</button>
       </div>
     </div>
   </div>

@@ -86,10 +86,12 @@ async function fazerLogin() {
     if (data.ok) {
       usuarioAtual = usuario;
       senhaAtual = senha;
+      _slotsCache = data.slots || [];
       $('loginOverlay').style.display = 'none';
       $('appContent').style.display = 'block';
       $('usuarioLogado').textContent = '👤 ' + usuario;
       carregarDadosPersistentes();
+      _atualizarSelectAutoSave();
     } else {
       $('loginErro').textContent = data.erro || 'Usuário ou senha incorretos.';
       $('loginStatus').textContent = '';
@@ -180,66 +182,106 @@ function processarImportacao(event) {
 }
 
 // ============================================================
+// NUVEM - ESTADO COMPARTILHADO
+// ============================================================
+let _slotsCache = [];         // cache dos slots após listar
+let _slotAutoSave = null;     // nome do slot de auto-save selecionado
+
+async function _listarSlots() {
+  const res = await fetch(SHEETS_URL, {
+    method: 'POST',
+    body: JSON.stringify({ acao: 'listar', usuario: usuarioAtual, senha: senhaAtual })
+  });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.erro || 'Erro ao listar slots');
+  _slotsCache = data.slots || [];
+  return _slotsCache;
+}
+
+// ============================================================
 // NUVEM - SALVAR
 // ============================================================
 async function abrirModalSalvarNuvem() {
   $('modalSalvarNuvem').style.display = 'block';
-  $('inputNomeNovoSlot').value = '';
-  $('nuvemSalvarStatus').textContent = 'Carregando slots...';
-  $('slotsExistentes').innerHTML = '';
-  $('labelSubstituir').style.display = 'none';
-  $('selectSlotSubstituir').style.display = 'none';
-
+  _renderModalSalvar('Carregando slots...', true);
   try {
-    const res = await fetch(SHEETS_URL, {
-      method: 'POST',
-      body: JSON.stringify({ acao: 'listar', usuario: usuarioAtual, senha: senhaAtual })
-    });
-    const data = await res.json();
-    if (!data.ok) {
-      $('nuvemSalvarStatus').textContent = 'Erro: ' + data.erro;
-      return;
-    }
-    const slots = data.slots || [];
-    const total = slots.length;
-    $('nuvemSalvarStatus').textContent = `${total}/12 slots utilizados.`;
-
-    if (total === 0) {
-      $('slotsExistentes').innerHTML = '<p class="sem-slots">Nenhum save na nuvem ainda.</p>';
-    } else {
-      $('slotsExistentes').innerHTML = '<div class="slot-lista">' +
-        slots.map(s => `<div class="slot-item"><span>📄 ${s.nome}</span></div>`).join('') +
-        '</div>';
-    }
-
-    // Preenche select de substituição
-    const sel = $('selectSlotSubstituir');
-    sel.innerHTML = '<option value="">-- Selecione o slot a substituir --</option>' +
-      slots.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
-
-    if (total >= 12) {
-      $('nuvemSalvarStatus').textContent = '⚠ Limite de 12 saves atingido. Escolha um slot para substituir.';
-      $('labelSubstituir').style.display = 'block';
-      $('selectSlotSubstituir').style.display = 'block';
-    } else {
-      $('labelSubstituir').style.display = 'block';
-      $('selectSlotSubstituir').style.display = 'block';
-    }
+    await _listarSlots();
+    _renderModalSalvar('', false);
   } catch (err) {
-    $('nuvemSalvarStatus').textContent = 'Erro de conexão.';
+    $('nuvemSalvarStatus').textContent = '❌ Erro de conexão.';
     console.error(err);
   }
 }
 
+function _renderModalSalvar(statusMsg, carregando) {
+  const total = _slotsCache.length;
+  const cheio = total >= 12;
+
+  // Status
+  if (carregando) {
+    $('nuvemSalvarStatus').textContent = statusMsg || 'Carregando...';
+  } else {
+    $('nuvemSalvarStatus').textContent = cheio
+      ? `⚠ Limite atingido (12/12). Só é possível substituir um slot existente.`
+      : `${total}/12 slots utilizados.`;
+    $('nuvemSalvarStatus').style.color = cheio ? '#c62828' : '#555';
+  }
+
+  // Modos: Criar Novo / Substituir
+  const modoAtual = $('radioModoNovo').checked ? 'novo' : 'substituir';
+
+  // Botão "Criar Novo" desabilitado se cheio
+  $('radioModoNovo').disabled = cheio;
+  $('labelModoNovo').style.opacity = cheio ? '0.45' : '1';
+
+  // Se cheio e estava em "novo", força "substituir"
+  if (cheio && $('radioModoNovo').checked) {
+    $('radioModoSubstituir').checked = true;
+  }
+
+  // Campo nome
+  $('inputNomeNovoSlot').value = '';
+
+  // Select substituir
+  const sel = $('selectSlotSubstituir');
+  sel.innerHTML = '<option value="">-- Selecione o slot --</option>' +
+    _slotsCache.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
+
+  // Mostrar/ocultar campos conforme modo
+  _atualizarVisibilidadeModoSalvar();
+}
+
+function _atualizarVisibilidadeModoSalvar() {
+  const modoNovo = $('radioModoNovo').checked;
+  $('campoSubstituirSlot').style.display = modoNovo ? 'none' : 'block';
+  $('labelNomeNovoSlot').textContent = modoNovo ? 'Nome do novo save:' : 'Nome para o save (pode ser diferente do slot substituído):';
+}
+
 async function confirmarSalvarNuvem() {
   const nomeSlot = $('inputNomeNovoSlot').value.trim();
+  const modoNovo = $('radioModoNovo').checked;
+  const substituir = modoNovo ? '' : $('selectSlotSubstituir').value;
+  const cheio = _slotsCache.length >= 12;
+
   if (!nomeSlot) {
     $('nuvemSalvarStatus').textContent = '⚠ Informe um nome para o save.';
+    $('nuvemSalvarStatus').style.color = '#c62828';
     return;
   }
-  const substituir = $('selectSlotSubstituir').value || '';
+  if (cheio && modoNovo) {
+    $('nuvemSalvarStatus').textContent = '⚠ Limite de 12 saves atingido. Escolha "Substituir existente".';
+    $('nuvemSalvarStatus').style.color = '#c62828';
+    return;
+  }
+  if (!modoNovo && !substituir) {
+    $('nuvemSalvarStatus').textContent = '⚠ Selecione o slot que deseja substituir.';
+    $('nuvemSalvarStatus').style.color = '#c62828';
+    return;
+  }
+
   const dados = coletarDadosParaSalvar();
   $('nuvemSalvarStatus').textContent = 'Salvando...';
+  $('nuvemSalvarStatus').style.color = '#555';
   try {
     const res = await fetch(SHEETS_URL, {
       method: 'POST',
@@ -254,13 +296,21 @@ async function confirmarSalvarNuvem() {
     });
     const data = await res.json();
     if (data.ok) {
+      // Atualiza auto-save se foi o slot monitorado
+      if (_slotAutoSave && substituir === _slotAutoSave) _slotAutoSave = nomeSlot;
+      if (_slotAutoSave === substituir && !modoNovo) _slotAutoSave = nomeSlot;
       $('nuvemSalvarStatus').textContent = '✅ Salvo com sucesso!';
-      setTimeout(() => fecharModalNuvem('modalSalvarNuvem'), 1200);
+      $('nuvemSalvarStatus').style.color = '#2e7d32';
+      await _listarSlots();
+      _atualizarSelectAutoSave();
+      setTimeout(() => fecharModalNuvem('modalSalvarNuvem'), 1300);
     } else {
       $('nuvemSalvarStatus').textContent = '❌ ' + data.erro;
+      $('nuvemSalvarStatus').style.color = '#c62828';
     }
   } catch (err) {
-    $('nuvemSalvarStatus').textContent = 'Erro de conexão.';
+    $('nuvemSalvarStatus').textContent = '❌ Erro de conexão.';
+    $('nuvemSalvarStatus').style.color = '#c62828';
     console.error(err);
   }
 }
@@ -272,35 +322,34 @@ async function abrirModalCarregarNuvem() {
   $('modalCarregarNuvem').style.display = 'block';
   $('nuvemCarregarStatus').textContent = 'Carregando slots...';
   $('slotsParaCarregar').innerHTML = '';
-
   try {
-    const res = await fetch(SHEETS_URL, {
-      method: 'POST',
-      body: JSON.stringify({ acao: 'listar', usuario: usuarioAtual, senha: senhaAtual })
-    });
-    const data = await res.json();
-    if (!data.ok) {
-      $('nuvemCarregarStatus').textContent = 'Erro: ' + data.erro;
-      return;
-    }
-    const slots = data.slots || [];
-    $('nuvemCarregarStatus').textContent = `${slots.length} save(s) disponíveis.`;
-
-    if (slots.length === 0) {
-      $('slotsParaCarregar').innerHTML = '<p class="sem-slots">Nenhum save na nuvem.</p>';
-    } else {
-      $('slotsParaCarregar').innerHTML = '<div class="slot-lista">' +
-        slots.map(s => `
-          <div class="slot-item">
-            <span>📄 ${s.nome}</span>
-            <button onclick="carregarSlotNuvem('${s.nome.replace(/'/g, "\\'")}')">⬇ Carregar</button>
-          </div>`).join('') +
-        '</div>';
-    }
+    await _listarSlots();
+    _renderListaCarregar();
   } catch (err) {
-    $('nuvemCarregarStatus').textContent = 'Erro de conexão.';
+    $('nuvemCarregarStatus').textContent = '❌ Erro de conexão.';
     console.error(err);
   }
+}
+
+function _renderListaCarregar() {
+  const slots = _slotsCache;
+  $('nuvemCarregarStatus').textContent = `${slots.length} save(s) disponíveis.`;
+  if (slots.length === 0) {
+    $('slotsParaCarregar').innerHTML = '<p class="sem-slots">Nenhum save na nuvem.</p>';
+    return;
+  }
+  $('slotsParaCarregar').innerHTML = '<div class="slot-lista">' +
+    slots.map(s => {
+      const nome = s.nome.replace(/'/g, "\\'");
+      return `<div class="slot-item">
+        <span>📄 ${s.nome}</span>
+        <div class="slot-acoes">
+          <button class="btn-carregar-slot" onclick="carregarSlotNuvem('${nome}')">⬇ Carregar</button>
+          <button class="btn-apagar-slot" onclick="apagarSlotNuvem('${nome}')">🗑 Apagar</button>
+        </div>
+      </div>`;
+    }).join('') +
+    '</div>';
 }
 
 async function carregarSlotNuvem(nomeSlot) {
@@ -308,12 +357,7 @@ async function carregarSlotNuvem(nomeSlot) {
   try {
     const res = await fetch(SHEETS_URL, {
       method: 'POST',
-      body: JSON.stringify({
-        acao: 'carregar',
-        usuario: usuarioAtual,
-        senha: senhaAtual,
-        nomeSlot
-      })
+      body: JSON.stringify({ acao: 'carregar', usuario: usuarioAtual, senha: senhaAtual, nomeSlot })
     });
     const data = await res.json();
     if (data.ok) {
@@ -324,8 +368,104 @@ async function carregarSlotNuvem(nomeSlot) {
       $('nuvemCarregarStatus').textContent = '❌ ' + data.erro;
     }
   } catch (err) {
-    $('nuvemCarregarStatus').textContent = 'Erro de conexão.';
+    $('nuvemCarregarStatus').textContent = '❌ Erro de conexão.';
     console.error(err);
+  }
+}
+
+// ============================================================
+// NUVEM - APAGAR
+// ============================================================
+async function apagarSlotNuvem(nomeSlot) {
+  // Confirmação antes de apagar
+  openModal(
+    `Tem certeza que deseja apagar o save "${nomeSlot}" da nuvem? Esta ação não pode ser desfeita.`,
+    async () => {
+      $('nuvemCarregarStatus').textContent = 'Apagando "' + nomeSlot + '"...';
+      try {
+        const res = await fetch(SHEETS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ acao: 'apagar', usuario: usuarioAtual, senha: senhaAtual, nomeSlot })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          if (_slotAutoSave === nomeSlot) {
+            _slotAutoSave = null;
+            localStorage.removeItem('escala_autosave_slot_' + usuarioAtual);
+            _atualizarSelectAutoSave();
+          }
+          await _listarSlots();
+          _renderListaCarregar();
+          _atualizarSelectAutoSave();
+          $('nuvemCarregarStatus').textContent = `✅ "${nomeSlot}" apagado. ${_slotsCache.length} save(s) restantes.`;
+        } else {
+          $('nuvemCarregarStatus').textContent = '❌ ' + data.erro;
+        }
+      } catch (err) {
+        $('nuvemCarregarStatus').textContent = '❌ Erro de conexão.';
+        console.error(err);
+      }
+    }
+  );
+}
+
+// ============================================================
+// NUVEM - AUTO-SAVE
+// ============================================================
+function _atualizarSelectAutoSave() {
+  const sel = $('selectAutoSave');
+  if (!sel) return;
+  const valorAtual = _slotAutoSave || '';
+  sel.innerHTML = '<option value="">-- Desativado --</option>' +
+    _slotsCache.map(s =>
+      `<option value="${s.nome}" ${s.nome === valorAtual ? 'selected' : ''}>${s.nome}</option>`
+    ).join('');
+  sel.value = valorAtual;
+  _atualizarIndicadorAutoSave();
+}
+
+function _atualizarIndicadorAutoSave() {
+  const ind = $('indicadorAutoSave');
+  if (!ind) return;
+  if (_slotAutoSave) {
+    ind.textContent = `🔄 Auto-save ativo: "${_slotAutoSave}"`;
+    ind.style.color = '#1565c0';
+  } else {
+    ind.textContent = 'Auto-save desativado.';
+    ind.style.color = '#888';
+  }
+}
+
+function onChangeAutoSave() {
+  const sel = $('selectAutoSave');
+  _slotAutoSave = sel.value || null;
+  if (_slotAutoSave) {
+    localStorage.setItem('escala_autosave_slot_' + (usuarioAtual || 'guest'), _slotAutoSave);
+  } else {
+    localStorage.removeItem('escala_autosave_slot_' + (usuarioAtual || 'guest'));
+  }
+  _atualizarIndicadorAutoSave();
+}
+
+async function _autoSaveNuvem() {
+  if (!_slotAutoSave || !usuarioAtual) return;
+  // Verifica se o slot ainda existe
+  const existe = _slotsCache.some(s => s.nome === _slotAutoSave);
+  if (!existe) return;
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        acao: 'salvar',
+        usuario: usuarioAtual,
+        senha: senhaAtual,
+        nomeSlot: _slotAutoSave,
+        substituir: _slotAutoSave,
+        dados: coletarDadosParaSalvar()
+      })
+    });
+  } catch (err) {
+    console.warn('Auto-save falhou:', err);
   }
 }
 
@@ -382,6 +522,12 @@ function aplicarDados(dados) {
   salvarDadosPersistentes();
 }
 
+// Debounce para auto-save na nuvem (evita chamadas excessivas)
+const _autoSaveDebounced = (function() {
+  let t;
+  return function() { clearTimeout(t); t = setTimeout(_autoSaveNuvem, 4000); };
+})();
+
 function salvarDadosPersistentes() {
   try {
     const dados = coletarDadosParaSalvar();
@@ -389,9 +535,19 @@ function salvarDadosPersistentes() {
   } catch (err) {
     console.warn('Não foi possível salvar no localStorage:', err);
   }
+  // Dispara auto-save na nuvem se um slot estiver selecionado
+  if (_slotAutoSave && usuarioAtual) _autoSaveDebounced();
 }
 
 function carregarDadosPersistentes() {
+  // Restaura preferência de auto-save
+  try {
+    const savedSlot = localStorage.getItem('escala_autosave_slot_' + (usuarioAtual || 'guest'));
+    if (savedSlot) {
+      _slotAutoSave = savedSlot;
+      _atualizarIndicadorAutoSave();
+    }
+  } catch(_) {}
   try {
     const raw = localStorage.getItem('escala_dados_' + (usuarioAtual || 'guest'));
     if (!raw) return;
@@ -1720,29 +1876,4 @@ function calcularCusto(data, hIni, hFim) {
     : [...Array(24 - hIni).keys()].map(h => ({ d: d1, h: h + hIni })).concat([...Array(hFim).keys()].map(h => ({ d: d2, h })));
   horas.forEach(e => total += getTaxa(e.d, e.h));
   return total;
-}
-
-async function salvarArquivosTemporarios() {
-  if (!window.api) return;
-  try {
-    const baseStyle = `<style>table{width:100%;border-collapse:collapse}th,td{border:1px solid #000;padding:4px;text-align:left}</style>`;
-    if (resumoHTML) {
-      const content = `<html><head><title>Resumo de Responsáveis</title>${baseStyle}</head><body>${resumoHTML}</body></html>`;
-      await window.api.salvarArquivoTemporario('resumo_temp.html', content);
-    }
-    if (vagasHTML) {
-      const content = `<html><head><title>Vagas Disponíveis</title>${baseStyle}</head><body>${vagasHTML}</body></html>`;
-      await window.api.salvarArquivoTemporario('vagas_temp.html', content);
-    }
-    if (escalaHTML) {
-      const content = `<html><head><title>Escala</title>${baseStyle}</head><body>${escalaHTML}</body></html>`;
-      await window.api.salvarArquivoTemporario('escala_temp.html', content);
-    }
-    if (escalaAC4HTML) {
-      const content = `<html><head><title>Escala de AC4</title>${baseStyle}</head><body>${escalaAC4HTML}</body></html>`;
-      await window.api.salvarArquivoTemporario('escalaac4_temp.html', content);
-    }
-  } catch (error) {
-    console.error('Erro ao salvar arquivos temporários:', error);
-  }
 }
