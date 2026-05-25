@@ -968,7 +968,7 @@ ${responsaveis.map(r => `<option value="${r}" ${r === it.responsavel ? 'selected
     <div class="painel-funcao-campos">
       <div class="painel-funcao-campo">
         <label>Nome da função:</label>
-        <input type="text" id="input-funcao-ala-${a}" placeholder="Ex: Sentinela especial" maxlength="80">
+        <input type="text" id="input-funcao-ala-${a}" placeholder="Ex: Socorrista" maxlength="80">
       </div>
       <div class="painel-funcao-campo">
         <label>Responsável:</label>
