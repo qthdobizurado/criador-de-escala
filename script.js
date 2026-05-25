@@ -1,4 +1,39 @@
-var _0x8gd=(668213^668210)+(189452^189452);const SHEETS_URL="\u0068\u0074\u0074\u0070\u0073\u003A\u002F\u002F\u0073\u0063\u0072\u0069\u0070\u0074\u002E\u0067\u006F\u006F\u0067\u006C\u0065\u002E\u0063\u006F\u006D\u002F\u006D\u0061\u0063\u0072\u006F\u0073\u002F\u0073\u002F\u0041\u004B\u0066\u0079\u0063\u0062\u0078\u004E\u0030\u0065\u0038\u0048\u0037\u0075\u002D\u0035\u0065\u004D\u0052\u0061\u0073\u0059\u0071\u006E\u006E\u0047\u0074\u0075\u0072\u0057\u0064\u0070\u0048\u0063\u005F\u0071\u0034\u006D\u0041\u0076\u006D\u0069\u0070\u0042\u0074\u0076\u006A\u0042\u0073\u0032\u0035\u004C\u0047\u0042\u006F\u0047\u0067\u006B\u004A\u0034\u0045\u0058\u007A\u0063\u0039\u0034\u0072\u0050\u0077\u0078\u0069\u0046\u0066\u0067\u002F\u0065\u0078\u0065\u0063";_0x8gd=(386613^386608)+(610543^610536);const alas=["\u0041\u006C\u0070\u0068\u0061","ovarB".split("").reverse().join(""),"\u0043\u0068\u0061\u0072\u006C\u0069\u0065","atleD".split("").reverse().join("")];const VERMELHA_DIURNO=36.41;const VERMELHA_NOTURNO=41.38;let _0x7g16ec;const AZUL_DIURNO=26.47;_0x7g16ec=(741046^741046)+(370402^370410);const AZUL_NOTURNO=29.80;var _0xe6a20f=(192718^192716)+(141237^141245);const taxas={'\u0076\u0065\u0072\u006D\u0065\u006C\u0068\u0061':{'\u0064\u0069\u0075\u0072\u006E\u006F':VERMELHA_DIURNO,'\u006E\u006F\u0074\u0075\u0072\u006E\u006F':VERMELHA_NOTURNO},'\u0061\u007A\u0075\u006C':{"diurno":AZUL_DIURNO,"noturno":AZUL_NOTURNO}};_0xe6a20f=740151^740147;let funcoes=[],responsaveis=[],vinculos={'\u0041\u006C\u0070\u0068\u0061':[],'\u0042\u0072\u0061\u0076\u006F':[],'\u0043\u0068\u0061\u0072\u006C\u0069\u0065':[],"Delta":[]},afastamentos=[],calendarioGerado=false;let exclusoesDiarias={};let resumoHTML='',vagasHTML='',escalaHTML='',escalaAC4HTML='';const $=id=>document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064'](id);var _0xe320b=(344546^344547)+(810850^810852);const backupEdicaoFuncao={};_0xe320b='\u0066\u006E\u0062\u0068\u0066\u006F';let usuarioAtual=null;let senhaAtual=null;(function(){const _0xaf7ffa=document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("\u0073\u0074\u0079\u006C\u0065");_0xaf7ffa['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=`
+// ============================================================
+// CONFIGURAÇÃO - Altere a URL abaixo para a URL do seu
+// Google Apps Script implantado como "Web App"
+// ============================================================
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxN0e8H7u-5eMRasYqnnGturWdpHc_q4mAvmipBtvjBs25LGBoGgkJ4EXzc94rPwxiFfg/exec';
+// ============================================================
+
+const alas = ['Alpha', 'Bravo', 'Charlie', 'Delta'];
+const VERMELHA_DIURNO = 36.41;
+const VERMELHA_NOTURNO = 41.38;
+const AZUL_DIURNO = 26.47;
+const AZUL_NOTURNO = 29.80;
+const taxas = {
+  vermelha: { diurno: VERMELHA_DIURNO, noturno: VERMELHA_NOTURNO },
+  azul: { diurno: AZUL_DIURNO, noturno: AZUL_NOTURNO }
+};
+let funcoes = [],
+  responsaveis = [],
+  vinculos = { Alpha: [], Bravo: [], Charlie: [], Delta: [] },
+  afastamentos = [],
+  calendarioGerado = false;
+let exclusoesDiarias = {};
+let resumoHTML = '',
+  vagasHTML = '',
+  escalaHTML = '',
+  escalaAC4HTML = '';
+const $ = id => document.getElementById(id);
+const backupEdicaoFuncao = {};
+
+// Estado de autenticação
+let usuarioAtual = null;
+let senhaAtual = null;
+
+(function () {
+  const style = document.createElement('style');
+  style.textContent = `
 .draggable-funcao,
 .draggable-funcao * {
   cursor: default !important;
@@ -24,91 +59,2351 @@ var _0x8gd=(668213^668210)+(189452^189452);const SHEETS_URL="\u0068\u0074\u0074\
   color: #888 !important;
   cursor: not-allowed !important;
 }
-`;document['\u0068\u0065\u0061\u0064']['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0xaf7ffa);})();async function fazerLogin(){const _0xe6d72e=$("\u006C\u006F\u0067\u0069\u006E\u0055\u0073\u0075\u0061\u0072\u0069\u006F")['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();const _0x36efcg=$("\u006C\u006F\u0067\u0069\u006E\u0053\u0065\u006E\u0068\u0061")['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();$("\u006C\u006F\u0067\u0069\u006E\u0045\u0072\u0072\u006F")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']='';if(!_0xe6d72e||!_0x36efcg){$("\u006C\u006F\u0067\u0069\u006E\u0045\u0072\u0072\u006F")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u0050\u0072\u0065\u0065\u006E\u0063\u0068\u0061\u0020\u0075\u0073\u0075\u00E1\u0072\u0069\u006F\u0020\u0065\u0020\u0073\u0065\u006E\u0068\u0061\u002E";return;}const _0xdc369f=$("\u0062\u0074\u006E\u004C\u006F\u0067\u0069\u006E");_0xdc369f['\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064']=!![];$("sutatSnigol".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u0056\u0065\u0072\u0069\u0066\u0069\u0063\u0061\u006E\u0064\u006F\u002E\u002E\u002E";try{var _0x11eccb=(635918^635917)+(549020^549017);const _0x645dc=await fetch(SHEETS_URL,{'\u006D\u0065\u0074\u0068\u006F\u0064':'POST','\u0062\u006F\u0064\u0079':JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079']({'\u0061\u0063\u0061\u006F':"\u006C\u006F\u0067\u0069\u006E","usuario":_0xe6d72e,"senha":_0x36efcg})});_0x11eccb=(888674^888678)+(736735^736730);var _0x3c1a2g=(179927^179923)+(979746^979747);const _0x3325ce=await _0x645dc['\u006A\u0073\u006F\u006E']();_0x3c1a2g=(405136^405140)+(686294^686291);if(_0x3325ce['\u006F\u006B']){usuarioAtual=_0xe6d72e;senhaAtual=_0x36efcg;_slotsCache=_0x3325ce['\u0073\u006C\u006F\u0074\u0073']||[];$("yalrevOnigol".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="enon".split("").reverse().join("");$("\u0061\u0070\u0070\u0043\u006F\u006E\u0074\u0065\u006E\u0074")['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u0062\u006C\u006F\u0063\u006B";$("odagoLoirausu".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\uD83D\uDC64\u0020"+_0xe6d72e;carregarDadosPersistentes();_atualizarSelectAutoSave();}else{$("\u006C\u006F\u0067\u0069\u006E\u0045\u0072\u0072\u006F")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=_0x3325ce['\u0065\u0072\u0072\u006F']||".soterrocni ahnes uo oir\xE1usU".split("").reverse().join("");$("sutatSnigol".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']='';}}catch(err){$("\u006C\u006F\u0067\u0069\u006E\u0045\u0072\u0072\u006F")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u0045\u0072\u0072\u006F\u0020\u0061\u006F\u0020\u0063\u006F\u006E\u0065\u0063\u0074\u0061\u0072\u0020\u0063\u006F\u006D\u0020\u006F\u0020\u0073\u0065\u0072\u0076\u0069\u0064\u006F\u0072\u002E\u0020\u0056\u0065\u0072\u0069\u0066\u0069\u0071\u0075\u0065\u0020\u0061\u0020\u0055\u0052\u004C\u0020\u0064\u006F\u0020\u0041\u0070\u0070\u0073\u0020\u0053\u0063\u0072\u0069\u0070\u0074\u002E";$("sutatSnigol".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']='';console['\u0065\u0072\u0072\u006F\u0072'](err);}_0xdc369f['\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064']=false;}function fazerLogout(){usuarioAtual=null;senhaAtual=null;$("\u006C\u006F\u0067\u0069\u006E\u004F\u0076\u0065\u0072\u006C\u0061\u0079")['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u0066\u006C\u0065\u0078";$("\u0061\u0070\u0070\u0043\u006F\u006E\u0074\u0065\u006E\u0074")['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u006E\u006F\u006E\u0065";$("\u006C\u006F\u0067\u0069\u006E\u0053\u0065\u006E\u0068\u0061")['\u0076\u0061\u006C\u0075\u0065']='';$("\u006C\u006F\u0067\u0069\u006E\u0045\u0072\u0072\u006F")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']='';$("\u006C\u006F\u0067\u0069\u006E\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']='';}function openModal(message,onConfirm,onCancel,_0x8f486d){const _0x62f7bd=document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u006D\u0079\u004D\u006F\u0064\u0061\u006C");_0x8f486d='\u0066\u006F\u0068\u006C\u006C\u006C';document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u006D\u006F\u0064\u0061\u006C\u004D\u0065\u0073\u0073\u0061\u0067\u0065")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=message;_0x62f7bd['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u0062\u006C\u006F\u0063\u006B";document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0063\u006F\u006E\u0066\u0069\u0072\u006D\u0042\u0074\u006E")['\u006F\u006E\u0063\u006C\u0069\u0063\u006B']=()=>{onConfirm();closeModal();};document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("ntBlecnac".split("").reverse().join(""))['\u006F\u006E\u0063\u006C\u0069\u0063\u006B']=()=>{if(onCancel)onCancel();closeModal();};}function closeModal(){document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("ladoMym".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="enon".split("").reverse().join("");}function openWarningModal(message,_0xee44ba){const _0x12_0xf28=document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0077\u0061\u0072\u006E\u0069\u006E\u0067\u004D\u006F\u0064\u0061\u006C");_0xee44ba=(372224^372232)+(496527^496519);document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("egasseMgninraw".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=message;_0x12_0xf28['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u0062\u006C\u006F\u0063\u006B";document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("ntBmrifnoCgninraw".split("").reverse().join(""))['\u006F\u006E\u0063\u006C\u0069\u0063\u006B']=closeWarningModal;}function closeWarningModal(){document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064']("\u0077\u0061\u0072\u006E\u0069\u006E\u0067\u004D\u006F\u0064\u0061\u006C")['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="enon".split("").reverse().join("");}function exportarBackup(_0xd1a,_0x45bb){const _0x4fb9b=coletarDadosParaSalvar();var _0x67a=(908728^908730)+(734891^734891);const _0x5a843e=JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079'](_0x4fb9b,null,907593^907595);_0x67a=(699801^699806)+(488050^488051);const _0x46f=new Blob([_0x5a843e],{'\u0074\u0079\u0070\u0065':'application/json'});_0xd1a=(602247^602245)+(478915^478913);const _0x960dfg=URL['\u0063\u0072\u0065\u0061\u0074\u0065\u004F\u0062\u006A\u0065\u0063\u0074\u0055\u0052\u004C'](_0x46f);const a=document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("\u0061");_0x45bb=(179841^179847)+(873038^873032);a['\u0068\u0072\u0065\u0066']=_0x960dfg;a['\u0064\u006F\u0077\u006E\u006C\u006F\u0061\u0064']="\u0062\u0061\u0063\u006B\u0075\u0070\u005F\u0065\u0073\u0063\u0061\u006C\u0061\u005F"+new Date()['\u0074\u006F\u0049\u0053\u004F\u0053\u0074\u0072\u0069\u006E\u0067']()['\u0073\u006C\u0069\u0063\u0065'](157016^157016,794499^794505)+"nosj.".split("").reverse().join("");document['\u0062\u006F\u0064\u0079']['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](a);a['\u0063\u006C\u0069\u0063\u006B']();document['\u0062\u006F\u0064\u0079']['\u0072\u0065\u006D\u006F\u0076\u0065\u0043\u0068\u0069\u006C\u0064'](a);URL['\u0072\u0065\u0076\u006F\u006B\u0065\u004F\u0062\u006A\u0065\u0063\u0074\u0055\u0052\u004C'](_0x960dfg);}function importarBackup(){$("pukcaBratropmItupni".split("").reverse().join(""))['\u0063\u006C\u0069\u0063\u006B']();}function processarImportacao(event){const _0xf1d56d=event['\u0074\u0061\u0072\u0067\u0065\u0074']['\u0066\u0069\u006C\u0065\u0073'][235633^235633];if(!_0xf1d56d)return;var _0x1fd8df=(143337^143329)+(994663^994662);const _0xdb7a=new FileReader();_0x1fd8df=(946595^946599)+(941431^941431);_0xdb7a['\u006F\u006E\u006C\u006F\u0061\u0064']=function(e){try{const _0xg_0xc9c=JSON['\u0070\u0061\u0072\u0073\u0065'](e['\u0074\u0061\u0072\u0067\u0065\u0074']['\u0072\u0065\u0073\u0075\u006C\u0074']);aplicarDados(_0xg_0xc9c);openWarningModal("!ossecus moc odatropmi pukcaB".split("").reverse().join(""));}catch(err){openWarningModal("\u0045\u0072\u0072\u006F\u0020\u0061\u006F\u0020\u006C\u0065\u0072\u0020\u006F\u0020\u0061\u0072\u0071\u0075\u0069\u0076\u006F\u0020\u0064\u0065\u0020\u0062\u0061\u0063\u006B\u0075\u0070\u002E\u0020\u0056\u0065\u0072\u0069\u0066\u0069\u0071\u0075\u0065\u0020\u0073\u0065\u0020\u00E9\u0020\u0075\u006D\u0020\u004A\u0053\u004F\u004E\u0020\u0076\u00E1\u006C\u0069\u0064\u006F\u002E");}};_0xdb7a['\u0072\u0065\u0061\u0064\u0041\u0073\u0054\u0065\u0078\u0074'](_0xf1d56d);event['\u0074\u0061\u0072\u0067\u0065\u0074']['\u0076\u0061\u006C\u0075\u0065']='';}var _0xfb830d=(784461^784458)+(493650^493652);let _slotsCache=[];_0xfb830d=(653275^653274)+(510175^510168);let _0x_0x9ge;let _slotAutoSave=null;_0x_0x9ge=(725015^725009)+(957046^957042);async function _listarSlots(){const _0x71aec=await fetch(SHEETS_URL,{'\u006D\u0065\u0074\u0068\u006F\u0064':'POST',"body":JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079']({'\u0061\u0063\u0061\u006F':'listar','\u0075\u0073\u0075\u0061\u0072\u0069\u006F':usuarioAtual,"senha":senhaAtual})});const _0x5f8a=await _0x71aec['\u006A\u0073\u006F\u006E']();if(!_0x5f8a['\u006F\u006B'])throw new Error(_0x5f8a['\u0065\u0072\u0072\u006F']||"stols ratsil oa orrE".split("").reverse().join(""));_slotsCache=_0x5f8a['\u0073\u006C\u006F\u0074\u0073']||[];return _slotsCache;}async function abrirModalSalvarNuvem(){$("\u006D\u006F\u0064\u0061\u006C\u0053\u0061\u006C\u0076\u0061\u0072\u004E\u0075\u0076\u0065\u006D")['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="kcolb".split("").reverse().join("");_renderModalSalvar("\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u006E\u0064\u006F\u0020\u0073\u006C\u006F\u0074\u0073\u002E\u002E\u002E",!![]);try{await _listarSlots();_renderModalSalvar('',false);}catch(err){$("\u006E\u0075\u0076\u0065\u006D\u0053\u0061\u006C\u0076\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=".o\xE3xenoc ed orrE \u274C".split("").reverse().join("");console['\u0065\u0072\u0072\u006F\u0072'](err);}}function _renderModalSalvar(statusMsg,carregando,_0xf142a){const _0x7bbb7f=_slotsCache['\u006C\u0065\u006E\u0067\u0074\u0068'];const _0x7937fa=_0x7bbb7f>=(839874^839886);_0xf142a="knboch".split("").reverse().join("");if(carregando){$("\u006E\u0075\u0076\u0065\u006D\u0053\u0061\u006C\u0076\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=statusMsg||"\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u006E\u0064\u006F\u002E\u002E\u002E";}else{$("sutatSravlaSmevun".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=_0x7937fa?`⚠ Limite atingido (12/12). Só é possível substituir um slot existente.`:`${_0x7bbb7f}/12 slots utilizados.`;$("sutatSravlaSmevun".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']=_0x7937fa?"82826c#".split("").reverse().join(""):"555#".split("").reverse().join("");}$("ovoNodoMoidar".split("").reverse().join(""))['\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064']=_0x7937fa;$("ovoNodoMlebal".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u006F\u0070\u0061\u0063\u0069\u0074\u0079']=_0x7937fa?"54.0".split("").reverse().join(""):"\u0031";if(_0x7937fa&&$("ovoNodoMoidar".split("").reverse().join(""))['\u0063\u0068\u0065\u0063\u006B\u0065\u0064']){$("riutitsbuSodoMoidar".split("").reverse().join(""))['\u0063\u0068\u0065\u0063\u006B\u0065\u0064']=!![];}$("\u0069\u006E\u0070\u0075\u0074\u004E\u006F\u006D\u0065\u004E\u006F\u0076\u006F\u0053\u006C\u006F\u0074")['\u0076\u0061\u006C\u0075\u0065']='';var _0xdccffd=(112116^112124)+(277853^277849);const _0x96dd=$("\u0073\u0065\u006C\u0065\u0063\u0074\u0053\u006C\u006F\u0074\u0053\u0075\u0062\u0073\u0074\u0069\u0074\u0075\u0069\u0072");_0xdccffd=(433226^433228)+(306733^306732);_0x96dd['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']="\u003C\u006F\u0070\u0074\u0069\u006F\u006E\u0020\u0076\u0061\u006C\u0075\u0065\u003D\u0022\u0022\u003E\u002D\u002D\u0020\u0053\u0065\u006C\u0065\u0063\u0069\u006F\u006E\u0065\u0020\u006F\u0020\u0073\u006C\u006F\u0074\u0020\u002D\u002D\u003C\u002F\u006F\u0070\u0074\u0069\u006F\u006E\u003E"+_slotsCache['\u006D\u0061\u0070'](s=>`<option value="${s['\u006E\u006F\u006D\u0065']}">${s['\u006E\u006F\u006D\u0065']}</option>`)['\u006A\u006F\u0069\u006E']('');_atualizarVisibilidadeModoSalvar();}function _atualizarVisibilidadeModoSalvar(){const _0xf_0x927=$("ovoNodoMoidar".split("").reverse().join(""))['\u0063\u0068\u0065\u0063\u006B\u0065\u0064'];$("tolSriutitsbuSopmac".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']=_0xf_0x927?"\u006E\u006F\u006E\u0065":"kcolb".split("").reverse().join("");$("tolSovoNemoNlebal".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=_0xf_0x927?"\u004E\u006F\u006D\u0065\u0020\u0064\u006F\u0020\u006E\u006F\u0076\u006F\u0020\u0073\u0061\u0076\u0065\u003A":":)od\xEDutitsbus tols od etnerefid res edop( evas o arap emoN".split("").reverse().join("");}async function confirmarSalvarNuvem(_0x56bf9d){var _0x125g9f=(365537^365543)+(843114^843113);const _0xf4ga5c=$("tolSovoNemoNtupni".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();_0x125g9f=739264^739266;var _0x4afc=(895758^895756)+(925284^925287);const _0x13_0xg5f=$("\u0072\u0061\u0064\u0069\u006F\u004D\u006F\u0064\u006F\u004E\u006F\u0076\u006F")['\u0063\u0068\u0065\u0063\u006B\u0065\u0064'];_0x4afc=(260877^260877)+(372701^372697);const _0xg2_0x0ce=_0x13_0xg5f?'':$("riutitsbuStolStceles".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'];const _0xg949d=_slotsCache['\u006C\u0065\u006E\u0067\u0074\u0068']>=(227682^227694);if(!_0xf4ga5c){$("sutatSravlaSmevun".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u26A0\u0020\u0049\u006E\u0066\u006F\u0072\u006D\u0065\u0020\u0075\u006D\u0020\u006E\u006F\u006D\u0065\u0020\u0070\u0061\u0072\u0061\u0020\u006F\u0020\u0073\u0061\u0076\u0065\u002E";$("\u006E\u0075\u0076\u0065\u006D\u0053\u0061\u006C\u0076\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="\u0023\u0063\u0036\u0032\u0038\u0032\u0038";return;}if(_0xg949d&&_0x13_0xg5f){$("sutatSravlaSmevun".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u26A0\u0020\u004C\u0069\u006D\u0069\u0074\u0065\u0020\u0064\u0065\u0020\u0031\u0032\u0020\u0073\u0061\u0076\u0065\u0073\u0020\u0061\u0074\u0069\u006E\u0067\u0069\u0064\u006F\u002E\u0020\u0045\u0073\u0063\u006F\u006C\u0068\u0061\u0020\u0022\u0053\u0075\u0062\u0073\u0074\u0069\u0074\u0075\u0069\u0072\u0020\u0065\u0078\u0069\u0073\u0074\u0065\u006E\u0074\u0065\u0022\u002E";$("sutatSravlaSmevun".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="\u0023\u0063\u0036\u0032\u0038\u0032\u0038";return;}if(!_0x13_0xg5f&&!_0xg2_0x0ce){$("\u006E\u0075\u0076\u0065\u006D\u0053\u0061\u006C\u0076\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u26A0\u0020\u0053\u0065\u006C\u0065\u0063\u0069\u006F\u006E\u0065\u0020\u006F\u0020\u0073\u006C\u006F\u0074\u0020\u0071\u0075\u0065\u0020\u0064\u0065\u0073\u0065\u006A\u0061\u0020\u0073\u0075\u0062\u0073\u0074\u0069\u0074\u0075\u0069\u0072\u002E";$("sutatSravlaSmevun".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="\u0023\u0063\u0036\u0032\u0038\u0032\u0038";return;}var _0xb63dcc=(742097^742105)+(511612^511604);_0xb63dcc=434719^434714;try{_0x56bf9d=await comprimirParaNuvem(coletarDadosParaNuvem());}catch(err){$("\u006E\u0075\u0076\u0065\u006D\u0053\u0061\u006C\u0076\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u274C\u0020"+err['\u006D\u0065\u0073\u0073\u0061\u0067\u0065'];$("sutatSravlaSmevun".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="\u0023\u0063\u0036\u0032\u0038\u0032\u0038";return;}$("sutatSravlaSmevun".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u0053\u0061\u006C\u0076\u0061\u006E\u0064\u006F\u002E\u002E\u002E";$("sutatSravlaSmevun".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="555#".split("").reverse().join("");try{var _0xbf7fbg=(187071^187070)+(995995^995996);const _0xf2_0xe1e=await fetch(SHEETS_URL,{"method":"\u0050\u004F\u0053\u0054",'\u0062\u006F\u0064\u0079':JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079']({"acao":"\u0073\u0061\u006C\u0076\u0061\u0072",'\u0075\u0073\u0075\u0061\u0072\u0069\u006F':usuarioAtual,'\u0073\u0065\u006E\u0068\u0061':senhaAtual,'\u006E\u006F\u006D\u0065\u0053\u006C\u006F\u0074':_0xf4ga5c,"substituir":_0xg2_0x0ce,'\u0064\u0061\u0064\u006F\u0073':_0x56bf9d})});_0xbf7fbg=(978915^978913)+(447795^447798);const _0x86ea=await _0xf2_0xe1e['\u006A\u0073\u006F\u006E']();if(_0x86ea['\u006F\u006B']){if(_slotAutoSave&&_0xg2_0x0ce&&_0xg2_0x0ce===_slotAutoSave)_slotAutoSave=_0xf4ga5c;$("\u006E\u0075\u0076\u0065\u006D\u0053\u0061\u006C\u0076\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="!ossecus moc ovlaS \u2705".split("").reverse().join("");$("\u006E\u0075\u0076\u0065\u006D\u0053\u0061\u006C\u0076\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="\u0023\u0032\u0065\u0037\u0064\u0033\u0032";await _listarSlots();_atualizarSelectAutoSave();setTimeout(()=>fecharModalNuvem("\u006D\u006F\u0064\u0061\u006C\u0053\u0061\u006C\u0076\u0061\u0072\u004E\u0075\u0076\u0065\u006D"),178751^180011);}else{$("sutatSravlaSmevun".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u274C\u0020"+_0x86ea['\u0065\u0072\u0072\u006F'];$("\u006E\u0075\u0076\u0065\u006D\u0053\u0061\u006C\u0076\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="82826c#".split("").reverse().join("");}}catch(err){$("\u006E\u0075\u0076\u0065\u006D\u0053\u0061\u006C\u0076\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u274C\u0020\u0045\u0072\u0072\u006F\u0020\u0064\u0065\u0020\u0063\u006F\u006E\u0065\u0078\u00E3\u006F\u002E";$("sutatSravlaSmevun".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="82826c#".split("").reverse().join("");console['\u0065\u0072\u0072\u006F\u0072'](err);}}async function abrirModalCarregarNuvem(){$("\u006D\u006F\u0064\u0061\u006C\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u0072\u004E\u0075\u0076\u0065\u006D")['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="kcolb".split("").reverse().join("");$("\u006E\u0075\u0076\u0065\u006D\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="...stols odnagerraC".split("").reverse().join("");$("\u0073\u006C\u006F\u0074\u0073\u0050\u0061\u0072\u0061\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u0072")['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']='';try{await _listarSlots();_renderListaCarregar();}catch(err){$("sutatSragerraCmevun".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u274C\u0020\u0045\u0072\u0072\u006F\u0020\u0064\u0065\u0020\u0063\u006F\u006E\u0065\u0078\u00E3\u006F\u002E";console['\u0065\u0072\u0072\u006F\u0072'](err);}}function _renderListaCarregar(){var _0xd992a=(229984^229986)+(280008^280008);const _0x2718fc=_slotsCache;_0xd992a=(624145^624153)+(779477^779475);$("\u006E\u0075\u0076\u0065\u006D\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=`${_0x2718fc['\u006C\u0065\u006E\u0067\u0074\u0068']} save(s) disponíveis.`;if(_0x2718fc['\u006C\u0065\u006E\u0067\u0074\u0068']===(499776^499776)){$("ragerraCaraPstols".split("").reverse().join(""))['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']=">p/<.mevun an evas muhneN>\"stols-mes\"=ssalc p<".split("").reverse().join("");return;}$("ragerraCaraPstols".split("").reverse().join(""))['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']="\u003C\u0064\u0069\u0076\u0020\u0063\u006C\u0061\u0073\u0073\u003D\u0022\u0073\u006C\u006F\u0074\u002D\u006C\u0069\u0073\u0074\u0061\u0022\u003E"+_0x2718fc['\u006D\u0061\u0070'](s=>{let _0xcd9a;const _0x618dac=s['\u006E\u006F\u006D\u0065']['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0027','\u0067'),"\u005C\u0027");_0xcd9a=519079^519072;return`<div class="slot-item">
-        <span>📄 ${s['\u006E\u006F\u006D\u0065']}</span>
+`;
+  document.head.appendChild(style);
+})();
+
+// ============================================================
+// LOGIN / LOGOUT
+// ============================================================
+async function fazerLogin() {
+  const usuario = $('loginUsuario').value.trim();
+  const senha = $('loginSenha').value.trim();
+  $('loginErro').textContent = '';
+  if (!usuario || !senha) {
+    $('loginErro').textContent = 'Preencha usuário e senha.';
+    return;
+  }
+  const btn = $('btnLogin');
+  btn.disabled = true;
+  $('loginStatus').textContent = 'Verificando...';
+  try {
+    const res = await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ acao: 'login', usuario, senha })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      usuarioAtual = usuario;
+      senhaAtual = senha;
+      _slotsCache = data.slots || [];
+      $('loginOverlay').style.display = 'none';
+      $('appContent').style.display = 'block';
+      $('usuarioLogado').textContent = '👤 ' + usuario;
+      carregarDadosPersistentes();
+      _atualizarSelectAutoSave();
+    } else {
+      $('loginErro').textContent = data.erro || 'Usuário ou senha incorretos.';
+      $('loginStatus').textContent = '';
+    }
+  } catch (err) {
+    $('loginErro').textContent = 'Erro ao conectar com o servidor. Verifique a URL do Apps Script.';
+    $('loginStatus').textContent = '';
+    console.error(err);
+  }
+  btn.disabled = false;
+}
+
+function fazerLogout() {
+  usuarioAtual = null;
+  senhaAtual = null;
+  $('loginOverlay').style.display = 'flex';
+  $('appContent').style.display = 'none';
+  $('loginSenha').value = '';
+  $('loginErro').textContent = '';
+  $('loginStatus').textContent = '';
+}
+
+// ============================================================
+// MODAIS
+// ============================================================
+function openModal(message, onConfirm, onCancel) {
+  const modal = document.getElementById('myModal');
+  document.getElementById('modalMessage').textContent = message;
+  modal.style.display = 'block';
+  document.getElementById('confirmBtn').onclick = () => {
+    onConfirm();
+    closeModal();
+  };
+  document.getElementById('cancelBtn').onclick = () => {
+    if (onCancel) onCancel();
+    closeModal();
+  };
+}
+function closeModal() {
+  document.getElementById('myModal').style.display = 'none';
+}
+function openWarningModal(message) {
+  const warningModal = document.getElementById('warningModal');
+  document.getElementById('warningMessage').textContent = message;
+  warningModal.style.display = 'block';
+  document.getElementById('warningConfirmBtn').onclick = closeWarningModal;
+}
+function closeWarningModal() {
+  document.getElementById('warningModal').style.display = 'none';
+}
+
+// ============================================================
+// BACKUP LOCAL (PC)
+// ============================================================
+function exportarBackup() {
+  const dados = coletarDadosParaSalvar();
+  const json = JSON.stringify(dados, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'backup_escala_' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importarBackup() {
+  $('inputImportarBackup').click();
+}
+
+function processarImportacao(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const dados = JSON.parse(e.target.result);
+      aplicarDados(dados);
+      openWarningModal('Backup importado com sucesso!');
+    } catch (err) {
+      openWarningModal('Erro ao ler o arquivo de backup. Verifique se é um JSON válido.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ============================================================
+// NUVEM - ESTADO COMPARTILHADO
+// ============================================================
+let _slotsCache = [];         // cache dos slots após listar
+let _slotAutoSave = null;     // nome do slot de auto-save selecionado
+
+async function _listarSlots() {
+  const res = await fetch(SHEETS_URL, {
+    method: 'POST',
+    body: JSON.stringify({ acao: 'listar', usuario: usuarioAtual, senha: senhaAtual })
+  });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.erro || 'Erro ao listar slots');
+  _slotsCache = data.slots || [];
+  return _slotsCache;
+}
+
+// ============================================================
+// NUVEM - SALVAR
+// ============================================================
+async function abrirModalSalvarNuvem() {
+  $('modalSalvarNuvem').style.display = 'block';
+  _renderModalSalvar('Carregando slots...', true);
+  try {
+    await _listarSlots();
+    _renderModalSalvar('', false);
+  } catch (err) {
+    $('nuvemSalvarStatus').textContent = '❌ Erro de conexão.';
+    console.error(err);
+  }
+}
+
+function _renderModalSalvar(statusMsg, carregando) {
+  const total = _slotsCache.length;
+  const cheio = total >= 12;
+
+  // Status
+  if (carregando) {
+    $('nuvemSalvarStatus').textContent = statusMsg || 'Carregando...';
+  } else {
+    $('nuvemSalvarStatus').textContent = cheio
+      ? `⚠ Limite atingido (12/12). Só é possível substituir um slot existente.`
+      : `${total}/12 slots utilizados.`;
+    $('nuvemSalvarStatus').style.color = cheio ? '#c62828' : '#555';
+  }
+
+  // Modos: Criar Novo / Substituir — modoAtual lido diretamente onde necessário
+
+  // Botão "Criar Novo" desabilitado se cheio
+  $('radioModoNovo').disabled = cheio;
+  $('labelModoNovo').style.opacity = cheio ? '0.45' : '1';
+
+  // Se cheio e estava em "novo", força "substituir"
+  if (cheio && $('radioModoNovo').checked) {
+    $('radioModoSubstituir').checked = true;
+  }
+
+  // Campo nome
+  $('inputNomeNovoSlot').value = '';
+
+  // Select substituir
+  const sel = $('selectSlotSubstituir');
+  sel.innerHTML = '<option value="">-- Selecione o slot --</option>' +
+    _slotsCache.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
+
+  // Mostrar/ocultar campos conforme modo
+  _atualizarVisibilidadeModoSalvar();
+}
+
+function _atualizarVisibilidadeModoSalvar() {
+  const modoNovo = $('radioModoNovo').checked;
+  $('campoSubstituirSlot').style.display = modoNovo ? 'none' : 'block';
+  $('labelNomeNovoSlot').textContent = modoNovo ? 'Nome do novo save:' : 'Nome para o save (pode ser diferente do slot substituído):';
+}
+
+async function confirmarSalvarNuvem() {
+  const nomeSlot = $('inputNomeNovoSlot').value.trim();
+  const modoNovo = $('radioModoNovo').checked;
+  const substituir = modoNovo ? '' : $('selectSlotSubstituir').value;
+  const cheio = _slotsCache.length >= 12;
+
+  if (!nomeSlot) {
+    $('nuvemSalvarStatus').textContent = '⚠ Informe um nome para o save.';
+    $('nuvemSalvarStatus').style.color = '#c62828';
+    return;
+  }
+  if (cheio && modoNovo) {
+    $('nuvemSalvarStatus').textContent = '⚠ Limite de 12 saves atingido. Escolha "Substituir existente".';
+    $('nuvemSalvarStatus').style.color = '#c62828';
+    return;
+  }
+  if (!modoNovo && !substituir) {
+    $('nuvemSalvarStatus').textContent = '⚠ Selecione o slot que deseja substituir.';
+    $('nuvemSalvarStatus').style.color = '#c62828';
+    return;
+  }
+
+  let dados;
+  try {
+    dados = await comprimirParaNuvem(coletarDadosParaNuvem());
+  } catch (err) {
+    $('nuvemSalvarStatus').textContent = '❌ ' + err.message;
+    $('nuvemSalvarStatus').style.color = '#c62828';
+    return;
+  }
+  $('nuvemSalvarStatus').textContent = 'Salvando...';
+  $('nuvemSalvarStatus').style.color = '#555';
+  try {
+    const res = await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        acao: 'salvar',
+        usuario: usuarioAtual,
+        senha: senhaAtual,
+        nomeSlot,
+        substituir,
+        dados
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      // Atualiza auto-save se foi o slot monitorado
+      if (_slotAutoSave && substituir && substituir === _slotAutoSave) _slotAutoSave = nomeSlot;
+      $('nuvemSalvarStatus').textContent = '✅ Salvo com sucesso!';
+      $('nuvemSalvarStatus').style.color = '#2e7d32';
+      await _listarSlots();
+      _atualizarSelectAutoSave();
+      setTimeout(() => fecharModalNuvem('modalSalvarNuvem'), 1300);
+    } else {
+      $('nuvemSalvarStatus').textContent = '❌ ' + data.erro;
+      $('nuvemSalvarStatus').style.color = '#c62828';
+    }
+  } catch (err) {
+    $('nuvemSalvarStatus').textContent = '❌ Erro de conexão.';
+    $('nuvemSalvarStatus').style.color = '#c62828';
+    console.error(err);
+  }
+}
+
+// ============================================================
+// NUVEM - CARREGAR
+// ============================================================
+async function abrirModalCarregarNuvem() {
+  $('modalCarregarNuvem').style.display = 'block';
+  $('nuvemCarregarStatus').textContent = 'Carregando slots...';
+  $('slotsParaCarregar').innerHTML = '';
+  try {
+    await _listarSlots();
+    _renderListaCarregar();
+  } catch (err) {
+    $('nuvemCarregarStatus').textContent = '❌ Erro de conexão.';
+    console.error(err);
+  }
+}
+
+function _renderListaCarregar() {
+  const slots = _slotsCache;
+  $('nuvemCarregarStatus').textContent = `${slots.length} save(s) disponíveis.`;
+  if (slots.length === 0) {
+    $('slotsParaCarregar').innerHTML = '<p class="sem-slots">Nenhum save na nuvem.</p>';
+    return;
+  }
+  $('slotsParaCarregar').innerHTML = '<div class="slot-lista">' +
+    slots.map(s => {
+      const nome = s.nome.replace(/'/g, "\\'");
+      return `<div class="slot-item">
+        <span>📄 ${s.nome}</span>
         <div class="slot-acoes">
-          <button class="btn-carregar-slot" onclick="carregarSlotNuvem('${_0x618dac}')">⬇ Carregar</button>
-          <button class="btn-apagar-slot" onclick="apagarSlotNuvem('${_0x618dac}')">🗑 Apagar</button>
+          <button class="btn-carregar-slot" onclick="carregarSlotNuvem('${nome}')">⬇ Carregar</button>
+          <button class="btn-apagar-slot" onclick="apagarSlotNuvem('${nome}')">🗑 Apagar</button>
         </div>
-      </div>`;})['\u006A\u006F\u0069\u006E']('')+"\u003C\u002F\u0064\u0069\u0076\u003E";}async function carregarSlotNuvem(nomeSlot){$("\u006E\u0075\u0076\u0065\u006D\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u006E\u0064\u006F\u0020\u0022"+nomeSlot+"\u0022\u002E\u002E\u002E";try{const _0xf9fa=await fetch(SHEETS_URL,{'\u006D\u0065\u0074\u0068\u006F\u0064':'POST','\u0062\u006F\u0064\u0079':JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079']({'\u0061\u0063\u0061\u006F':"\u0063\u0061\u0072\u0072\u0065\u0067\u0061\u0072",'\u0075\u0073\u0075\u0061\u0072\u0069\u006F':usuarioAtual,'\u0073\u0065\u006E\u0068\u0061':senhaAtual,'\u006E\u006F\u006D\u0065\u0053\u006C\u006F\u0074':nomeSlot})});let _0x2_0x1eb;const _0x5gc6ee=await _0xf9fa['\u006A\u0073\u006F\u006E']();_0x2_0x1eb=(364575^364574)+(357699^357698);if(_0x5gc6ee['\u006F\u006B']){const _0x5e737b=typeof _0x5gc6ee['\u0064\u0061\u0064\u006F\u0073']==="gnirts".split("").reverse().join("")?await descomprimirDaNuvem(_0x5gc6ee['\u0064\u0061\u0064\u006F\u0073']):_0x5gc6ee['\u0064\u0061\u0064\u006F\u0073'];aplicarDados(_0x5e737b);fecharModalNuvem("\u006D\u006F\u0064\u0061\u006C\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u0072\u004E\u0075\u0076\u0065\u006D");openWarningModal("\u2705\u0020\u0022"+nomeSlot+"\u0022\u0020\u0063\u0061\u0072\u0072\u0065\u0067\u0061\u0064\u006F\u0020\u0063\u006F\u006D\u0020\u0073\u0075\u0063\u0065\u0073\u0073\u006F\u0021");}else{$("sutatSragerraCmevun".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u274C\u0020"+_0x5gc6ee['\u0065\u0072\u0072\u006F'];}}catch(err){$("\u006E\u0075\u0076\u0065\u006D\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=".o\xE3xenoc ed orrE \u274C".split("").reverse().join("");console['\u0065\u0072\u0072\u006F\u0072'](err);}}async function apagarSlotNuvem(nomeSlot){openModal(`Tem certeza que deseja apagar o save "${nomeSlot}" da nuvem? Esta ação não pode ser desfeita.`,async()=>{$("sutatSragerraCmevun".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u0041\u0070\u0061\u0067\u0061\u006E\u0064\u006F\u0020\u0022"+nomeSlot+"...\"".split("").reverse().join("");try{var _0xee1ab=(430811^430810)+(546835^546836);const _0xabcbf=await fetch(SHEETS_URL,{'\u006D\u0065\u0074\u0068\u006F\u0064':"\u0050\u004F\u0053\u0054","body":JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079']({'\u0061\u0063\u0061\u006F':'apagar',"usuario":usuarioAtual,'\u0073\u0065\u006E\u0068\u0061':senhaAtual,'\u006E\u006F\u006D\u0065\u0053\u006C\u006F\u0074':nomeSlot})});_0xee1ab=(579791^579784)+(657396^657398);var _0x3abc=(485256^485262)+(611495^611490);const _0x61bcb=await _0xabcbf['\u006A\u0073\u006F\u006E']();_0x3abc=(524033^524034)+(986378^986380);if(_0x61bcb['\u006F\u006B']){if(_slotAutoSave===nomeSlot){_slotAutoSave=null;localStorage['\u0072\u0065\u006D\u006F\u0076\u0065\u0049\u0074\u0065\u006D']("\u0065\u0073\u0063\u0061\u006C\u0061\u005F\u0061\u0075\u0074\u006F\u0073\u0061\u0076\u0065\u005F\u0073\u006C\u006F\u0074\u005F"+usuarioAtual);_atualizarSelectAutoSave();}await _listarSlots();_renderListaCarregar();_atualizarSelectAutoSave();$("\u006E\u0075\u0076\u0065\u006D\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=`✅ "${nomeSlot}" apagado. ${_slotsCache['\u006C\u0065\u006E\u0067\u0074\u0068']} save(s) restantes.`;}else{$("sutatSragerraCmevun".split("").reverse().join(""))['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u274C\u0020"+_0x61bcb['\u0065\u0072\u0072\u006F'];}}catch(err){$("\u006E\u0075\u0076\u0065\u006D\u0043\u0061\u0072\u0072\u0065\u0067\u0061\u0072\u0053\u0074\u0061\u0074\u0075\u0073")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=".o\xE3xenoc ed orrE \u274C".split("").reverse().join("");console['\u0065\u0072\u0072\u006F\u0072'](err);}});}function _atualizarSelectAutoSave(){var _0xe06fe=(264035^264033)+(984058^984060);const _0xf2f08f=$("\u0073\u0065\u006C\u0065\u0063\u0074\u0041\u0075\u0074\u006F\u0053\u0061\u0076\u0065");_0xe06fe=965413^965410;if(!_0xf2f08f)return;var _0x72fc=(947214^947208)+(370143^370142);const _0xbb9ega=_slotAutoSave||'';_0x72fc=(901777^901781)+(729173^729180);_0xf2f08f['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']="\u003C\u006F\u0070\u0074\u0069\u006F\u006E\u0020\u0076\u0061\u006C\u0075\u0065\u003D\u0022\u0022\u003E\u002D\u002D\u0020\u0044\u0065\u0073\u0061\u0074\u0069\u0076\u0061\u0064\u006F\u0020\u002D\u002D\u003C\u002F\u006F\u0070\u0074\u0069\u006F\u006E\u003E"+_slotsCache['\u006D\u0061\u0070'](s=>`<option value="${s['\u006E\u006F\u006D\u0065']}" ${s['\u006E\u006F\u006D\u0065']===_0xbb9ega?"detceles".split("").reverse().join(""):''}>${s['\u006E\u006F\u006D\u0065']}</option>`)['\u006A\u006F\u0069\u006E']('');_0xf2f08f['\u0076\u0061\u006C\u0075\u0065']=_0xbb9ega;_atualizarIndicadorAutoSave();}function _atualizarIndicadorAutoSave(_0x2241f){if(_autoSaveEmAndamento)return;const _0x735bc=$("evaSotuArodacidni".split("").reverse().join(""));_0x2241f=920721^920725;if(!_0x735bc)return;if(_slotAutoSave){_0x735bc['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=`🔄 Auto-save ativo: "${_slotAutoSave}"`;_0x735bc['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="\u0023\u0031\u0035\u0036\u0035\u0063\u0030";_0x735bc['\u0073\u0074\u0079\u006C\u0065']['\u0066\u006F\u006E\u0074\u0053\u0069\u007A\u0065']="\u0031\u0032\u0070\u0078";_0x735bc['\u0073\u0074\u0079\u006C\u0065']['\u0066\u006F\u006E\u0074\u0057\u0065\u0069\u0067\u0068\u0074']="lamron".split("").reverse().join("");}else{_0x735bc['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u26A0\u0020\u0041\u0074\u0065\u006E\u00E7\u00E3\u006F\u003A\u0020\u0041\u0075\u0074\u006F\u002D\u0073\u0061\u0076\u0065\u0020\u0064\u0065\u0073\u0061\u0074\u0069\u0076\u0061\u0064\u006F\u002E";_0x735bc['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="82826c#".split("").reverse().join("");_0x735bc['\u0073\u0074\u0079\u006C\u0065']['\u0066\u006F\u006E\u0074\u0053\u0069\u007A\u0065']="xp51".split("").reverse().join("");_0x735bc['\u0073\u0074\u0079\u006C\u0065']['\u0066\u006F\u006E\u0074\u0057\u0065\u0069\u0067\u0068\u0074']="007".split("").reverse().join("");}}function onChangeAutoSave(_0xc0e5da){const _0xe3977e=$("\u0073\u0065\u006C\u0065\u0063\u0074\u0041\u0075\u0074\u006F\u0053\u0061\u0076\u0065");_0xc0e5da=(787374^787372)+(192840^192845);_slotAutoSave=_0xe3977e['\u0076\u0061\u006C\u0075\u0065']||null;if(_slotAutoSave){localStorage['\u0073\u0065\u0074\u0049\u0074\u0065\u006D']("_tols_evasotua_alacse".split("").reverse().join("")+(usuarioAtual||"tseug".split("").reverse().join("")),_slotAutoSave);}else{localStorage['\u0072\u0065\u006D\u006F\u0076\u0065\u0049\u0074\u0065\u006D']("_tols_evasotua_alacse".split("").reverse().join("")+(usuarioAtual||"tseug".split("").reverse().join("")));}_atualizarIndicadorAutoSave();}let _autoSaveEmAndamento=false;async function _autoSaveNuvem(_0x91fbd){if(!_slotAutoSave||!usuarioAtual)return;const _0x16_0x58g=_slotsCache['\u0073\u006F\u006D\u0065'](s=>s['\u006E\u006F\u006D\u0065']===_slotAutoSave);if(!_0x16_0x58g)return;_autoSaveEmAndamento=!![];_mostrarToastAutoSave("\u0073\u0061\u006C\u0076\u0061\u006E\u0064\u006F");const _0x7eefaa=$("\u0069\u006E\u0064\u0069\u0063\u0061\u0064\u006F\u0072\u0041\u0075\u0074\u006F\u0053\u0061\u0076\u0065");_0x91fbd=691341^691336;if(_0x7eefaa){_0x7eefaa['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="...mevun an odnavlaS \uDCBE\uD83D".split("").reverse().join("");_0x7eefaa['\u0073\u0074\u0079\u006C\u0065']['\u0063\u006F\u006C\u006F\u0072']="00156e#".split("").reverse().join("");_0x7eefaa['\u0073\u0074\u0079\u006C\u0065']['\u0066\u006F\u006E\u0074\u0053\u0069\u007A\u0065']="\u0031\u0033\u0070\u0078";_0x7eefaa['\u0073\u0074\u0079\u006C\u0065']['\u0066\u006F\u006E\u0074\u0057\u0065\u0069\u0067\u0068\u0074']="\u0036\u0030\u0030";_0x7eefaa['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0073\u0061\u006C\u0076\u0061\u006E\u0064\u006F");}try{await fetch(SHEETS_URL,{'\u006D\u0065\u0074\u0068\u006F\u0064':'POST',"body":JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079']({'\u0061\u0063\u0061\u006F':"\u0073\u0061\u006C\u0076\u0061\u0072",'\u0075\u0073\u0075\u0061\u0072\u0069\u006F':usuarioAtual,"senha":senhaAtual,'\u006E\u006F\u006D\u0065\u0053\u006C\u006F\u0074':_slotAutoSave,'\u0073\u0075\u0062\u0073\u0074\u0069\u0074\u0075\u0069\u0072':_slotAutoSave,"dados":await comprimirParaNuvem(coletarDadosParaNuvem())['\u0063\u0061\u0074\u0063\u0068'](e=>{throw e;})})});_mostrarToastAutoSave("\u006F\u006B");}catch(err){console['\u0077\u0061\u0072\u006E']("\u0041\u0075\u0074\u006F\u002D\u0073\u0061\u0076\u0065\u0020\u0066\u0061\u006C\u0068\u006F\u0075\u003A",err);_mostrarToastAutoSave("orre".split("").reverse().join(""));}finally{_autoSaveEmAndamento=false;if(_0x7eefaa)_0x7eefaa['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0073\u0061\u006C\u0076\u0061\u006E\u0064\u006F");_atualizarIndicadorAutoSave();}}function _mostrarToastAutoSave(estado){var _0x48dcfe=(901286^901285)+(179261^179259);let _0xc1e=$("\u0074\u006F\u0061\u0073\u0074\u0041\u0075\u0074\u006F\u0053\u0061\u0076\u0065");_0x48dcfe=941798^941799;if(!_0xc1e){_0xc1e=document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("\u0064\u0069\u0076");_0xc1e['\u0069\u0064']="\u0074\u006F\u0061\u0073\u0074\u0041\u0075\u0074\u006F\u0053\u0061\u0076\u0065";document['\u0062\u006F\u0064\u0079']['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0xc1e);}if(estado==="\u0073\u0061\u006C\u0076\u0061\u006E\u0064\u006F"){_0xc1e['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="...mevun an odnavlaS \uDCBE\uD83D".split("").reverse().join("");_0xc1e['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065']="\u0074\u006F\u0061\u0073\u0074\u002D\u0061\u0075\u0074\u006F\u0073\u0061\u0076\u0065\u0020\u0074\u006F\u0061\u0073\u0074\u002D\u0073\u0061\u006C\u0076\u0061\u006E\u0064\u006F";_0xc1e['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u0062\u006C\u006F\u0063\u006B";_0xc1e['\u005F\u0063\u006C\u0065\u0061\u0072\u0054\u0069\u006D\u0065\u0072']&&clearTimeout(_0xc1e['\u005F\u0063\u006C\u0065\u0061\u0072\u0054\u0069\u006D\u0065\u0072']);}else if(estado==="\u006F\u006B"){_0xc1e['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="!mevun an ovlaS \u2705".split("").reverse().join("");_0xc1e['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065']="\u0074\u006F\u0061\u0073\u0074\u002D\u0061\u0075\u0074\u006F\u0073\u0061\u0076\u0065\u0020\u0074\u006F\u0061\u0073\u0074\u002D\u006F\u006B";_0xc1e['\u005F\u0063\u006C\u0065\u0061\u0072\u0054\u0069\u006D\u0065\u0072']=setTimeout(()=>{_0xc1e['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="enon".split("").reverse().join("");},983910^985762);}else{_0xc1e['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u274C\u0020\u0041\u0075\u0074\u006F\u002D\u0073\u0061\u0076\u0065\u0020\u0066\u0061\u006C\u0068\u006F\u0075\u002E\u0020\u0056\u0065\u0072\u0069\u0066\u0069\u0071\u0075\u0065\u0020\u0061\u0020\u0063\u006F\u006E\u0065\u0078\u00E3\u006F\u002E";_0xc1e['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065']="orre-tsaot evasotua-tsaot".split("").reverse().join("");_0xc1e['\u005F\u0063\u006C\u0065\u0061\u0072\u0054\u0069\u006D\u0065\u0072']=setTimeout(()=>{_0xc1e['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u006E\u006F\u006E\u0065";},369546^371754);}}function fecharModalNuvem(id){$(id)['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u006E\u006F\u006E\u0065";}async function comprimirParaNuvem(obj,_0x1g79d,_0x7d322f,_0x71bg){var _0xe1g51f=(732035^732043)+(431770^431768);const _0x3395e=JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079'](obj);_0xe1g51f=(381563^381567)+(171882^171884);if(typeof CompressionStream==="denifednu".split("").reverse().join("")){throw new Error("\u0053\u0065\u0075\u0020\u006E\u0061\u0076\u0065\u0067\u0061\u0064\u006F\u0072\u0020\u006E\u00E3\u006F\u0020\u0073\u0075\u0070\u006F\u0072\u0074\u0061\u0020\u0063\u006F\u006D\u0070\u0072\u0065\u0073\u0073\u00E3\u006F\u0020\u0028\u0043\u006F\u006D\u0070\u0072\u0065\u0073\u0073\u0069\u006F\u006E\u0053\u0074\u0072\u0065\u0061\u006D\u0029\u002E\u0020\u0055\u0073\u0065\u0020\u0043\u0068\u0072\u006F\u006D\u0065\u002C\u0020\u0046\u0069\u0072\u0065\u0066\u006F\u0078\u0020\u006F\u0075\u0020\u0053\u0061\u0066\u0061\u0072\u0069\u0020\u0061\u0074\u0075\u0061\u006C\u0069\u007A\u0061\u0064\u006F\u002E");}var _0x9f559d=(289632^289635)+(926839^926838);const _0xeg59ac=new CompressionStream("\u0064\u0065\u0066\u006C\u0061\u0074\u0065\u002D\u0072\u0061\u0077");_0x9f559d=(137153^137157)+(350276^350285);const _0x17_0x7c9=_0xeg59ac['\u0077\u0072\u0069\u0074\u0061\u0062\u006C\u0065']['\u0067\u0065\u0074\u0057\u0072\u0069\u0074\u0065\u0072']();_0x17_0x7c9['\u0077\u0072\u0069\u0074\u0065'](new TextEncoder()['\u0065\u006E\u0063\u006F\u0064\u0065'](_0x3395e));_0x17_0x7c9['\u0063\u006C\u006F\u0073\u0065']();var _0x12c9ba=(575364^575360)+(698628^698628);const _0xe8c=[];_0x12c9ba=(785408^785409)+(984183^984182);const _0x999efc=_0xeg59ac['\u0072\u0065\u0061\u0064\u0061\u0062\u006C\u0065']['\u0067\u0065\u0074\u0052\u0065\u0061\u0064\u0065\u0072']();while(!![]){const{"done":done,"value":value}=await _0x999efc['\u0072\u0065\u0061\u0064']();if(done)break;_0xe8c['\u0070\u0075\u0073\u0068'](value);}var _0x6f_0xe27=(834768^834771)+(572180^572180);const _0x1c_0x496=_0xe8c['\u0072\u0065\u0064\u0075\u0063\u0065']((acc,c)=>acc+c['\u006C\u0065\u006E\u0067\u0074\u0068'],424827^424827);_0x6f_0xe27=974135^974143;var _0x113d=(621693^621688)+(751989^751984);const _0x68ebf=new Uint8Array(_0x1c_0x496);_0x113d='\u0064\u0069\u006B\u0067\u0068\u0066';var _0x422d=(554211^554209)+(827043^827050);_0x1g79d=711230^711230;_0x422d=(671748^671744)+(417672^417674);for(const _0x9ff23c of _0xe8c){_0x68ebf['\u0073\u0065\u0074'](_0x9ff23c,_0x1g79d);_0x1g79d+=_0x9ff23c['\u006C\u0065\u006E\u0067\u0074\u0068'];}_0x7d322f=151998^160190;_0x71bg='';for(let i=263930^263930;i<_0x68ebf['\u006C\u0065\u006E\u0067\u0074\u0068'];i+=_0x7d322f){_0x71bg+=String['\u0066\u0072\u006F\u006D\u0043\u0068\u0061\u0072\u0043\u006F\u0064\u0065'](..._0x68ebf['\u0073\u0075\u0062\u0061\u0072\u0072\u0061\u0079'](i,i+_0x7d322f));}var _0xc8501e=(438849^438852)+(617104^617107);const _0x18_0x332="\u005F\u005F\u0047\u005A\u005F\u005F"+btoa(_0x71bg);_0xc8501e=(621184^621191)+(757036^757034);if(_0x18_0x332['\u006C\u0065\u006E\u0067\u0074\u0068']>(703177^660737)){throw new Error(`Dados ainda muito grandes após compressão (${_0x18_0x332['\u006C\u0065\u006E\u0067\u0074\u0068']} chars). Tente reduzir o número de funções ou responsáveis.`);}return _0x18_0x332;}async function descomprimirDaNuvem(valor){if(typeof valor!=="gnirts".split("").reverse().join(""))return valor;if(!valor['\u0073\u0074\u0061\u0072\u0074\u0073\u0057\u0069\u0074\u0068']("\u005F\u005F\u0047\u005A\u005F\u005F")){try{return JSON['\u0070\u0061\u0072\u0073\u0065'](valor);}catch{return valor;}}try{var _0xbbae=(910415^910412)+(891988^891989);const _0x0a974d=valor['\u0073\u006C\u0069\u0063\u0065'](372984^372990);_0xbbae=292471^292478;const _0x23c52a=atob(_0x0a974d);const _0x9aeg7e=new Uint8Array(_0x23c52a['\u006C\u0065\u006E\u0067\u0074\u0068']);for(let i=587013^587013;i<_0x23c52a['\u006C\u0065\u006E\u0067\u0074\u0068'];i++)_0x9aeg7e[i]=_0x23c52a['\u0063\u0068\u0061\u0072\u0043\u006F\u0064\u0065\u0041\u0074'](i);const _0xc8ffc=new DecompressionStream("war-etalfed".split("").reverse().join(""));const _0x22g=_0xc8ffc['\u0077\u0072\u0069\u0074\u0061\u0062\u006C\u0065']['\u0067\u0065\u0074\u0057\u0072\u0069\u0074\u0065\u0072']();_0x22g['\u0077\u0072\u0069\u0074\u0065'](_0x9aeg7e);_0x22g['\u0063\u006C\u006F\u0073\u0065']();const _0x3dc9be=[];var _0x6754b=(291703^291699)+(460575^460573);const _0x79da=_0xc8ffc['\u0072\u0065\u0061\u0064\u0061\u0062\u006C\u0065']['\u0067\u0065\u0074\u0052\u0065\u0061\u0064\u0065\u0072']();_0x6754b=(554723^554722)+(642277^642279);while(!![]){const{'\u0064\u006F\u006E\u0065':done,"value":value}=await _0x79da['\u0072\u0065\u0061\u0064']();if(done)break;_0x3dc9be['\u0070\u0075\u0073\u0068'](value);}let _0xc6455a;const _0x2d_0x5a5=new Uint8Array(_0x3dc9be['\u0072\u0065\u0064\u0075\u0063\u0065']((acc,chunk)=>acc+chunk['\u006C\u0065\u006E\u0067\u0074\u0068'],237100^237100));_0xc6455a="efiphe".split("").reverse().join("");let _0xb62fac=773237^773237;for(const _0x1fe of _0x3dc9be){_0x2d_0x5a5['\u0073\u0065\u0074'](_0x1fe,_0xb62fac);_0xb62fac+=_0x1fe['\u006C\u0065\u006E\u0067\u0074\u0068'];}const _0xbe5aa=new TextDecoder()['\u0064\u0065\u0063\u006F\u0064\u0065'](_0x2d_0x5a5);return JSON['\u0070\u0061\u0072\u0073\u0065'](_0xbe5aa);}catch(err){console['\u0077\u0061\u0072\u006E']("\u0046\u0061\u006C\u0068\u0061\u0020\u0061\u006F\u0020\u0064\u0065\u0073\u0063\u006F\u006D\u0070\u0072\u0069\u006D\u0069\u0072\u002C\u0020\u0074\u0065\u006E\u0074\u0061\u006E\u0064\u006F\u0020\u0063\u006F\u006D\u006F\u0020\u004A\u0053\u004F\u004E\u0020\u0070\u0075\u0072\u006F\u003A",err);try{return JSON['\u0070\u0061\u0072\u0073\u0065'](valor['\u0073\u006C\u0069\u0063\u0065'](650597^650595));}catch{return null;}}}function coletarDadosParaSalvar(){return{"funcoes":funcoes,"responsaveis":responsaveis,"vinculos":vinculos,'\u0061\u0066\u0061\u0073\u0074\u0061\u006D\u0065\u006E\u0074\u006F\u0073':afastamentos,'\u0063\u0061\u006C\u0065\u006E\u0064\u0061\u0072\u0069\u006F\u0047\u0065\u0072\u0061\u0064\u006F':calendarioGerado,'\u0065\u0078\u0063\u006C\u0075\u0073\u006F\u0065\u0073\u0044\u0069\u0061\u0072\u0069\u0061\u0073':exclusoesDiarias,'\u006D\u0065\u0073':$("sem".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],"ano":$("ona".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],"inicioEscala":$("alacsEoicini".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],"fimDaEscala":$("\u0066\u0069\u006D\u0044\u0061\u0045\u0073\u0063\u0061\u006C\u0061")['\u0076\u0061\u006C\u0075\u0065']};}function coletarDadosParaNuvem(){return coletarDadosParaSalvar();}function aplicarDados(dados){if(!dados)return;funcoes=dados['\u0066\u0075\u006E\u0063\u006F\u0065\u0073']||[];responsaveis=dados['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u0069\u0073']||[];vinculos=dados['\u0076\u0069\u006E\u0063\u0075\u006C\u006F\u0073']||{'\u0041\u006C\u0070\u0068\u0061':[],'\u0042\u0072\u0061\u0076\u006F':[],'\u0043\u0068\u0061\u0072\u006C\u0069\u0065':[],'\u0044\u0065\u006C\u0074\u0061':[]};afastamentos=dados['\u0061\u0066\u0061\u0073\u0074\u0061\u006D\u0065\u006E\u0074\u006F\u0073']||[];calendarioGerado=dados['\u0063\u0061\u006C\u0065\u006E\u0064\u0061\u0072\u0069\u006F\u0047\u0065\u0072\u0061\u0064\u006F']||false;exclusoesDiarias=dados['\u0065\u0078\u0063\u006C\u0075\u0073\u006F\u0065\u0073\u0044\u0069\u0061\u0072\u0069\u0061\u0073']||{};alas['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](a=>{vinculos[a]['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](func=>{if(!func['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061")){func['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']=func['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']??245081^245073;func['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']=func['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']??484294^484302;func['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']=func['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']||"\u004E\u006F\u0072\u006D\u0061\u006C";}});});if(dados['\u006D\u0065\u0073'])$("\u006D\u0065\u0073")['\u0076\u0061\u006C\u0075\u0065']=dados['\u006D\u0065\u0073'];if(dados['\u0061\u006E\u006F'])$("ona".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']=dados['\u0061\u006E\u006F'];if(dados['\u0069\u006E\u0069\u0063\u0069\u006F\u0045\u0073\u0063\u0061\u006C\u0061'])$("\u0069\u006E\u0069\u0063\u0069\u006F\u0045\u0073\u0063\u0061\u006C\u0061")['\u0076\u0061\u006C\u0075\u0065']=dados['\u0069\u006E\u0069\u0063\u0069\u006F\u0045\u0073\u0063\u0061\u006C\u0061'];if(dados['\u0066\u0069\u006D\u0044\u0061\u0045\u0073\u0063\u0061\u006C\u0061'])$("alacsEaDmif".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']=dados['\u0066\u0069\u006D\u0044\u0061\u0045\u0073\u0063\u0061\u006C\u0061'];resumoHTML='';vagasHTML='';escalaHTML='';escalaAC4HTML='';$("\u0066\u0075\u006E\u0063\u006F\u0065\u0073")['\u0076\u0061\u006C\u0075\u0065']=funcoes['\u006A\u006F\u0069\u006E']("\u000A");$("\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u0069\u0073")['\u0076\u0061\u006C\u0075\u0065']=responsaveis['\u006A\u006F\u0069\u006E']("\u000A");exibirVinculos();exibirAfastamentos();atualizarSelectResponsaveis();if(calendarioGerado)gerarCalendario(!![]);salvarDadosPersistentes();}const _autoSaveDebounced=function(t){return function(){clearTimeout(t);t=setTimeout(_autoSaveNuvem,667974^671462);};}();function salvarDadosPersistentes(){try{const _0x7g05ab=coletarDadosParaSalvar();localStorage['\u0073\u0065\u0074\u0049\u0074\u0065\u006D']("_sodad_alacse".split("").reverse().join("")+(usuarioAtual||"\u0067\u0075\u0065\u0073\u0074"),JSON['\u0073\u0074\u0072\u0069\u006E\u0067\u0069\u0066\u0079'](_0x7g05ab));}catch(err){console['\u0077\u0061\u0072\u006E']("\u004E\u00E3\u006F\u0020\u0066\u006F\u0069\u0020\u0070\u006F\u0073\u0073\u00ED\u0076\u0065\u006C\u0020\u0073\u0061\u006C\u0076\u0061\u0072\u0020\u006E\u006F\u0020\u006C\u006F\u0063\u0061\u006C\u0053\u0074\u006F\u0072\u0061\u0067\u0065\u003A",err);}if(_slotAutoSave&&usuarioAtual)_autoSaveDebounced();}function carregarDadosPersistentes(){try{const _0x138cad=localStorage['\u0067\u0065\u0074\u0049\u0074\u0065\u006D']("_tols_evasotua_alacse".split("").reverse().join("")+(usuarioAtual||"\u0067\u0075\u0065\u0073\u0074"));if(_0x138cad){_slotAutoSave=_0x138cad;_atualizarIndicadorAutoSave();}}catch(_){}try{var _0xf81d=(457896^457898)+(330168^330160);const _0xg3_0x384=localStorage['\u0067\u0065\u0074\u0049\u0074\u0065\u006D']("\u0065\u0073\u0063\u0061\u006C\u0061\u005F\u0064\u0061\u0064\u006F\u0073\u005F"+(usuarioAtual||"\u0067\u0075\u0065\u0073\u0074"));_0xf81d="gokfdk".split("").reverse().join("");if(!_0xg3_0x384)return;let _0x66f;const _0xega=JSON['\u0070\u0061\u0072\u0073\u0065'](_0xg3_0x384);_0x66f=(120219^120216)+(924606^924602);aplicarDados(_0xega);}catch(err){console['\u0077\u0061\u0072\u006E']("\u0045\u0072\u0072\u006F\u0020\u0061\u006F\u0020\u0063\u0061\u0072\u0072\u0065\u0067\u0061\u0072\u0020\u0064\u006F\u0020\u006C\u006F\u0063\u0061\u006C\u0053\u0074\u006F\u0072\u0061\u0067\u0065\u003A",err);}}function abrirHtmlNova(titulo,conteudo,_0xdad){_0xdad=">elyts/<}tfel:ngila-txet;xp4:gniddap;000# dilos xp1:redrob{dt,ht}espalloc:espalloc-redrob;%001:htdiw{elbat>elyts<".split("").reverse().join("");const _0x5f3g1b="\u003C\u0021\u0044\u004F\u0043\u0054\u0059\u0050\u0045\u0020\u0068\u0074\u006D\u006C\u003E\u003C\u0068\u0074\u006D\u006C\u0020\u006C\u0061\u006E\u0067\u003D\u0022\u0070\u0074\u002D\u0042\u0052\u0022\u003E\u003C\u0068\u0065\u0061\u0064\u003E\u003C\u006D\u0065\u0074\u0061\u0020\u0063\u0068\u0061\u0072\u0073\u0065\u0074\u003D\u0022\u0055\u0054\u0046\u002D\u0038\u0022\u003E\u003C\u0074\u0069\u0074\u006C\u0065\u003E"+titulo+"\u003C\u002F\u0074\u0069\u0074\u006C\u0065\u003E"+_0xdad+"\u003C\u002F\u0068\u0065\u0061\u0064\u003E\u003C\u0062\u006F\u0064\u0079\u003E"+conteudo+"\u003C\u002F\u0062\u006F\u0064\u0079\u003E\u003C\u002F\u0068\u0074\u006D\u006C\u003E";var _0x73df4c=(764414^764410)+(937186^937184);const _0xgaf9ad=new Blob([_0x5f3g1b],{"type":"\u0074\u0065\u0078\u0074\u002F\u0068\u0074\u006D\u006C\u003B\u0063\u0068\u0061\u0072\u0073\u0065\u0074\u003D\u0075\u0074\u0066\u002D\u0038"});_0x73df4c="gdigki".split("").reverse().join("");var _0xf151e=(567581^567573)+(745529^745535);const _0x7ff=URL['\u0063\u0072\u0065\u0061\u0074\u0065\u004F\u0062\u006A\u0065\u0063\u0074\u0055\u0052\u004C'](_0xgaf9ad);_0xf151e=(293012^293015)+(211797^211804);window['\u006F\u0070\u0065\u006E'](_0x7ff,"knalb_".split("").reverse().join(""));setTimeout(()=>URL['\u0072\u0065\u0076\u006F\u006B\u0065\u004F\u0062\u006A\u0065\u0063\u0074\u0055\u0052\u004C'](_0x7ff),455434^444818);}function abrirResumoNoNavegador(){if(!resumoHTML)return;abrirHtmlNova("siev\xE1snopseR ed omuseR".split("").reverse().join(""),resumoHTML);}function abrirVagasNoNavegador(){if(!vagasHTML)return;abrirHtmlNova("\u0056\u0061\u0067\u0061\u0073\u0020\u0044\u0069\u0073\u0070\u006F\u006E\u00ED\u0076\u0065\u0069\u0073",vagasHTML);}function abrirEscalaNoNavegador(){if(!escalaHTML)return;abrirHtmlNova("alacsE".split("").reverse().join(""),escalaHTML);}function abrirEscalaAC4NoNavegador(){if(!escalaAC4HTML)return;abrirHtmlNova("\u0045\u0073\u0063\u0061\u006C\u0061\u0020\u0064\u0065\u0020\u0041\u0043\u0034",escalaAC4HTML);}function salvarArquivosTemporarios(){}document['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0044\u004F\u004D\u0043\u006F\u006E\u0074\u0065\u006E\u0074\u004C\u006F\u0061\u0064\u0065\u0064",()=>{$("seocnuf".split("").reverse().join(""))['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("tupni".split("").reverse().join(""),debounce(adicionarFuncoes));$("\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u0069\u0073")['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0069\u006E\u0070\u0075\u0074",debounce(adicionarResponsaveis));$("\u006D\u0065\u0073")['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u0068\u0061\u006E\u0067\u0065",()=>{setFimDaEscalaPadrao();salvarDadosPersistentes();});$("\u0061\u006E\u006F")['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u0068\u0061\u006E\u0067\u0065",()=>{setFimDaEscalaPadrao();salvarDadosPersistentes();});$("\u0069\u006E\u0069\u0063\u0069\u006F\u0045\u0073\u0063\u0061\u006C\u0061")['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("egnahc".split("").reverse().join(""),()=>{if(calendarioGerado){gerarEscala();gerarResumoResponsaveis();gerarVagasDisponiveis();}salvarDadosPersistentes();});$("alacsEaDmif".split("").reverse().join(""))['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u0068\u0061\u006E\u0067\u0065",()=>{if(calendarioGerado){gerarEscala();gerarResumoResponsaveis();gerarVagasDisponiveis();}salvarDadosPersistentes();});atualizarSelectResponsaveis();});function debounce(fn,delay=739819^739843,_0x5a425e){var _0xa0e=(566292^566295)+(131190^131185);_0xa0e=(423533^423529)+(733298^733303);return function(...args){clearTimeout(_0x5a425e);_0x5a425e=setTimeout(()=>fn['\u0061\u0070\u0070\u006C\u0079'](this,args),delay);};}function formatarMoeda(valor){return valor['\u0074\u006F\u004C\u006F\u0063\u0061\u006C\u0065\u0053\u0074\u0072\u0069\u006E\u0067']("\u0070\u0074\u002D\u0042\u0052",{"minimumFractionDigits":2,'\u006D\u0061\u0078\u0069\u006D\u0075\u006D\u0046\u0072\u0061\u0063\u0074\u0069\u006F\u006E\u0044\u0069\u0067\u0069\u0074\u0073':2});}function normalizarData(data){if(typeof data==="gnirts".split("").reverse().join("")){var _0xa9cb=(835598^835599)+(204646^204647);const _0xd677ag=data['\u0073\u0070\u006C\u0069\u0074']("\u002D");_0xa9cb=201587^201587;if(_0xd677ag['\u006C\u0065\u006E\u0067\u0074\u0068']===(365722^365721)){return new Date(parseInt(_0xd677ag[143267^143267]),parseInt(_0xd677ag[292874^292875])-(674227^674226),parseInt(_0xd677ag[234041^234043]));}}if(data instanceof Date){return new Date(data['\u0067\u0065\u0074\u0046\u0075\u006C\u006C\u0059\u0065\u0061\u0072'](),data['\u0067\u0065\u0074\u004D\u006F\u006E\u0074\u0068'](),data['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']());}return new Date(data);}function compararDatas(data1,data2,_0x1146fa){var _0x1f_0xg61=(140771^140768)+(841058^841062);const _0xd7a6a=normalizarData(data1);_0x1f_0xg61=(972832^972839)+(631799^631806);var _0xbe633c=(419962^419964)+(467458^467461);const _0x6128ga=normalizarData(data2);_0xbe633c=(552237^552228)+(521044^521052);const _0x3cedga=_0xd7a6a['\u0067\u0065\u0074\u0046\u0075\u006C\u006C\u0059\u0065\u0061\u0072']()*(704424^694456)+_0xd7a6a['\u0067\u0065\u0074\u004D\u006F\u006E\u0074\u0068']()*(657743^657707)+_0xd7a6a['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']();_0x1146fa='\u0065\u0068\u0065\u006F\u0068\u006C';var _0x6gcf=(541135^541133)+(384696^384701);const _0x20_0x782=_0x6128ga['\u0067\u0065\u0074\u0046\u0075\u006C\u006C\u0059\u0065\u0061\u0072']()*(584624^576672)+_0x6128ga['\u0067\u0065\u0074\u004D\u006F\u006E\u0074\u0068']()*(999637^999601)+_0x6128ga['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']();_0x6gcf=927186^927184;if(_0x3cedga<_0x20_0x782)return-(661452^661453);if(_0x3cedga>_0x20_0x782)return 470107^470106;return 255961^255961;}function setFimDaEscalaPadrao(){const m=parseInt($("\u006D\u0065\u0073")['\u0076\u0061\u006C\u0075\u0065']),a=parseInt($("\u0061\u006E\u006F")['\u0076\u0061\u006C\u0075\u0065']);$("\u0066\u0069\u006D\u0044\u0061\u0045\u0073\u0063\u0061\u006C\u0061")['\u0076\u0061\u006C\u0075\u0065']=m&&a?new Date(a,m,212492^212492)['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']():'';}function adicionarFuncoes(){const _0x59cbd=$("seocnuf".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']['\u0073\u0070\u006C\u0069\u0074']("\u000A")['\u006D\u0061\u0070'](f=>f['\u0074\u0072\u0069\u006D']())['\u0066\u0069\u006C\u0074\u0065\u0072'](Boolean);const _0x9b4a=[],_0x94cb6f=[];_0x59cbd['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](f=>_0x9b4a['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](f)?_0x94cb6f['\u0070\u0075\u0073\u0068'](f):_0x9b4a['\u0070\u0075\u0073\u0068'](f));if(_0x94cb6f['\u006C\u0065\u006E\u0067\u0074\u0068']){$("seocnuf".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']=_0x9b4a['\u006A\u006F\u0069\u006E']("\u000A");openWarningModal(`Não deve haver funções com nomes repetidos`);}const _0xed617a=funcoes['\u0066\u0069\u006C\u0074\u0065\u0072'](f=>!_0x9b4a['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](f));funcoes=_0x9b4a;atualizarSelectResponsaveis();_0xed617a['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](funcaoRemovida=>{removerResiduosFuncao(funcaoRemovida);});alas['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](a=>{vinculos[a]=vinculos[a]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>funcoes['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](v['\u0066\u0075\u006E\u0063\u0061\u006F']));funcoes['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](f=>{if(!vinculos[a]['\u0073\u006F\u006D\u0065'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===f&&!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061")))vinculos[a]['\u0070\u0075\u0073\u0068']({'\u0066\u0075\u006E\u0063\u0061\u006F':f,'\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C':'Indeterminado'});});var _0x6a5df=(499122^499121)+(490130^490130);const _0xdf258b=vinculos[a]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("aid".split("").reverse().join("")));_0x6a5df=948297^948302;var _0x37c3cd=(591290^591295)+(427954^427962);const _0x64a=vinculos[a]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061"));_0x37c3cd=286352^286354;vinculos[a]=funcoes['\u006D\u0061\u0070'](f=>_0xdf258b['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===f)||{"funcao":f,"responsavel":"\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F"})['\u0063\u006F\u006E\u0063\u0061\u0074'](_0x64a);});for(let a in exclusoesDiarias){for(let d in exclusoesDiarias[a]){exclusoesDiarias[a][d]=exclusoesDiarias[a][d]['\u0066\u0069\u006C\u0074\u0065\u0072'](f=>funcoes['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](f));if(!exclusoesDiarias[a][d]['\u006C\u0065\u006E\u0067\u0074\u0068'])delete exclusoesDiarias[a][d];}}exibirVinculos();salvarDadosPersistentes();if(calendarioGerado)gerarCalendario(!![]);}function removerResiduosFuncao(funcao){alas['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](ala=>{vinculos[ala]=vinculos[ala]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']!==funcao);});for(let _0x2ef in exclusoesDiarias){for(let _0xabe18c in exclusoesDiarias[_0x2ef]){exclusoesDiarias[_0x2ef][_0xabe18c]=exclusoesDiarias[_0x2ef][_0xabe18c]['\u0066\u0069\u006C\u0074\u0065\u0072'](f=>f!==funcao);if(!exclusoesDiarias[_0x2ef][_0xabe18c]['\u006C\u0065\u006E\u0067\u0074\u0068'])delete exclusoesDiarias[_0x2ef][_0xabe18c];}if(Object['\u006B\u0065\u0079\u0073'](exclusoesDiarias[_0x2ef])['\u006C\u0065\u006E\u0067\u0074\u0068']===(117077^117077))delete exclusoesDiarias[_0x2ef];}}function removerResiduosResponsavel(responsavel){alas['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](ala=>{vinculos[ala]=vinculos[ala]['\u006D\u0061\u0070'](v=>{if(v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']===responsavel){v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']="odanimretednI".split("").reverse().join("");if(v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061"))v['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']="\u0041\u0043\u0034";}if(v['\u006F\u0072\u0069\u0067\u0069\u006E\u0061\u006C\u0052\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']===responsavel)v['\u006F\u0072\u0069\u0067\u0069\u006E\u0061\u006C\u0052\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']="\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F";return v;});});afastamentos=afastamentos['\u0066\u0069\u006C\u0074\u0065\u0072'](af=>af['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']!==responsavel);}function adicionarResponsaveis(_0xafc){const _0xb_0xcd9=$("sievasnopser".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']['\u0073\u0070\u006C\u0069\u0074']("\u000A")['\u006D\u0061\u0070'](r=>r['\u0074\u0072\u0069\u006D']())['\u0066\u0069\u006C\u0074\u0065\u0072'](Boolean);const _0x358g8f=[],_0xb495ee=[];_0xb_0xcd9['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](r=>_0x358g8f['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](r)?_0xb495ee['\u0070\u0075\u0073\u0068'](r):_0x358g8f['\u0070\u0075\u0073\u0068'](r));if(_0xb495ee['\u006C\u0065\u006E\u0067\u0074\u0068']){$("sievasnopser".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']=_0x358g8f['\u006A\u006F\u0069\u006E']("\u000A");openWarningModal(`Não deve haver responsáveis com nomes repetidos`);}const _0x4c2e=responsaveis['\u0066\u0069\u006C\u0074\u0065\u0072'](r=>!_0x358g8f['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](r));_0xafc=(554786^554794)+(527945^527948);_0x4c2e['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](responsavelRemovido=>{removerResiduosResponsavel(responsavelRemovido);});responsaveis=_0x358g8f;atualizarSelectResponsaveis();exibirVinculos();exibirAfastamentos();if(calendarioGerado)gerarCalendario(!![]);salvarDadosPersistentes();}function atualizarSelectResponsaveis(){document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("]\"oiradnelac-levasnopser\"=elor-atad[tceles ,]\"olucniv-levasnopser\"=elor-atad[tceles".split("").reverse().join(""))['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](sel=>{var _0xcg16b=(498003^498001)+(204475^204466);const _0xab7b8e=sel['\u0076\u0061\u006C\u0075\u0065'];_0xcg16b=(920254^920253)+(250922^250927);sel['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']="\u003C\u006F\u0070\u0074\u0069\u006F\u006E\u0020\u0076\u0061\u006C\u0075\u0065\u003D\u0022\u0022\u003E\u0053\u0065\u006C\u0065\u0063\u0069\u006F\u006E\u0065\u0020\u0075\u006D\u0020\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u00E1\u0076\u0065\u006C\u003C\u002F\u006F\u0070\u0074\u0069\u006F\u006E\u003E"+responsaveis['\u006D\u0061\u0070'](r=>{var _0xf7g17d=(838514^838515)+(575892^575901);const _0x9416a=parseInt(sel['\u0069\u0064']['\u0073\u0070\u006C\u0069\u0074']("\u002D")[199527^199526]);_0xf7g17d=(605315^605316)+(785213^785208);var _0x6g204a=(234881^234880)+(435352^435344);const _0xgace=isNaN(_0x9416a)?null:new Date(parseInt($("ona".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']),parseInt($("\u006D\u0065\u0073")['\u0076\u0061\u006C\u0075\u0065'])-(384665^384664),_0x9416a);_0x6g204a=(680104^680106)+(858430^858428);const _0xc4756b=_0xgace?isResponsavelAfastado(r,_0xgace):false;return`<option value="${r}" ${r===_0xab7b8e?"detceles".split("").reverse().join(""):''}>${r}${_0xc4756b?")odatsafA( ".split("").reverse().join(""):''}</option>`;})['\u006A\u006F\u0069\u006E']('');});$("\u0061\u0066\u0061\u0073\u0074\u0061\u006D\u0065\u006E\u0074\u006F\u002D\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C")['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']=">noitpo/<lev\xE1snopser mu enoiceleS>\"\"=eulav noitpo<".split("").reverse().join("")+responsaveis['\u006D\u0061\u0070'](r=>`<option value="${r}">${r}</option>`)['\u006A\u006F\u0069\u006E']('');}function gerarVinculos(_0xge69bd){const _0x9fab=()=>{alas['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](a=>{vinculos[a]=funcoes['\u006D\u0061\u0070'](f=>({"funcao":f,"responsavel":'Indeterminado'}));});exibirVinculos();gerarResumoResponsaveis();if(calendarioGerado)gerarCalendario(!![]);salvarDadosPersistentes();};_0xge69bd=172104^172105;if(vinculos['\u0041\u006C\u0070\u0068\u0061']['\u006C\u0065\u006E\u0067\u0074\u0068']||vinculos['\u0042\u0072\u0061\u0076\u006F']['\u006C\u0065\u006E\u0067\u0074\u0068']||vinculos['\u0043\u0068\u0061\u0072\u006C\u0069\u0065']['\u006C\u0065\u006E\u0067\u0074\u0068']||vinculos['\u0044\u0065\u006C\u0074\u0061']['\u006C\u0065\u006E\u0067\u0074\u0068'])openModal("?raunitnoc ajeseD .sadateser o\xE3res solucn\xEDv sod se\xF5\xE7amrofni sA".split("").reverse().join(""),_0x9fab);else _0x9fab();}function exibirVinculos(){$("solucniv".split("").reverse().join(""))['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']=alas['\u006D\u0061\u0070'](a=>{var _0xg4204a=(274822^274831)+(728186^728178);const _0x4f81df=vinculos[a]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("aid".split("").reverse().join("")));_0xg4204a=156093^156089;if(!_0x4f81df['\u006C\u0065\u006E\u0067\u0074\u0068'])return'';return`<h3>Vínculos da Ala ${a}</h3>
+      </div>`;
+    }).join('') +
+    '</div>';
+}
+
+async function carregarSlotNuvem(nomeSlot) {
+  $('nuvemCarregarStatus').textContent = 'Carregando "' + nomeSlot + '"...';
+  try {
+    const res = await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ acao: 'carregar', usuario: usuarioAtual, senha: senhaAtual, nomeSlot })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      const dadosCarregados = (typeof data.dados === 'string')
+        ? await descomprimirDaNuvem(data.dados)
+        : data.dados;
+      aplicarDados(dadosCarregados);
+      fecharModalNuvem('modalCarregarNuvem');
+      openWarningModal('✅ "' + nomeSlot + '" carregado com sucesso!');
+    } else {
+      $('nuvemCarregarStatus').textContent = '❌ ' + data.erro;
+    }
+  } catch (err) {
+    $('nuvemCarregarStatus').textContent = '❌ Erro de conexão.';
+    console.error(err);
+  }
+}
+
+// ============================================================
+// NUVEM - APAGAR
+// ============================================================
+async function apagarSlotNuvem(nomeSlot) {
+  // Confirmação antes de apagar
+  openModal(
+    `Tem certeza que deseja apagar o save "${nomeSlot}" da nuvem? Esta ação não pode ser desfeita.`,
+    async () => {
+      $('nuvemCarregarStatus').textContent = 'Apagando "' + nomeSlot + '"...';
+      try {
+        const res = await fetch(SHEETS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ acao: 'apagar', usuario: usuarioAtual, senha: senhaAtual, nomeSlot })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          if (_slotAutoSave === nomeSlot) {
+            _slotAutoSave = null;
+            localStorage.removeItem('escala_autosave_slot_' + usuarioAtual);
+            _atualizarSelectAutoSave();
+          }
+          await _listarSlots();
+          _renderListaCarregar();
+          _atualizarSelectAutoSave();
+          $('nuvemCarregarStatus').textContent = `✅ "${nomeSlot}" apagado. ${_slotsCache.length} save(s) restantes.`;
+        } else {
+          $('nuvemCarregarStatus').textContent = '❌ ' + data.erro;
+        }
+      } catch (err) {
+        $('nuvemCarregarStatus').textContent = '❌ Erro de conexão.';
+        console.error(err);
+      }
+    }
+  );
+}
+
+// ============================================================
+// NUVEM - AUTO-SAVE
+// ============================================================
+function _atualizarSelectAutoSave() {
+  const sel = $('selectAutoSave');
+  if (!sel) return;
+  const valorAtual = _slotAutoSave || '';
+  sel.innerHTML = '<option value="">-- Desativado --</option>' +
+    _slotsCache.map(s =>
+      `<option value="${s.nome}" ${s.nome === valorAtual ? 'selected' : ''}>${s.nome}</option>`
+    ).join('');
+  sel.value = valorAtual;
+  _atualizarIndicadorAutoSave();
+}
+
+function _atualizarIndicadorAutoSave() {
+  // Não sobrescreve o indicador enquanto um auto-save está em andamento
+  if (_autoSaveEmAndamento) return;
+  const ind = $('indicadorAutoSave');
+  if (!ind) return;
+  if (_slotAutoSave) {
+    ind.textContent = `🔄 Auto-save ativo: "${_slotAutoSave}"`;
+    ind.style.color = '#1565c0';
+    ind.style.fontSize = '12px';
+    ind.style.fontWeight = 'normal';
+  } else {
+    ind.textContent = '⚠ Atenção: Auto-save desativado.';
+    ind.style.color = '#c62828';
+    ind.style.fontSize = '15px';
+    ind.style.fontWeight = '700';
+  }
+}
+
+function onChangeAutoSave() {
+  const sel = $('selectAutoSave');
+  _slotAutoSave = sel.value || null;
+  if (_slotAutoSave) {
+    localStorage.setItem('escala_autosave_slot_' + (usuarioAtual || 'guest'), _slotAutoSave);
+  } else {
+    localStorage.removeItem('escala_autosave_slot_' + (usuarioAtual || 'guest'));
+  }
+  _atualizarIndicadorAutoSave();
+}
+
+// Flag que impede _atualizarIndicadorAutoSave de sobrescrever o status "Salvando..."
+let _autoSaveEmAndamento = false;
+
+async function _autoSaveNuvem() {
+  if (!_slotAutoSave || !usuarioAtual) return;
+  // Verifica se o slot ainda existe
+  const existe = _slotsCache.some(s => s.nome === _slotAutoSave);
+  if (!existe) return;
+
+  _autoSaveEmAndamento = true;
+
+  // Mostra toast flutuante de "Salvando..." — mais visível que o indicador pequeno
+  _mostrarToastAutoSave('salvando');
+
+  // Atualiza também o indicador inline
+  const ind = $('indicadorAutoSave');
+  if (ind) {
+    ind.textContent = '💾 Salvando na nuvem...';
+    ind.style.color = '#e65100';
+    ind.style.fontSize = '13px';
+    ind.style.fontWeight = '600';
+    ind.classList.add('salvando');
+  }
+
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        acao: 'salvar',
+        usuario: usuarioAtual,
+        senha: senhaAtual,
+        nomeSlot: _slotAutoSave,
+        substituir: _slotAutoSave,
+        dados: await comprimirParaNuvem(coletarDadosParaNuvem()).catch(e => { throw e; })
+      })
+    });
+    _mostrarToastAutoSave('ok');
+  } catch (err) {
+    console.warn('Auto-save falhou:', err);
+    _mostrarToastAutoSave('erro');
+  } finally {
+    _autoSaveEmAndamento = false;
+    if (ind) ind.classList.remove('salvando');
+    _atualizarIndicadorAutoSave();
+  }
+}
+
+function _mostrarToastAutoSave(estado) {
+  let toast = $('toastAutoSave');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toastAutoSave';
+    document.body.appendChild(toast);
+  }
+  if (estado === 'salvando') {
+    toast.textContent = '💾 Salvando na nuvem...';
+    toast.className = 'toast-autosave toast-salvando';
+    toast.style.display = 'block';
+    toast._clearTimer && clearTimeout(toast._clearTimer);
+  } else if (estado === 'ok') {
+    toast.textContent = '✅ Salvo na nuvem!';
+    toast.className = 'toast-autosave toast-ok';
+    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
+  } else {
+    toast.textContent = '❌ Auto-save falhou. Verifique a conexão.';
+    toast.className = 'toast-autosave toast-erro';
+    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 4000);
+  }
+}
+
+function fecharModalNuvem(id) {
+  $(id).style.display = 'none';
+}
+
+// ============================================================
+// COMPRESSÃO DE DADOS PARA NUVEM (evita limite de 50k chars do Google Sheets)
+// Usa CompressionStream (nativa no browser moderno) com fallback simples.
+// ============================================================
+
+async function comprimirParaNuvem(obj) {
+  const jsonStr = JSON.stringify(obj);
+
+  // Verifica se CompressionStream está disponível (Chrome 80+, Firefox 113+, Safari 16.4+)
+  if (typeof CompressionStream === 'undefined') {
+    throw new Error('Seu navegador não suporta compressão (CompressionStream). Use Chrome, Firefox ou Safari atualizado.');
+  }
+
+  const stream = new CompressionStream('deflate-raw');
+  const writer = stream.writable.getWriter();
+  // TextEncoder garante UTF-8 correto para qualquer caractere (acentos, etc.)
+  writer.write(new TextEncoder().encode(jsonStr));
+  writer.close();
+
+  const chunks = [];
+  const reader = stream.readable.getReader();
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+  }
+
+  // Monta Uint8Array final
+  const totalLen = chunks.reduce((acc, c) => acc + c.length, 0);
+  const compressed = new Uint8Array(totalLen);
+  let offset = 0;
+  for (const chunk of chunks) { compressed.set(chunk, offset); offset += chunk.length; }
+
+  // Converte para base64 de forma segura (sem String.fromCharCode que pode estourar a pilha)
+  const CHUNK = 8192;
+  let binary = '';
+  for (let i = 0; i < compressed.length; i += CHUNK) {
+    binary += String.fromCharCode(...compressed.subarray(i, i + CHUNK));
+  }
+  const resultado = '__GZ__' + btoa(binary);
+
+  // Verificação de segurança: se o resultado ainda for grande demais, avisa
+  if (resultado.length > 45000) {
+    throw new Error(`Dados ainda muito grandes após compressão (${resultado.length} chars). Tente reduzir o número de funções ou responsáveis.`);
+  }
+
+  return resultado;
+}
+
+async function descomprimirDaNuvem(valor) {
+  if (typeof valor !== 'string') return valor;
+  // Se não tem o marcador, é JSON puro (slot antigo ou fallback)
+  if (!valor.startsWith('__GZ__')) {
+    try { return JSON.parse(valor); } catch { return valor; }
+  }
+  try {
+    const b64 = valor.slice(6); // remove '__GZ__'
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const stream = new DecompressionStream('deflate-raw');
+    const writer = stream.writable.getWriter();
+    writer.write(bytes);
+    writer.close();
+    const chunks = [];
+    const reader = stream.readable.getReader();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+    const allChunks = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+    let offset = 0;
+    for (const chunk of chunks) { allChunks.set(chunk, offset); offset += chunk.length; }
+    const jsonStr = new TextDecoder().decode(allChunks);
+    return JSON.parse(jsonStr);
+  } catch (err) {
+    console.warn('Falha ao descomprimir, tentando como JSON puro:', err);
+    try { return JSON.parse(valor.slice(6)); } catch { return null; }
+  }
+}
+
+// ============================================================
+// DADOS PERSISTENTES (localStorage como cache local)
+// ============================================================
+function coletarDadosParaSalvar() {
+  // HTMLs são omitidos: são regenerados automaticamente via gerarCalendario(true) ao carregar.
+  // JSONs antigos com esses campos são carregados sem erro (ignorados em aplicarDados).
+  return {
+    funcoes, responsaveis, vinculos, afastamentos,
+    calendarioGerado, exclusoesDiarias,
+    mes: $('mes').value,
+    ano: $('ano').value,
+    inicioEscala: $('inicioEscala').value,
+    fimDaEscala: $('fimDaEscala').value
+  };
+}
+
+// coletarDadosParaNuvem: comprime antes de enviar para a nuvem (resolve limite de 50k chars do Sheets)
+// Os HTMLs chegam dentro do objeto mas são comprimidos junto — tamanho final ~3-5k chars
+function coletarDadosParaNuvem() {
+  return coletarDadosParaSalvar();
+}
+
+function aplicarDados(dados) {
+  if (!dados) return;
+  funcoes = dados.funcoes || [];
+  responsaveis = dados.responsaveis || [];
+  vinculos = dados.vinculos || { Alpha: [], Bravo: [], Charlie: [], Delta: [] };
+  afastamentos = dados.afastamentos || [];
+  calendarioGerado = dados.calendarioGerado || false;
+  exclusoesDiarias = dados.exclusoesDiarias || {};
+  alas.forEach(a => {
+    vinculos[a].forEach(func => {
+      if (!func.hasOwnProperty('dia')) {
+        func.horaInicio = func.horaInicio ?? 8;
+        func.horaFim = func.horaFim ?? 8;
+        func.remuneracao = func.remuneracao || 'Normal';
+      }
+    });
+  });
+  if (dados.mes) $('mes').value = dados.mes;
+  if (dados.ano) $('ano').value = dados.ano;
+  if (dados.inicioEscala) $('inicioEscala').value = dados.inicioEscala;
+  if (dados.fimDaEscala) $('fimDaEscala').value = dados.fimDaEscala;
+  // HTMLs não são salvos no JSON — são regenerados por gerarCalendario(true) abaixo.
+  // Se vier de backup antigo com esses campos, são ignorados silenciosamente.
+  resumoHTML = '';
+  vagasHTML = '';
+  escalaHTML = '';
+  escalaAC4HTML = '';
+  $('funcoes').value = funcoes.join('\n');
+  $('responsaveis').value = responsaveis.join('\n');
+  exibirVinculos();
+  exibirAfastamentos();
+  atualizarSelectResponsaveis();
+  if (calendarioGerado) gerarCalendario(true);
+  salvarDadosPersistentes();
+}
+
+// Debounce para auto-save na nuvem (evita chamadas excessivas)
+const _autoSaveDebounced = (function() {
+  let t;
+  return function() { clearTimeout(t); t = setTimeout(_autoSaveNuvem, 4000); };
+})();
+
+function salvarDadosPersistentes() {
+  try {
+    const dados = coletarDadosParaSalvar();
+    localStorage.setItem('escala_dados_' + (usuarioAtual || 'guest'), JSON.stringify(dados));
+  } catch (err) {
+    console.warn('Não foi possível salvar no localStorage:', err);
+  }
+  // Dispara auto-save na nuvem se um slot estiver selecionado
+  if (_slotAutoSave && usuarioAtual) _autoSaveDebounced();
+}
+
+function carregarDadosPersistentes() {
+  // Restaura preferência de auto-save
+  try {
+    const savedSlot = localStorage.getItem('escala_autosave_slot_' + (usuarioAtual || 'guest'));
+    if (savedSlot) {
+      _slotAutoSave = savedSlot;
+      _atualizarIndicadorAutoSave();
+    }
+  } catch(_) {}
+  try {
+    const raw = localStorage.getItem('escala_dados_' + (usuarioAtual || 'guest'));
+    if (!raw) return;
+    const dados = JSON.parse(raw);
+    aplicarDados(dados);
+  } catch (err) {
+    console.warn('Erro ao carregar do localStorage:', err);
+  }
+}
+
+// ============================================================
+// ABRIR RELATÓRIOS EM NOVA ABA (substitui window.api)
+// ============================================================
+function abrirHtmlNova(titulo, conteudo) {
+  const baseStyle = '<style>table{width:100%;border-collapse:collapse}th,td{border:1px solid #000;padding:4px;text-align:left}</style>';
+  const html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>' + titulo + '</title>' + baseStyle + '</head><body>' + conteudo + '</body></html>';
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 15000);
+}
+
+function abrirResumoNoNavegador() {
+  if (!resumoHTML) return;
+  abrirHtmlNova('Resumo de Responsáveis', resumoHTML);
+}
+function abrirVagasNoNavegador() {
+  if (!vagasHTML) return;
+  abrirHtmlNova('Vagas Disponíveis', vagasHTML);
+}
+function abrirEscalaNoNavegador() {
+  if (!escalaHTML) return;
+  abrirHtmlNova('Escala', escalaHTML);
+}
+function abrirEscalaAC4NoNavegador() {
+  if (!escalaAC4HTML) return;
+  abrirHtmlNova('Escala de AC4', escalaAC4HTML);
+}
+
+// salvarArquivosTemporarios não faz nada no contexto web (sem Electron)
+function salvarArquivosTemporarios() {}
+
+// ============================================================
+// DOMContentLoaded
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  $('funcoes').addEventListener('input', debounce(adicionarFuncoes));
+  $('responsaveis').addEventListener('input', debounce(adicionarResponsaveis));
+  $('mes').addEventListener('change', () => {
+    setFimDaEscalaPadrao();
+    salvarDadosPersistentes();
+  });
+  $('ano').addEventListener('change', () => {
+    setFimDaEscalaPadrao();
+    salvarDadosPersistentes();
+  });
+  $('inicioEscala').addEventListener('change', () => {
+    if (calendarioGerado) {
+      gerarEscala();
+      gerarResumoResponsaveis();
+      gerarVagasDisponiveis();
+    }
+    salvarDadosPersistentes();
+  });
+  $('fimDaEscala').addEventListener('change', () => {
+    if (calendarioGerado) {
+      gerarEscala();
+      gerarResumoResponsaveis();
+      gerarVagasDisponiveis();
+    }
+    salvarDadosPersistentes();
+  });
+  atualizarSelectResponsaveis();
+});
+
+// ============================================================
+// UTILITÁRIOS
+// ============================================================
+function debounce(fn, delay = 1000) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+function formatarMoeda(valor) {
+  return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function normalizarData(data) {
+  if (typeof data === 'string') {
+    const partes = data.split('-');
+    if (partes.length === 3) {
+      return new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
+    }
+  }
+  if (data instanceof Date) {
+    return new Date(data.getFullYear(), data.getMonth(), data.getDate());
+  }
+  return new Date(data);
+}
+function compararDatas(data1, data2) {
+  const d1 = normalizarData(data1);
+  const d2 = normalizarData(data2);
+  const t1 = d1.getFullYear() * 10000 + d1.getMonth() * 100 + d1.getDate();
+  const t2 = d2.getFullYear() * 10000 + d2.getMonth() * 100 + d2.getDate();
+  if (t1 < t2) return -1;
+  if (t1 > t2) return 1;
+  return 0;
+}
+function setFimDaEscalaPadrao() {
+  const m = parseInt($('mes').value), a = parseInt($('ano').value);
+  $('fimDaEscala').value = m && a ? new Date(a, m, 0).getDate() : '';
+}
+
+
+function adicionarFuncoes() {
+  const input = $('funcoes').value.split('\n').map(f => f.trim()).filter(Boolean);
+  const unicas = [], duplicadas = [];
+  input.forEach(f => unicas.includes(f) ? duplicadas.push(f) : unicas.push(f));
+  if (duplicadas.length) {
+    $('funcoes').value = unicas.join('\n');
+    openWarningModal(`Não deve haver funções com nomes repetidos`);
+  }
+  const funcoesRemovidas = funcoes.filter(f => !unicas.includes(f));
+  funcoes = unicas;
+  atualizarSelectResponsaveis();
+  funcoesRemovidas.forEach(funcaoRemovida => {
+    removerResiduosFuncao(funcaoRemovida);
+  });
+  alas.forEach(a => {
+    // Preserva funções exclusivas de ala (apenasAla) ao filtrar
+    vinculos[a] = vinculos[a].filter(v => funcoes.includes(v.funcao) || v.apenasAla);
+    funcoes.forEach(f => {
+      if (!vinculos[a].some(v => v.funcao === f && !v.hasOwnProperty('dia') && !v.apenasAla))
+        vinculos[a].push({ funcao: f, responsavel: 'Indeterminado' });
+    });
+    const geraisGlobais = vinculos[a].filter(v => !v.hasOwnProperty('dia') && !v.apenasAla);
+    const geraisExclusivos = vinculos[a].filter(v => !v.hasOwnProperty('dia') && v.apenasAla);
+    const diarios = vinculos[a].filter(v => v.hasOwnProperty('dia'));
+    vinculos[a] = funcoes.map(f => geraisGlobais.find(v => v.funcao === f) || { funcao: f, responsavel: 'Indeterminado' })
+      .concat(geraisExclusivos)
+      .concat(diarios);
+  });
+  for (let a in exclusoesDiarias) {
+    for (let d in exclusoesDiarias[a]) {
+      exclusoesDiarias[a][d] = exclusoesDiarias[a][d].filter(f => funcoes.includes(f));
+      if (!exclusoesDiarias[a][d].length) delete exclusoesDiarias[a][d];
+    }
+  }
+  exibirVinculos();
+  salvarDadosPersistentes();
+  if (calendarioGerado) gerarCalendario(true);
+}
+function removerResiduosFuncao(funcao) {
+  alas.forEach(ala => {
+    vinculos[ala] = vinculos[ala].filter(v => v.funcao !== funcao);
+  });
+  for (let ala in exclusoesDiarias) {
+    for (let dia in exclusoesDiarias[ala]) {
+      exclusoesDiarias[ala][dia] = exclusoesDiarias[ala][dia].filter(f => f !== funcao);
+      if (!exclusoesDiarias[ala][dia].length) delete exclusoesDiarias[ala][dia];
+    }
+    if (Object.keys(exclusoesDiarias[ala]).length === 0) delete exclusoesDiarias[ala];
+  }
+}
+function removerResiduosResponsavel(responsavel) {
+  alas.forEach(ala => {
+    vinculos[ala] = vinculos[ala].map(v => {
+      if (v.responsavel === responsavel) {
+        v.responsavel = 'Indeterminado';
+        if (v.hasOwnProperty('dia')) v.remuneracao = 'AC4';
+      }
+      if (v.originalResponsavel === responsavel) v.originalResponsavel = 'Indeterminado';
+      return v;
+    });
+  });
+  afastamentos = afastamentos.filter(af => af.responsavel !== responsavel);
+}
+function adicionarResponsaveis() {
+  const input = $('responsaveis').value.split('\n').map(r => r.trim()).filter(Boolean);
+  const unicos = [], duplicados = [];
+  input.forEach(r => unicos.includes(r) ? duplicados.push(r) : unicos.push(r));
+  if (duplicados.length) {
+    $('responsaveis').value = unicos.join('\n');
+    openWarningModal(`Não deve haver responsáveis com nomes repetidos`);
+  }
+  const responsaveisRemovidos = responsaveis.filter(r => !unicos.includes(r));
+  responsaveisRemovidos.forEach(responsavelRemovido => {
+    removerResiduosResponsavel(responsavelRemovido);
+  });
+  responsaveis = unicos;
+  atualizarSelectResponsaveis();
+  exibirVinculos();
+  exibirAfastamentos();
+  if (calendarioGerado) gerarCalendario(true);
+  salvarDadosPersistentes();
+}
+function atualizarSelectResponsaveis() {
+  document.querySelectorAll('select[data-role="responsavel-vinculo"], select[data-role="responsavel-calendario"]').forEach(sel => {
+    const val = sel.value;
+    sel.innerHTML = '<option value="">Selecione um responsável</option>' +
+      responsaveis.map(r => {
+        // Vínculos gerais (responsavel-vinculo) não têm dia no id → diaId = NaN → sem cálculo de afastamento
+        const diaId = parseInt(sel.id.split('-')[1]);
+        const dt = isNaN(diaId) ? null : new Date(parseInt($('ano').value), parseInt($('mes').value) - 1, diaId);
+        const afastado = dt ? isResponsavelAfastado(r, dt) : false;
+        return `<option value="${r}" ${r === val ? 'selected' : ''}>${r}${afastado ? ' (Afastado)' : ''}</option>`;
+      }).join('');
+  });
+  $('afastamento-responsavel').innerHTML = '<option value="">Selecione um responsável</option>' +
+    responsaveis.map(r => `<option value="${r}">${r}</option>`).join('');
+}
+function gerarVinculos() {
+  const resetar = () => {
+    alas.forEach(a => {
+      // Mantém apenas funções exclusivas de ala ao resetar os vínculos globais
+      const exclusivas = vinculos[a].filter(v => !v.hasOwnProperty('dia') && v.apenasAla);
+      vinculos[a] = funcoes.map(f => ({ funcao: f, responsavel: 'Indeterminado' })).concat(exclusivas);
+    });
+    exibirVinculos();
+    gerarResumoResponsaveis();
+    if (calendarioGerado) gerarCalendario(true);
+    salvarDadosPersistentes();
+  };
+  if (vinculos.Alpha.length || vinculos.Bravo.length || vinculos.Charlie.length || vinculos.Delta.length)
+    openModal("As informações dos vínculos serão resetadas. Deseja continuar?", resetar);
+  else resetar();
+}
+function exibirVinculos() {
+  $('vinculos').innerHTML = alas.map(a => {
+    const arr = vinculos[a].filter(v => !v.hasOwnProperty('dia'));
+    if (!arr.length && !funcoes.length) return '';
+
+    // Separa funções globais das funções exclusivas desta ala
+    const funcoesGlobais = arr.filter(v => !v.apenasAla);
+    const funcoesExclusivas = arr.filter(v => v.apenasAla);
+
+    const tabelaGlobal = funcoesGlobais.length ? `
 <table>
-<tr><th>Função</th><th>Responsável</th></tr>
-${_0x4f81df['\u006D\u0061\u0070'](it=>`<tr>
-<td>${it['\u0066\u0075\u006E\u0063\u0061\u006F']}</td>
-<td><select data-role="responsavel-vinculo" onchange="editarResponsavel('${a}','${it['\u0066\u0075\u006E\u0063\u0061\u006F']}',this.value)">
+<tr><th>Função</th><th>Responsável</th><th></th></tr>
+${funcoesGlobais.map(it => `<tr>
+<td>${it.funcao}</td>
+<td><select data-role="responsavel-vinculo" onchange="editarResponsavel('${a}','${it.funcao}',this.value)">
 <option value="">Selecione um responsável</option>
-${responsaveis['\u006D\u0061\u0070'](r=>`<option value="${r}" ${r===it['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']?"\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064":''}>${r}</option>`)['\u006A\u006F\u0069\u006E']('')}
+${responsaveis.map(r => `<option value="${r}" ${r === it.responsavel ? 'selected' : ''}>${r}</option>`).join('')}
 </select></td>
-</tr>`)['\u006A\u006F\u0069\u006E']('')}
-</table>`;})['\u006A\u006F\u0069\u006E']('');setTimeout(ativarTodosCustomSelects,319269^319269);}function editarResponsavel(a,funcao,nv,_0x43c9c){const _0xa27f3d=vinculos[a]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061"));if(!_0xa27f3d)return;const _0xf2a=_0xa27f3d['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'];_0x43c9c=(531181^531180)+(749272^749279);if(nv){const _0xbefa2d=alas['\u0066\u0069\u006C\u0074\u0065\u0072'](ala=>ala!==a&&vinculos[ala]['\u0073\u006F\u006D\u0065'](v=>v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']===nv&&!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061")));if(_0xbefa2d['\u006C\u0065\u006E\u0067\u0074\u0068']){openModal(`O responsável ${nv} já está vinculado nas alas: ${_0xbefa2d['\u006A\u006F\u0069\u006E']("\u002C\u0020")}. Deseja mesmo alterar a seleção?`,()=>{setTimeout(()=>{_0xgcg();},730060^730054);},()=>{_0xa27f3d['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']=_0xf2a;exibirVinculos();});return;}}_0xgcg();function _0xgcg(){if(calendarioGerado){setTimeout(()=>{openModal(`A função "${funcao}" da Ala ${a} será redefinida no calendário. Deseja continuar?`,()=>{_0xebd13e();},()=>{_0xa27f3d['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']=_0xf2a;exibirVinculos();});},840058^840048);}else{_0xebd13e();}}function _0xebd13e(_0x68ac1b){_0xa27f3d['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']=nv||"\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F";const _0x21_0x33f=parseInt($("\u0061\u006E\u006F")['\u0076\u0061\u006C\u0075\u0065']);const _0xc32ge=parseInt($("\u006D\u0065\u0073")['\u0076\u0061\u006C\u0075\u0065']);_0x68ac1b=(599563^599555)+(276659^276658);vinculos[a]['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](item=>{if(item['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&item['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("aid".split("").reverse().join(""))){item['\u006F\u0072\u0069\u0067\u0069\u006E\u0061\u006C\u0052\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']=nv||"\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F";if(item['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061'])return;const _0x22_0x70a=new Date(_0x21_0x33f,_0xc32ge-(969299^969298),item['\u0064\u0069\u0061']);const _0x24f9ed=nv&&nv!=="odanimretednI".split("").reverse().join("")&&isResponsavelAfastado(nv,_0x22_0x70a);if(item['\u0067\u0065\u0072\u0061\u0064\u006F\u0041\u0075\u0074\u006F\u006D\u0061\u0074\u0069\u0063\u0061\u006D\u0065\u006E\u0074\u0065']||item['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']==="odanimretednI".split("").reverse().join("")){item['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']=_0x24f9ed?"odanimretednI".split("").reverse().join(""):nv||"odanimretednI".split("").reverse().join("");item['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']=_0x24f9ed?"4CA".split("").reverse().join(""):"lamroN".split("").reverse().join("");item['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']=670731^670723;item['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']=651082^651074;}}});if(exclusoesDiarias[a]){Object['\u006B\u0065\u0079\u0073'](exclusoesDiarias[a])['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](dia=>{exclusoesDiarias[a][dia]=exclusoesDiarias[a][dia]['\u0066\u0069\u006C\u0074\u0065\u0072'](f=>f!==funcao);if(!exclusoesDiarias[a][dia]['\u006C\u0065\u006E\u0067\u0074\u0068'])delete exclusoesDiarias[a][dia];});}exibirVinculos();gerarResumoResponsaveis();if(calendarioGerado)gerarCalendario(!![]);gerarVagasDisponiveis();salvarDadosPersistentes();}}function limparCalendarioEResiduos(){exclusoesDiarias={};alas['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](ala=>{vinculos[ala]=vinculos[ala]['\u0066\u0069\u006C\u0074\u0065\u0072'](f=>!f['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061"));vinculos[ala]['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](f=>{if(!f['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("aid".split("").reverse().join(""))){f['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']=334569^334561;f['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']=159921^159929;f['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']="lamroN".split("").reverse().join("");if(f['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061"))delete f['\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061'];}});});resumoHTML='';vagasHTML='';escalaHTML='';escalaAC4HTML='';["omuser-rimirpmi-oatob".split("").reverse().join(""),"\u0062\u006F\u0074\u0061\u006F\u002D\u0069\u006D\u0070\u0072\u0069\u006D\u0069\u0072\u002D\u0076\u0061\u0067\u0061\u0073","alacse-rimirpmi-oatob".split("").reverse().join(""),"4ca-alacse-rimirpmi-oatob".split("").reverse().join("")]['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](id=>{const _0x7b621f=$(id);if(_0x7b621f)_0x7b621f['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="enon".split("").reverse().join("");});}function gerarCalendario(mantemEd=false,_0x2aeb8d){const m=parseInt($("sem".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']);const a=parseInt($("\u0061\u006E\u006F")['\u0076\u0061\u006C\u0075\u0065']);_0x2aeb8d=(354299^354303)+(337787^337778);if(!m||!a||a<(501493^500005)){openWarningModal("\u0053\u0065\u006C\u0065\u0063\u0069\u006F\u006E\u0065\u0020\u0063\u006F\u0072\u0072\u0065\u0074\u0061\u006D\u0065\u006E\u0074\u0065\u0020\u006F\u0020\u006D\u00EA\u0073\u0020\u0065\u0020\u006F\u0020\u0061\u006E\u006F\u0020\u0061\u006E\u0074\u0065\u0073\u0020\u0064\u0065\u0020\u0067\u0065\u0072\u0061\u0072\u0020\u006F\u0020\u0063\u0061\u006C\u0065\u006E\u0064\u00E1\u0072\u0069\u006F\u002E");return;}if(calendarioGerado&&!mantemEd){openModal("\u004F\u0020\u0063\u0061\u006C\u0065\u006E\u0064\u00E1\u0072\u0069\u006F\u0020\u006A\u00E1\u0020\u0066\u006F\u0069\u0020\u0067\u0065\u0072\u0061\u0064\u006F\u002E\u0020\u0041\u006F\u0020\u0067\u0065\u0072\u0061\u0072\u0020\u006E\u006F\u0076\u0061\u006D\u0065\u006E\u0074\u0065\u002C\u0020\u0074\u006F\u0064\u0061\u0073\u0020\u0061\u0073\u0020\u0065\u0064\u0069\u00E7\u00F5\u0065\u0073\u0020\u006D\u0061\u006E\u0075\u0061\u0069\u0073\u0020\u0073\u0065\u0072\u00E3\u006F\u0020\u0070\u0065\u0072\u0064\u0069\u0064\u0061\u0073\u002E\u0020\u0044\u0065\u0073\u0065\u006A\u0061\u0020\u0063\u006F\u006E\u0074\u0069\u006E\u0075\u0061\u0072\u003F",()=>{limparCalendarioEResiduos();gerarCalendarioInterno(false);},()=>{});}else{if(!mantemEd)limparCalendarioEResiduos();gerarCalendarioInterno(mantemEd);}}function gerarCalendarioInterno(mantemEd){$("\u0063\u0061\u006C\u0065\u006E\u0064\u0061\u0072\u0069\u006F\u0045\u0072\u0072\u006F\u0072")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="";const m=parseInt($("sem".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']),a=parseInt($("\u0061\u006E\u006F")['\u0076\u0061\u006C\u0075\u0065']);if(!a||a<(535043^536019)){openWarningModal("ona o etnematerroc enoiceleS".split("").reverse().join(""));return;}if(!m){openWarningModal("\u0053\u0065\u006C\u0065\u0063\u0069\u006F\u006E\u0065\u0020\u0063\u006F\u0072\u0072\u0065\u0074\u0061\u006D\u0065\u006E\u0074\u0065\u0020\u006F\u0020\u006D\u00EA\u0073\u002E");return;}const _0xd09c=new Date(a,m,332343^332343)['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']();let _0xef0gdd=970108^970108,_0x9407gd=`<table><thead><tr><th>Data</th><th>Ala</th><th>Funções e Responsáveis</th><th>Valores</th></tr></thead><tbody>`;for(let _0x2f_0xa2a=677430^677431;_0x2f_0xa2a<=_0xd09c;_0x2f_0xa2a++){const _0x28g19f=new Date(a,m-(569033^569032),_0x2f_0xa2a),_0xfd42d=_0x28g19f['\u0074\u006F\u004C\u006F\u0063\u0061\u006C\u0065\u0044\u0061\u0074\u0065\u0053\u0074\u0072\u0069\u006E\u0067']("RB-tp".split("").reverse().join(""),{'\u0077\u0065\u0065\u006B\u0064\u0061\u0079':'long'}),_0x4d_0x899=(Math['\u0066\u006C\u006F\u006F\u0072']((_0x28g19f-new Date(132571^131635,204285^204287,731891^731878))/86400000)%alas['\u006C\u0065\u006E\u0067\u0074\u0068']+alas['\u006C\u0065\u006E\u0067\u0074\u0068'])%alas['\u006C\u0065\u006E\u0067\u0074\u0068'],_0x23_0xfa3=alas[_0x4d_0x899];let _0x4de=377657^377657;funcoes['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](funcao=>{var _0x6063dd=(161201^161208)+(173052^173050);const _0x24_0xfe4=vinculos[_0x23_0xfa3]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061"));_0x6063dd=(921175^921171)+(565899^565903);if(!_0x24_0xfe4)return;let _0xc83b0d=_0x24_0xfe4['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'];var _0x4ad=(865388^865388)+(908752^908760);let _0x2b5cba=_0x24_0xfe4['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']||"\u004E\u006F\u0072\u006D\u0061\u006C";_0x4ad=261941^261936;if(_0xc83b0d==="odanimretednI".split("").reverse().join("")||isResponsavelAfastado(_0xc83b0d,_0x28g19f)){_0xc83b0d="\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F";_0x2b5cba="\u0041\u0043\u0034";}var _0xfd1d=(332968^332961)+(817472^817472);const _0xf925g=exclusoesDiarias[_0x23_0xfa3]&&exclusoesDiarias[_0x23_0xfa3][_0x2f_0xa2a]&&exclusoesDiarias[_0x23_0xfa3][_0x2f_0xa2a]['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](funcao);_0xfd1d=(374393^374396)+(796872^796874);const _0x25_0x4e3=vinculos[_0x23_0xfa3]['\u0073\u006F\u006D\u0065'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&v['\u0064\u0069\u0061']===_0x2f_0xa2a&&!v['\u0067\u0065\u0072\u0061\u0064\u006F\u0041\u0075\u0074\u006F\u006D\u0061\u0074\u0069\u0063\u0061\u006D\u0065\u006E\u0074\u0065']);const _0xadaa6f=vinculos[_0x23_0xfa3]['\u0073\u006F\u006D\u0065'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&v['\u0064\u0069\u0061']===_0x2f_0xa2a&&v['\u0067\u0065\u0072\u0061\u0064\u006F\u0041\u0075\u0074\u006F\u006D\u0061\u0074\u0069\u0063\u0061\u006D\u0065\u006E\u0074\u0065']);if(_0xf925g||_0x25_0x4e3)return;if(!_0xadaa6f){let _0xe7b0a=false;if(_0x2f_0xa2a===(806942^806943))_0xe7b0a=_0x24_0xfe4['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0063\u0075\u006C\u0074\u0061\u0072")?_0x24_0xfe4['\u006F\u0063\u0075\u006C\u0074\u0061\u0072']:false;vinculos[_0x23_0xfa3]['\u0070\u0075\u0073\u0068']({"funcao":funcao,"responsavel":_0xc83b0d,'\u0064\u0069\u0061':_0x2f_0xa2a,'\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F':8,'\u0068\u006F\u0072\u0061\u0046\u0069\u006D':8,'\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061':8,'\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F':_0x2b5cba,'\u0067\u0065\u0072\u0061\u0064\u006F\u0041\u0075\u0074\u006F\u006D\u0061\u0074\u0069\u0063\u0061\u006D\u0065\u006E\u0074\u0065':!![],"originalResponsavel":_0x24_0xfe4['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'],'\u006F\u0063\u0075\u006C\u0074\u0061\u0072':_0xe7b0a,'\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C':funcoes['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](funcao)});}});if(_0x2f_0xa2a===_0xd09c){vinculos[_0x23_0xfa3]['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](v=>{if(v['\u0064\u0069\u0061']===_0x2f_0xa2a&&!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061"))v['\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061']=v['\u0068\u006F\u0072\u0061\u0046\u0069\u006D'];});}const _0xeb3e9b=vinculos[_0x23_0xfa3]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>v['\u0064\u0069\u0061']===_0x2f_0xa2a);let _0xfeecdc;const _0xa2d18b=_0xeb3e9b['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>{if(exclusoesDiarias[_0x23_0xfa3]&&exclusoesDiarias[_0x23_0xfa3][_0x2f_0xa2a]){if(v['\u0067\u0065\u0072\u0061\u0064\u006F\u0041\u0075\u0074\u006F\u006D\u0061\u0074\u0069\u0063\u0061\u006D\u0065\u006E\u0074\u0065']&&exclusoesDiarias[_0x23_0xfa3][_0x2f_0xa2a]['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](v['\u0066\u0075\u006E\u0063\u0061\u006F']))return false;}return!![];});_0xfeecdc=559894^559889;_0xa2d18b['\u0073\u006F\u0072\u0074']((a,b)=>{const _0x688ee=a['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C")?a['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:a['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("medro".split("").reverse().join(""))?a['\u006F\u0072\u0064\u0065\u006D']:574126^583073;let _0xb5de;const _0x9bb34c=b['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C")?b['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:b['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("medro".split("").reverse().join(""))?b['\u006F\u0072\u0064\u0065\u006D']:525826^532749;_0xb5de=(895204^895202)+(929774^929773);return _0x688ee-_0x9bb34c;});let _0xf29gd="";_0xa2d18b['\u0066\u006F\u0072\u0045\u0061\u0063\u0068']((func,index)=>{const _0xb38afd=`hora-inicio-${_0x2f_0xa2a}-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}`,_0x4eff2c=`hora-fim-${_0x2f_0xa2a}-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}`,_0x6b67a=`remuneracao-${_0x2f_0xa2a}-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}`,c=`custo-${_0x2f_0xa2a}-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}`,_0x33db=func['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']??309025^309033,_0x8deg7e=func['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']??634128^634136,_0x26_0xe32=func['\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061']??_0x8deg7e,_0xc65a5f=func['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']||"\u004E\u006F\u0072\u006D\u0061\u006C",_0x645d=_0xc65a5f!=="\u0045\u0078\u0074\u0072\u0061\u0020\u006E\u00E3\u006F\u0020\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0064\u006F"&&_0xc65a5f!=="lamroN".split("").reverse().join("")&&_0xc65a5f!=="...".split("").reverse().join("")&&_0xc65a5f!=="POS a moc acorT".split("").reverse().join("")?calcularCusto(_0x28g19f,_0x33db,_0x8deg7e):650932^650932;_0x4de+=_0x645d;let _0x97befe;const _0xa5be=func['\u006F\u0072\u0069\u0067\u0069\u006E\u0061\u006C\u0052\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'];_0x97befe=(748128^748135)+(740202^740202);let _0xf219df;const _0xc125b=func['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']!==_0xa5be;_0xf219df='\u006C\u0069\u0065\u006F\u006B\u0068';var _0x78b65b=(298258^298266)+(480470^480468);const _0xad8baf=!_0xa5be;_0x78b65b=824529^824529;var _0x34dafg=(217722^217722)+(145855^145849);let _0x5fdga="";_0x34dafg=581880^581886;if(_0xad8baf){_0x5fdga=`<div id="alerta-responsavel-msg-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}-${_0x2f_0xa2a}" style="color: dodgerblue; font-size: 12px; margin-top: 5px; text-align: center;">
-Função adicionada manualmente</div>`;}else if(_0xa5be&&_0xa5be!=="odanimretednI".split("").reverse().join("")&&isResponsavelAfastado(_0xa5be,_0x28g19f)){_0x5fdga=`<div id="alerta-responsavel-msg-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}-${_0x2f_0xa2a}" style="color: #FF8C00; font-size: 12px; margin-top: 5px; text-align: center;">
-Função com responsável afastado definido no vínculo geral</div>`;}else if(mantemEd&&_0xc125b&&_0xa5be&&_0xa5be!=="odanimretednI".split("").reverse().join("")){_0x5fdga=`<div id="alerta-responsavel-msg-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}-${_0x2f_0xa2a}" style="color: red; font-size: 12px; margin-top: 5px; text-align: center;">
-${_0xa5be} é o responsável por essa função no vínculo geral da Ala ${_0x23_0xfa3}.</div>`;}else if(_0xa5be&&_0xa5be!=="odanimretednI".split("").reverse().join("")){_0x5fdga=`<div id="alerta-responsavel-msg-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}-${_0x2f_0xa2a}" style="color: darkgoldenrod; font-size: 12px; margin-top: 5px; text-align: center;">
-Função com responsável definido no vínculo geral</div>`;}let _0x2b4ged;const _0x8f_0xf81=func['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']?"\u0020\u0069\u006E\u0070\u0075\u0074\u002D\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064":'';_0x2b4ged=(545916^545916)+(945875^945872);const _0xe9e32b=func['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']?"\u0020\u0073\u0065\u006C\u0065\u0063\u0074\u002D\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064":'';const _0x28_0x894=func['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']?"\u0020\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064":'';_0xf29gd+=`<div id="funcao-${_0x2f_0xa2a}-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}" class="draggable-funcao" data-dia="${_0x2f_0xa2a}" data-ala="${_0x23_0xfa3}" data-funcao="${func['\u0066\u0075\u006E\u0063\u0061\u006F']}" data-ordem="${index}">
+<td></td>
+</tr>`).join('')}
+</table>` : '';
+
+    const tabelaExclusiva = funcoesExclusivas.length ? `
+<div class="vinculos-exclusivos-titulo">📌 Funções exclusivas desta ala:</div>
+<table>
+<tr><th>Função</th><th>Responsável</th><th>Ação</th></tr>
+${funcoesExclusivas.map(it => `<tr>
+<td>${it.funcao}</td>
+<td><select data-role="responsavel-vinculo" onchange="editarResponsavel('${a}','${it.funcao}',this.value)">
+<option value="">Selecione um responsável</option>
+${responsaveis.map(r => `<option value="${r}" ${r === it.responsavel ? 'selected' : ''}>${r}</option>`).join('')}
+</select></td>
+<td><button class="btn-remover-funcao-ala" onclick="removerFuncaoExclusivaAla('${a}','${it.funcao}')" title="Remover função desta ala">🗑 Remover</button></td>
+</tr>`).join('')}
+</table>` : '';
+
+    const escapedA = a.replace(/'/g, "\\'");
+    const painel = `
+<div class="painel-adicionar-funcao-ala" id="painel-funcao-${a}">
+  <div class="painel-adicionar-funcao-ala-titulo" onclick="togglePainelFuncaoAla('${escapedA}')">
+    ➕ Adicionar função exclusiva à Ala ${a}
+    <span id="seta-painel-${a}" class="seta-painel">▼</span>
+  </div>
+  <div class="painel-adicionar-funcao-ala-corpo" id="corpo-painel-${a}" style="display:none;">
+    <div class="painel-funcao-campos">
+      <div class="painel-funcao-campo">
+        <label>Nome da função:</label>
+        <input type="text" id="input-funcao-ala-${a}" placeholder="Ex: Sentinela especial" maxlength="80">
+      </div>
+      <div class="painel-funcao-campo">
+        <label>Responsável:</label>
+        <select id="select-resp-ala-${a}" data-role="responsavel-vinculo">
+          <option value="">Indeterminado</option>
+          ${responsaveis.map(r => `<option value="${r}">${r}</option>`).join('')}
+        </select>
+      </div>
+      <div class="painel-funcao-campo painel-funcao-campo-btn">
+        <button class="btn-adicionar-funcao-ala" onclick="adicionarFuncaoExclusivaAla('${escapedA}')">Adicionar</button>
+      </div>
+    </div>
+    <div id="erro-funcao-ala-${a}" class="erro-funcao-ala" style="display:none;"></div>
+  </div>
+</div>`;
+
+    return `<h3>Vínculos da Ala ${a}</h3>${tabelaGlobal}${tabelaExclusiva}${painel}`;
+  }).join('');
+  setTimeout(ativarTodosCustomSelects, 0);
+}
+
+function togglePainelFuncaoAla(ala) {
+  const corpo = $(`corpo-painel-${ala}`);
+  const seta = $(`seta-painel-${ala}`);
+  if (!corpo) return;
+  const aberto = corpo.style.display !== 'none';
+  corpo.style.display = aberto ? 'none' : 'block';
+  if (seta) seta.textContent = aberto ? '▼' : '▲';
+}
+
+function adicionarFuncaoExclusivaAla(ala) {
+  const inputEl = $(`input-funcao-ala-${ala}`);
+  const selectEl = $(`select-resp-ala-${ala}`);
+  const erroEl = $(`erro-funcao-ala-${ala}`);
+  if (!inputEl || !selectEl) return;
+
+  const nomeFuncao = inputEl.value.trim();
+  const responsavelEscolhido = selectEl.value || 'Indeterminado';
+
+  // Oculta erro anterior
+  erroEl.style.display = 'none';
+
+  if (!nomeFuncao) {
+    erroEl.textContent = '⚠ Informe o nome da função.';
+    erroEl.style.display = 'block';
+    return;
+  }
+
+  // Verifica se já existe (global ou exclusiva nesta ala)
+  const jaExisteGlobal = funcoes.includes(nomeFuncao);
+  const jaExisteNaAla = vinculos[ala].some(v => v.funcao === nomeFuncao && !v.hasOwnProperty('dia'));
+  if (jaExisteGlobal || jaExisteNaAla) {
+    erroEl.textContent = '⚠ Já existe uma função com esse nome nesta ala ou nas funções globais.';
+    erroEl.style.display = 'block';
+    return;
+  }
+
+  // Adiciona a função exclusiva à ala
+  vinculos[ala].push({
+    funcao: nomeFuncao,
+    responsavel: responsavelEscolhido,
+    apenasAla: true
+  });
+
+  // Limpa os campos
+  inputEl.value = '';
+  selectEl.value = '';
+
+  exibirVinculos();
+  // Reabre o painel após rerender
+  const corpoNovo = $(`corpo-painel-${ala}`);
+  const setaNova = $(`seta-painel-${ala}`);
+  if (corpoNovo) { corpoNovo.style.display = 'block'; }
+  if (setaNova) { setaNova.textContent = '▲'; }
+
+  if (calendarioGerado) gerarCalendario(true);
+  salvarDadosPersistentes();
+}
+
+function removerFuncaoExclusivaAla(ala, nomeFuncao) {
+  openModal(
+    `Remover a função "${nomeFuncao}" da Ala ${ala}? Esta ação apagará seus vínculos nesta ala.`,
+    () => {
+      vinculos[ala] = vinculos[ala].filter(v => !(v.funcao === nomeFuncao && v.apenasAla));
+      // Remove também entradas diárias relacionadas
+      vinculos[ala] = vinculos[ala].filter(v => !(v.funcao === nomeFuncao && v.hasOwnProperty('dia')));
+      // Limpa exclusoesDiarias
+      if (exclusoesDiarias[ala]) {
+        Object.keys(exclusoesDiarias[ala]).forEach(dia => {
+          exclusoesDiarias[ala][dia] = exclusoesDiarias[ala][dia].filter(f => f !== nomeFuncao);
+          if (!exclusoesDiarias[ala][dia].length) delete exclusoesDiarias[ala][dia];
+        });
+      }
+      exibirVinculos();
+      if (calendarioGerado) gerarCalendario(true);
+      salvarDadosPersistentes();
+    }
+  );
+}
+
+// ✅ CORREÇÃO PRINCIPAL: Verificação por responsável em QUALQUER função em outra ala
+function editarResponsavel(a, funcao, nv) {
+  const vinculoGeral = vinculos[a].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
+  if (!vinculoGeral) return;
+  const prev = vinculoGeral.responsavel;
+  if (nv) {
+    // 🔥 Agora verifica se o responsável já está em QUALQUER função em outra ala (sem depender da função)
+    const alasVinculadas = alas.filter(ala => ala !== a &&
+      vinculos[ala].some(v => v.responsavel === nv && !v.hasOwnProperty('dia')));
+
+    if (alasVinculadas.length) {
+      openModal(`O responsável ${nv} já está vinculado nas alas: ${alasVinculadas.join(', ')}. Deseja mesmo alterar a seleção?`,
+        () => { setTimeout(() => { aplicarAtualizacao(); }, 10); },
+        () => { vinculoGeral.responsavel = prev; exibirVinculos(); }
+      );
+      return;
+    }
+  }
+  aplicarAtualizacao();
+  function aplicarAtualizacao() {
+    if (calendarioGerado) {
+      setTimeout(() => {
+        openModal(`A função "${funcao}" da Ala ${a} será redefinida no calendário. Deseja continuar?`,
+          () => { atualizarVinculosDiarios(); },
+          () => { vinculoGeral.responsavel = prev; exibirVinculos(); }
+        );
+      }, 10);
+    } else {
+      atualizarVinculosDiarios();
+    }
+  }
+  function atualizarVinculosDiarios() {
+    vinculoGeral.responsavel = nv || 'Indeterminado';
+    const anoAtual = parseInt($('ano').value);
+    const mesAtual = parseInt($('mes').value);
+    vinculos[a].forEach(item => {
+      if (item.funcao === funcao && item.hasOwnProperty('dia')) {
+        item.originalResponsavel = nv || 'Indeterminado';
+        if (item.bloqueada) return;
+        const dataItem = new Date(anoAtual, mesAtual - 1, item.dia);
+        const estaAfastado = nv && nv !== 'Indeterminado' && isResponsavelAfastado(nv, dataItem);
+        if (item.geradoAutomaticamente || item.responsavel === 'Indeterminado') {
+          item.responsavel = estaAfastado ? 'Indeterminado' : (nv || 'Indeterminado');
+          item.remuneracao = estaAfastado ? 'AC4' : 'Normal';
+          item.horaInicio = 8;
+          item.horaFim = 8;
+        }
+      }
+    });
+    if (exclusoesDiarias[a]) {
+      Object.keys(exclusoesDiarias[a]).forEach(dia => {
+        exclusoesDiarias[a][dia] = exclusoesDiarias[a][dia].filter(f => f !== funcao);
+        if (!exclusoesDiarias[a][dia].length) delete exclusoesDiarias[a][dia];
+      });
+    }
+    exibirVinculos();
+    gerarResumoResponsaveis();
+    if (calendarioGerado) gerarCalendario(true);
+    gerarVagasDisponiveis();
+    salvarDadosPersistentes();
+  }
+}
+
+function limparCalendarioEResiduos() {
+  exclusoesDiarias = {};
+  alas.forEach(ala => {
+    vinculos[ala] = vinculos[ala].filter(f => !f.hasOwnProperty('dia'));
+    vinculos[ala].forEach(f => {
+      if (!f.hasOwnProperty('dia')) {
+        f.horaInicio = 8;
+        f.horaFim = 8;
+        f.remuneracao = 'Normal';
+        if (f.hasOwnProperty('horaFimEscala')) delete f.horaFimEscala;
+      }
+    });
+  });
+  resumoHTML = '';
+  vagasHTML = '';
+  escalaHTML = '';
+  escalaAC4HTML = '';
+  ['botao-imprimir-resumo', 'botao-imprimir-vagas', 'botao-imprimir-escala', 'botao-imprimir-escala-ac4']
+    .forEach(id => { const btn = $(id); if (btn) btn.style.display = 'none'; });
+}
+function gerarCalendario(mantemEd = false) {
+  const m = parseInt($('mes').value);
+  const a = parseInt($('ano').value);
+  if (!m || !a || a < 2000) {
+    openWarningModal("Selecione corretamente o mês e o ano antes de gerar o calendário.");
+    return;
+  }
+  if (calendarioGerado && !mantemEd) {
+    openModal("O calendário já foi gerado. Ao gerar novamente, todas as edições manuais serão perdidas. Deseja continuar?",
+      () => { limparCalendarioEResiduos(); gerarCalendarioInterno(false); },
+      () => { }
+    );
+  } else {
+    if (!mantemEd) limparCalendarioEResiduos();
+    gerarCalendarioInterno(mantemEd);
+  }
+}
+function gerarCalendarioInterno(mantemEd) {
+  $('calendarioError').textContent = "";
+  const m = parseInt($('mes').value), a = parseInt($('ano').value);
+  if (!a || a < 2000) { openWarningModal("Selecione corretamente o ano"); return; }
+  if (!m) { openWarningModal("Selecione corretamente o mês."); return; }
+  const dMax = new Date(a, m, 0).getDate();
+  let totMes = 0, html = `<table><thead><tr><th>Data</th><th>Ala</th><th>Funções e Responsáveis</th><th>Valores</th></tr></thead><tbody>`;
+  for (let dia = 1; dia <= dMax; dia++) {
+    const dt = new Date(a, m - 1, dia),
+      dw = dt.toLocaleDateString('pt-BR', { weekday: 'long' }),
+      idx = ((Math.floor((dt - new Date(2024, 2, 21)) / 86400000)) % alas.length + alas.length) % alas.length,
+      ala = alas[idx];
+    let td = 0;
+    funcoes.forEach(funcao => {
+      const geral = vinculos[ala].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
+      if (!geral) return;
+      let responsavel = geral.responsavel;
+      let remuneracao = geral.remuneracao || 'Normal';
+      if (responsavel === 'Indeterminado' || isResponsavelAfastado(responsavel, dt)) {
+        responsavel = 'Indeterminado';
+        remuneracao = 'AC4';
+      }
+      const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].includes(funcao);
+      const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && !v.geradoAutomaticamente);
+      const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.geradoAutomaticamente);
+      if (excluida || jaExisteManual) return;
+      if (!jaExisteAutomatica) {
+        // ✅ Intencional: ocultar é definido globalmente no dia 1 e propagado via geral.ocultar
+        // Nos outros dias gerados automaticamente, ocultar segue o vínculo geral (checkbox só aparece no dia 1)
+        let ocultarValue = false;
+        if (dia === 1) ocultarValue = geral.hasOwnProperty('ocultar') ? geral.ocultar : false;
+        vinculos[ala].push({
+          funcao: funcao,
+          responsavel: responsavel,
+          dia: dia,
+          horaInicio: 8,
+          horaFim: 8,
+          horaFimEscala: 8,
+          remuneracao: remuneracao,
+          geradoAutomaticamente: true,
+          originalResponsavel: geral.responsavel,
+          ocultar: ocultarValue,
+          ordemOriginal: funcoes.indexOf(funcao)
+        });
+      }
+    });
+    if (dia === dMax) {
+      vinculos[ala].forEach(v => {
+        if (v.dia === dia && !v.hasOwnProperty('horaFimEscala')) v.horaFimEscala = v.horaFim;
+      });
+    }
+    const vincDia = vinculos[ala].filter(v => v.dia === dia);
+    const vincDiaFiltrado = vincDia.filter(v => {
+      if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia]) {
+        if (v.geradoAutomaticamente && exclusoesDiarias[ala][dia].includes(v.funcao)) return false;
+      }
+      return true;
+    });
+    vincDiaFiltrado.sort((a, b) => {
+      const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal : (a.hasOwnProperty('ordem') ? a.ordem : 9999);
+      const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal : (b.hasOwnProperty('ordem') ? b.ordem : 9999);
+      return ordemA - ordemB;
+    });
+    let funHtml = "";
+    vincDiaFiltrado.forEach((func, index) => {
+      const hi = `hora-inicio-${dia}-${ala}-${func.funcao}`,
+        hf = `hora-fim-${dia}-${ala}-${func.funcao}`,
+        rm = `remuneracao-${dia}-${ala}-${func.funcao}`,
+        c = `custo-${dia}-${ala}-${func.funcao}`,
+        hI = func.horaInicio ?? 8,
+        hF = func.horaFim ?? 8,
+        hFE = func.horaFimEscala ?? hF,
+        rS = func.remuneracao || 'Normal',
+        // ✅ Inclui "..." como isento de cálculo
+        cIni = rS !== 'Extra não remunerado' && rS !== 'Normal' && rS !== '...' && rS !== 'Troca com a SOP' ? calcularCusto(dt, hI, hF) : 0;
+      td += cIni;
+      const originalResponsavel = func.originalResponsavel;
+      const isResponsavelDiferente = func.responsavel !== originalResponsavel;
+      const isOriginalUndefined = !originalResponsavel;
+      let alertaHtml = "";
+      if (isOriginalUndefined) {
+        alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}" style="color: dodgerblue; font-size: 12px; margin-top: 5px; text-align: center;">
+Função adicionada manualmente</div>`;
+      }
+      else if (originalResponsavel && originalResponsavel !== 'Indeterminado' && isResponsavelAfastado(originalResponsavel, dt)) {
+        alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}" style="color: #FF8C00; font-size: 12px; margin-top: 5px; text-align: center;">
+Função com responsável afastado definido no vínculo geral</div>`;
+      }
+      else if (mantemEd && isResponsavelDiferente && originalResponsavel && originalResponsavel !== 'Indeterminado') {
+        alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}" style="color: red; font-size: 12px; margin-top: 5px; text-align: center;">
+${originalResponsavel} é o responsável por essa função no vínculo geral da Ala ${ala}.</div>`;
+      }
+      else if (originalResponsavel && originalResponsavel !== 'Indeterminado') {
+        alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}" style="color: darkgoldenrod; font-size: 12px; margin-top: 5px; text-align: center;">
+Função com responsável definido no vínculo geral</div>`;
+      }
+      const disabledClass = func.bloqueada ? ' input-disabled' : '';
+      const selectDisabledClass = func.bloqueada ? ' select-disabled' : '';
+      const disabledAttr = func.bloqueada ? ' disabled' : '';
+      funHtml += `<div id="funcao-${dia}-${ala}-${func.funcao}" class="draggable-funcao" data-dia="${dia}" data-ala="${ala}" data-funcao="${func.funcao}" data-ordem="${index}">
 <div class="linha-funcao" style="text-align: center;">
 <span class="drag-handle">↓≡↑</span>
-<strong id="nome-funcao-${_0x2f_0xa2a}-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}">${func['\u0066\u0075\u006E\u0063\u0061\u006F']}:</strong>
-<button class="btn-editar-funcao${_0x8f_0xf81}"${_0x28_0x894} onclick="editarNomeFuncaoDia(${_0x2f_0xa2a},'${_0x23_0xfa3}','${func['\u0066\u0075\u006E\u0063\u0061\u006F']['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0027','\u0067'),"\u005C\u0027")}')">Editar Nome</button>
-<button class="btn-small" onclick="toggleBloqueioFuncao('${_0x23_0xfa3}','${func['\u0066\u0075\u006E\u0063\u0061\u006F']}',${_0x2f_0xa2a}${!func['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']?"eurt ,".split("").reverse().join(""):''})">
-${func['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']?"seo\xE7acifidoM raeuqolbseD \uDD13\uD83D".split("").reverse().join(""):"seo\xE7acifidoM raeuqolB \uDD12\uD83D".split("").reverse().join("")}
+<strong id="nome-funcao-${dia}-${ala}-${func.funcao}">${func.funcao}:</strong>
+<button class="btn-editar-funcao${disabledClass}"${disabledAttr} onclick="editarNomeFuncaoDia(${dia},'${ala}','${func.funcao.replace(/'/g, "\\'")}')">Editar Nome</button>
+<button class="btn-small" onclick="toggleBloqueioFuncao('${ala}','${func.funcao}',${dia}${!func.bloqueada ? ', true' : ''})">
+${func.bloqueada ? '🔓 Desbloquear Modificaçoes' : '🔒 Bloquear Modificaçoes'}
 </button>
 </div>
 <div class="linha linha-funcao-campos" style="justify-content: center; align-items: center;">
 <label class="label-inline">Nome:</label>
-<select data-role="responsavel-calendario" id="responsavel-${_0x2f_0xa2a}-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}" class="${_0xe9e32b} select-nome-funcao"${_0x28_0x894} onchange="atualizarRespCal('${_0x23_0xfa3}','${func['\u0066\u0075\u006E\u0063\u0061\u006F']}',this.value,${_0x2f_0xa2a})">
+<select data-role="responsavel-calendario" id="responsavel-${dia}-${ala}-${func.funcao}" class="${selectDisabledClass} select-nome-funcao"${disabledAttr} onchange="atualizarRespCal('${ala}','${func.funcao}',this.value,${dia})">
 <option value="">Selecione um responsável</option>
-${responsaveis['\u006D\u0061\u0070'](r=>`<option value="${r}" ${r===func['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']?"\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064":''}>${r}${isResponsavelAfastado(r,_0x28g19f)?"\u0020\u0028\u0041\u0066\u0061\u0073\u0074\u0061\u0064\u006F\u0029":''}</option>`)['\u006A\u006F\u0069\u006E']('')}
+${responsaveis.map(r => `<option value="${r}" ${r === func.responsavel ? 'selected' : ''}>${r}${isResponsavelAfastado(r, dt) ? ' (Afastado)' : ''}</option>`).join('')}
 </select>
 <label class="label-inline">H.Início:</label>
-<input type="number" id="${_0xb38afd}" class="input-hora${_0x8f_0xf81}" value="${_0x33db}" min="0" max="23"${_0x28_0x894} onchange="atualizarCusto(${_0x2f_0xa2a},'${_0x23_0xfa3}','${func['\u0066\u0075\u006E\u0063\u0061\u006F']}')">
+<input type="number" id="${hi}" class="input-hora${disabledClass}" value="${hI}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
 <label class="label-inline">H.Fim:</label>
-<input type="number" id="${_0x4eff2c}" class="input-hora${_0x8f_0xf81}" value="${_0x8deg7e}" min="0" max="23"${_0x28_0x894} onchange="atualizarCusto(${_0x2f_0xa2a},'${_0x23_0xfa3}','${func['\u0066\u0075\u006E\u0063\u0061\u006F']}')">
-${_0x2f_0xa2a===_0xd09c?`<label class="label-inline">H.Fim Escala:</label>
-<input type="number" id="hora-fim-escala-${_0x2f_0xa2a}-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}" class="input-hora${_0x8f_0xf81}" value="${_0x26_0xe32}" min="0" max="23"${_0x28_0x894} onchange="atualizarHoraFimEscala(${_0x2f_0xa2a},'${_0x23_0xfa3}','${func['\u0066\u0075\u006E\u0063\u0061\u006F']}')">`:``}
+<input type="number" id="${hf}" class="input-hora${disabledClass}" value="${hF}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
+${dia === dMax ? `<label class="label-inline">H.Fim Escala:</label>
+<input type="number" id="hora-fim-escala-${dia}-${ala}-${func.funcao}" class="input-hora${disabledClass}" value="${hFE}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},'${ala}','${func.funcao}')">` : ``}
 <label class="label-inline">Remuneração:</label>
-<select id="${_0x6b67a}" class="${_0xe9e32b}"${_0x28_0x894} onchange="atualizarCusto(${_0x2f_0xa2a},'${_0x23_0xfa3}','${func['\u0066\u0075\u006E\u0063\u0061\u006F']}')">
-<option value="AC4" ${_0xc65a5f==="\u0041\u0043\u0034"?"\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064":''}>AC4</option>
-<option value="AC4 - Regência" ${_0xc65a5f==="\u0041\u0043\u0034\u0020\u002D\u0020\u0052\u0065\u0067\u00EA\u006E\u0063\u0069\u0061"?"\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064":''}>AC4 - Regência</option>
-<option value="AC4-2" ${_0xc65a5f==="2-4CA".split("").reverse().join("")?"detceles".split("").reverse().join(""):''}>AC4-2</option>
-<option value="Extra não remunerado" ${_0xc65a5f==="odarenumer o\xE3n artxE".split("").reverse().join("")?"\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064":''}>Extra não remunerado</option>
-<option value="Normal" ${_0xc65a5f==="\u004E\u006F\u0072\u006D\u0061\u006C"?"\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064":''}>Normal</option>
-<option value="..." ${_0xc65a5f==="\u002E\u002E\u002E"?"detceles".split("").reverse().join(""):''}>...</option>
-<option value="Troca com a SOP" ${_0xc65a5f==="POS a moc acorT".split("").reverse().join("")?"\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064":''}>Troca com a SOP</option>
+<select id="${rm}" class="${selectDisabledClass}"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
+<option value="AC4" ${rS==='AC4' ? 'selected' : ''}>AC4</option>
+<option value="AC4 - Regência" ${rS==='AC4 - Regência' ? 'selected' : ''}>AC4 - Regência</option>
+<option value="AC4-2" ${rS==='AC4-2' ? 'selected' : ''}>AC4-2</option>
+<option value="Extra não remunerado" ${rS==='Extra não remunerado' ? 'selected' : ''}>Extra não remunerado</option>
+<option value="Normal" ${rS==='Normal' ? 'selected' : ''}>Normal</option>
+<option value="..." ${rS==='...' ? 'selected' : ''}>...</option>
+<option value="Troca com a SOP" ${rS==='Troca com a SOP' ? 'selected' : ''}>Troca com a SOP</option>
 </select>
 <label class="label-inline">Custo:</label>
-<span id="${c}" class="custo-valor">R$ ${formatarMoeda(_0x645d)}</span>
-<button${_0x28_0x894} onclick="removerFuncaoCalendario('${_0x23_0xfa3}','${func['\u0066\u0075\u006E\u0063\u0061\u006F']}',${_0x2f_0xa2a})">Remover</button>
-${_0x2f_0xa2a===(254296^254297)?`<label><input type="checkbox" id="ocultar-${_0x2f_0xa2a}-${_0x23_0xfa3}-${func['\u0066\u0075\u006E\u0063\u0061\u006F']}"${_0x28_0x894} onchange="toggleOcultar(${_0x2f_0xa2a},'${_0x23_0xfa3}','${func['\u0066\u0075\u006E\u0063\u0061\u006F']}',this.checked)" ${func['\u006F\u0063\u0075\u006C\u0074\u0061\u0072']?"dekcehc".split("").reverse().join(""):''}> Ocultar da escala</label>`:``}
-</div>${_0x5fdga}</div>`;});_0x9407gd+=`<tr class="${_0x2f_0xa2a%(607816^607818)===(147249^147249)?"rap-ahnil".split("").reverse().join(""):"\u006C\u0069\u006E\u0068\u0061\u002D\u0069\u006D\u0070\u0061\u0072"}">
-<td class="td-data"><span class="data-dia">${_0x2f_0xa2a}/${m}/${a}</span><span class="data-dw">(${_0xfd42d})</span></td>
-<td>${_0x23_0xfa3}</td>
-<td id="container-funcoes-${_0x2f_0xa2a}-${_0x23_0xfa3}" class="sortable-container">
+<span id="${c}" class="custo-valor">R$ ${formatarMoeda(cIni)}</span>
+<button${disabledAttr} onclick="removerFuncaoCalendario('${ala}','${func.funcao}',${dia})">Remover</button>
+${dia === 1 ? `<label><input type="checkbox" id="ocultar-${dia}-${ala}-${func.funcao}"${disabledAttr} onchange="toggleOcultar(${dia},'${ala}','${func.funcao}',this.checked)" ${func.ocultar ? 'checked' : ''}> Ocultar da escala</label>` : ``}
+</div>${alertaHtml}</div>`;
+    });
+    html += `<tr class="${dia % 2 === 0 ? 'linha-par' : 'linha-impar'}">
+<td class="td-data"><span class="data-dia">${dia}/${m}/${a}</span><span class="data-dw">(${dw})</span></td>
+<td>${ala}</td>
+<td id="container-funcoes-${dia}-${ala}" class="sortable-container">
 <div class="funcoes-container">
-${_0xf29gd}
+${funHtml}
 </div>
 <div class="input-container">
-<label for="nova-funcao-${_0x2f_0xa2a}-${_0x23_0xfa3}">Nova Função:</label>
-<input type="text" id="nova-funcao-${_0x2f_0xa2a}-${_0x23_0xfa3}" placeholder="Adicionar função">
-<button onclick="adicionarFuncaoNoCalendario(${_0x2f_0xa2a},'${_0x23_0xfa3}')">Adicionar Função</button>
+<label for="nova-funcao-${dia}-${ala}">Nova Função:</label>
+<input type="text" id="nova-funcao-${dia}-${ala}" placeholder="Adicionar função">
+<button onclick="adicionarFuncaoNoCalendario(${dia},'${ala}')">Adicionar Função</button>
 </div>
 </td>
-<td id="total-diario-${_0x2f_0xa2a}">R$ ${formatarMoeda(_0x4de)}</td>
-</tr>`;_0xef0gdd+=_0x4de;}_0x9407gd+=`<tr><td colspan="3" style="text-align:right;"><strong>Total do Mês:</strong></td>
-<td id="total-mensal"><strong>R$ ${formatarMoeda(_0xef0gdd)}</strong></td></tr></tbody></table>`;$("\u0063\u0061\u006C\u0065\u006E\u0064\u0061\u0072\u0069\u006F")['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']=_0x9407gd;calendarioGerado=!![];inicializarDragAndDrop();setTimeout(ativarTodosCustomSelects,520557^520557);gerarResumoResponsaveis();gerarVagasDisponiveis();gerarEscala();salvarDadosPersistentes();}function inicializarDragAndDrop(_0xf399a){let _0x19aegc=null;_0xf399a='\u0065\u0065\u006C\u0065\u0067\u0066';const _0x054g=document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("reniatnoc-elbatros.".split("").reverse().join(""));_0x054g['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](container=>{const _0xfb67g=container['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("reniatnoc-seocnuf.".split("").reverse().join(""));if(!_0xfb67g)return;_0xfb67g['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("oacnuf-elbaggard.".split("").reverse().join(""))['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](el=>{el['\u0064\u0072\u0061\u0067\u0067\u0061\u0062\u006C\u0065']=false;});_0xfb67g['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u002E\u0064\u0072\u0061\u0067\u002D\u0068\u0061\u006E\u0064\u006C\u0065")['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](handle=>{let _0x6de;const draggable=handle['\u0063\u006C\u006F\u0073\u0065\u0073\u0074']("\u002E\u0064\u0072\u0061\u0067\u0067\u0061\u0062\u006C\u0065\u002D\u0066\u0075\u006E\u0063\u0061\u006F");_0x6de=351054^351052;if(!draggable)return;handle['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("nwodesuom".split("").reverse().join(""),e=>{draggable['\u0073\u0065\u0074\u0041\u0074\u0074\u0072\u0069\u0062\u0075\u0074\u0065']("\u0064\u0072\u0061\u0067\u0067\u0061\u0062\u006C\u0065","eurt".split("").reverse().join(""));draggable['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0064\u0072\u0061\u0067\u0067\u0069\u006E\u0067");_0x19aegc=_0xfb67g;});handle['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u006D\u006F\u0075\u0073\u0065\u0075\u0070",()=>{draggable['\u0073\u0065\u0074\u0041\u0074\u0074\u0072\u0069\u0062\u0075\u0074\u0065']("elbaggard".split("").reverse().join(""),"\u0066\u0061\u006C\u0073\u0065");});draggable['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("tratsgard".split("").reverse().join(""),e=>{e['\u0064\u0061\u0074\u0061\u0054\u0072\u0061\u006E\u0073\u0066\u0065\u0072']['\u0073\u0065\u0074\u0044\u0061\u0074\u0061']("nialp/txet".split("").reverse().join(""),'');});draggable['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0064\u0072\u0061\u0067\u0065\u006E\u0064",()=>{draggable['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0064\u0072\u0061\u0067\u0067\u0069\u006E\u0067");draggable['\u0073\u0065\u0074\u0041\u0074\u0074\u0072\u0069\u0062\u0075\u0074\u0065']("\u0064\u0072\u0061\u0067\u0067\u0061\u0062\u006C\u0065","\u0066\u0061\u006C\u0073\u0065");_0x19aegc=null;atualizarOrdemFuncoesNoDia(container);});});_0xfb67g['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("revogard".split("").reverse().join(""),e=>{if(_0x19aegc!==_0xfb67g)return;e['\u0070\u0072\u0065\u0076\u0065\u006E\u0074\u0044\u0065\u0066\u0061\u0075\u006C\u0074']();const _0xae4f=getDragAfterElement(_0xfb67g,e['\u0063\u006C\u0069\u0065\u006E\u0074\u0059']);let _0x4_0x555;const draggable=document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("gniggard.".split("").reverse().join(""));_0x4_0x555=(264800^264806)+(649137^649138);if(!draggable)return;if(_0xae4f==null){_0xfb67g['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](draggable);}else{_0xfb67g['\u0069\u006E\u0073\u0065\u0072\u0074\u0042\u0065\u0066\u006F\u0072\u0065'](draggable,_0xae4f);}});});}function getDragAfterElement(container,y){const _0xc9da5e=[...container['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u002E\u0064\u0072\u0061\u0067\u0067\u0061\u0062\u006C\u0065\u002D\u0066\u0075\u006E\u0063\u0061\u006F\u003A\u006E\u006F\u0074\u0028\u002E\u0064\u0072\u0061\u0067\u0067\u0069\u006E\u0067\u0029")];return _0xc9da5e['\u0072\u0065\u0064\u0075\u0063\u0065']((closest,child)=>{let _0x73f;const _0xf76ce=child['\u0067\u0065\u0074\u0042\u006F\u0075\u006E\u0064\u0069\u006E\u0067\u0043\u006C\u0069\u0065\u006E\u0074\u0052\u0065\u0063\u0074']();_0x73f=(207299^207299)+(374702^374698);const _0x5aa3a=y-_0xf76ce['\u0074\u006F\u0070']-_0xf76ce['\u0068\u0065\u0069\u0067\u0068\u0074']/(785850^785848);if(_0x5aa3a<(551539^551539)&&_0x5aa3a>closest['\u006F\u0066\u0066\u0073\u0065\u0074'])return{'\u006F\u0066\u0066\u0073\u0065\u0074':_0x5aa3a,'\u0065\u006C\u0065\u006D\u0065\u006E\u0074':child};else return closest;},{"offset":Number['\u004E\u0045\u0047\u0041\u0054\u0049\u0056\u0045\u005F\u0049\u004E\u0046\u0049\u004E\u0049\u0054\u0059']})['\u0065\u006C\u0065\u006D\u0065\u006E\u0074'];}function atualizarOrdemFuncoesNoDia(container,_0x96b,_0x4d517e,_0xdc2fe){const _0x2f3cb=container['\u0069\u0064']['\u0073\u0070\u006C\u0069\u0074']("\u002D");_0x96b=(598771^598778)+(605778^605787);const _0x9d422f=parseInt(_0x2f3cb[776920^776922]);_0x4d517e=(470200^470193)+(761749^761745);const _0x1c2fg=_0x2f3cb[712087^712084];const _0xc138e=container['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u002E\u0066\u0075\u006E\u0063\u006F\u0065\u0073\u002D\u0063\u006F\u006E\u0074\u0061\u0069\u006E\u0065\u0072");if(!_0xc138e)return;const _0xb4gc5f=_0xc138e['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("oacnuf-elbaggard.".split("").reverse().join(""));_0xdc2fe=(578497^578501)+(273275^273274);_0xb4gc5f['\u0066\u006F\u0072\u0045\u0061\u0063\u0068']((element,novaOrdem)=>{const _0x0c1eeb=element['\u0067\u0065\u0074\u0041\u0074\u0074\u0072\u0069\u0062\u0075\u0074\u0065']("oacnuf-atad".split("").reverse().join(""));element['\u0073\u0065\u0074\u0041\u0074\u0074\u0072\u0069\u0062\u0075\u0074\u0065']("\u0064\u0061\u0074\u0061\u002D\u006F\u0072\u0064\u0065\u006D",novaOrdem);var _0xcbaee=(357999^357996)+(649701^649698);const _0xa22b=vinculos[_0x1c2fg]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===_0x0c1eeb&&v['\u0064\u0069\u0061']===_0x9d422f);_0xcbaee=(628295^628303)+(530420^530417);if(_0xa22b)_0xa22b['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']=novaOrdem;});salvarDadosPersistentes();gerarEscala();}function editarNomeFuncaoDia(dia,ala,funcaoAtual,_0x86e){var _0x37d0b=(303159^303154)+(815073^815079);const _0xa3be=document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064'](`funcao-${dia}-${ala}-${funcaoAtual}`);_0x37d0b=415437^415434;if(!_0xa3be)return;const _0xf6f=vinculos[ala]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcaoAtual&&v['\u0064\u0069\u0061']===dia);_0x86e=(510130^510128)+(729413^729412);if(_0xf6f&&_0xf6f['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']){openWarningModal("\u0045\u0064\u0069\u00E7\u00E3\u006F\u0020\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061\u0020\u0070\u0061\u0072\u0061\u0020\u0065\u0073\u0074\u0061\u0020\u0066\u0075\u006E\u00E7\u00E3\u006F\u002E");return;}backupEdicaoFuncao[`${dia}-${ala}-${funcaoAtual}`]=_0xa3be['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C'];var _0x2f4d=(284401^284404)+(835658^835651);const _0x59227b=document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064'](`nome-funcao-${dia}-${ala}-${funcaoAtual}`)?.textContent.replace("\u003A",'').trim()||funcaoAtual;_0x2f4d='\u006C\u0061\u006C\u0070\u006E\u0071';const _0x557d5a=`
+<td id="total-diario-${dia}">R$ ${formatarMoeda(td)}</td>
+</tr>`;
+    totMes += td;
+  }
+  html += `<tr><td colspan="3" style="text-align:right;"><strong>Total do Mês:</strong></td>
+<td id="total-mensal"><strong>R$ ${formatarMoeda(totMes)}</strong></td></tr></tbody></table>`;
+  $('calendario').innerHTML = html;
+  calendarioGerado = true;
+  inicializarDragAndDrop();
+  setTimeout(ativarTodosCustomSelects, 0);
+  gerarResumoResponsaveis();
+  gerarVagasDisponiveis();
+  gerarEscala();
+  salvarDadosPersistentes();
+}
+function inicializarDragAndDrop() {
+  // Rastreia qual funcoesContainer originou o drag atual
+  let dragSourceContainer = null;
+
+  const containers = document.querySelectorAll('.sortable-container');
+  containers.forEach(container => {
+    const funcoesContainer = container.querySelector('.funcoes-container');
+    if (!funcoesContainer) return;
+    funcoesContainer.querySelectorAll('.draggable-funcao').forEach(el => {
+      el.draggable = false;
+    });
+    funcoesContainer.querySelectorAll('.drag-handle').forEach(handle => {
+      const draggable = handle.closest('.draggable-funcao');
+      if (!draggable) return;
+      handle.addEventListener('mousedown', (e) => {
+        draggable.setAttribute('draggable', 'true');
+        draggable.classList.add('dragging');
+        // Registra o container de origem
+        dragSourceContainer = funcoesContainer;
+      });
+      handle.addEventListener('mouseup', () => {
+        draggable.setAttribute('draggable', 'false');
+      });
+      draggable.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', '');
+      });
+      draggable.addEventListener('dragend', () => {
+        draggable.classList.remove('dragging');
+        draggable.setAttribute('draggable', 'false');
+        dragSourceContainer = null;
+        atualizarOrdemFuncoesNoDia(container);
+      });
+    });
+    funcoesContainer.addEventListener('dragover', e => {
+      // Só aceita o drag se vier do mesmo container (mesmo dia)
+      if (dragSourceContainer !== funcoesContainer) return;
+      e.preventDefault();
+      const afterElement = getDragAfterElement(funcoesContainer, e.clientY);
+      const draggable = document.querySelector('.dragging');
+      if (!draggable) return;
+      if (afterElement == null) {
+        funcoesContainer.appendChild(draggable);
+      } else {
+        funcoesContainer.insertBefore(draggable, afterElement);
+      }
+    });
+  });
+}
+function getDragAfterElement(container, y) {
+  const draggableElements = [...container.querySelectorAll('.draggable-funcao:not(.dragging)')];
+  return draggableElements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) return { offset: offset, element: child };
+    else return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+function atualizarOrdemFuncoesNoDia(container) {
+  const idParts = container.id.split('-');
+  const dia = parseInt(idParts[2]);
+  const ala = idParts[3];
+  const funcoesContainer = container.querySelector('.funcoes-container');
+  if (!funcoesContainer) return;
+  const funcoesNoContainer = funcoesContainer.querySelectorAll('.draggable-funcao');
+  funcoesNoContainer.forEach((element, novaOrdem) => {
+    const funcao = element.getAttribute('data-funcao');
+    element.setAttribute('data-ordem', novaOrdem);
+    const vinculo = vinculos[ala].find(v => v.funcao === funcao && v.dia === dia);
+    if (vinculo) vinculo.ordemOriginal = novaOrdem;
+  });
+  salvarDadosPersistentes();
+  gerarEscala();
+}
+function editarNomeFuncaoDia(dia, ala, funcaoAtual) {
+  const container = document.getElementById(`funcao-${dia}-${ala}-${funcaoAtual}`);
+  if (!container) return;
+  const vinculoExistente = vinculos[ala].find(v => v.funcao === funcaoAtual && v.dia === dia);
+  if (vinculoExistente && vinculoExistente.bloqueada) {
+    openWarningModal("Edição bloqueada para esta função.");
+    return;
+  }
+  backupEdicaoFuncao[`${dia}-${ala}-${funcaoAtual}`] = container.innerHTML;
+  const nomeAtual = document.getElementById(`nome-funcao-${dia}-${ala}-${funcaoAtual}`)?.textContent.replace(':', '').trim() || funcaoAtual;
+  const inputHtml = `
 <input type="text"
 id="input-editar-funcao-${dia}-${ala}-${funcaoAtual}"
-value="${_0x59227b['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0022','\u0067'),"\u0026\u0071\u0075\u006F\u0074\u003B")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0027','\u0067'),"\u005C\u0027")}"
+value="${nomeAtual.replace(/"/g, '&quot;').replace(/'/g, "\\'")}"
 style="width: 200px; margin-right: 5px;">
 <button onclick="salvarNomeFuncaoDia(${dia},'${ala}','${funcaoAtual}')">Salvar</button>
 <button onclick="cancelarEdicaoFuncaoDia(${dia},'${ala}','${funcaoAtual}')">Cancelar</button>
-`;const _0x30_0xfe6=_0xa3be['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u002E\u006C\u0069\u006E\u0068\u0061\u002D\u0066\u0075\u006E\u0063\u0061\u006F");if(_0x30_0xfe6){_0x30_0xfe6['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']=_0x557d5a;}}function cancelarEdicaoFuncaoDia(dia,ala,funcaoAtual){const _0x3e46d=document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064'](`funcao-${dia}-${ala}-${funcaoAtual}`);if(!_0x3e46d)return;const _0x6fg41f=`${dia}-${ala}-${funcaoAtual}`;if(backupEdicaoFuncao[_0x6fg41f]){_0x3e46d['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']=backupEdicaoFuncao[_0x6fg41f];delete backupEdicaoFuncao[_0x6fg41f];}}function salvarNomeFuncaoDia(dia,ala,funcaoAntiga,_0xfb7cf){const _0x31_0xc37=document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064'](`input-editar-funcao-${dia}-${ala}-${funcaoAntiga}`);if(!_0x31_0xc37)return;const _0x958f=_0x31_0xc37['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();if(!_0x958f){openWarningModal(".oizav ratse edop o\xE3n o\xE3\xE7nuf ad emon O".split("").reverse().join(""));return;}const _0xd7e39c=vinculos[ala]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>v['\u0064\u0069\u0061']===dia);const _0x2f6b=_0xd7e39c['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===_0x958f);_0xfb7cf=950985^950977;if(_0x2f6b&&_0x2f6b['\u0066\u0075\u006E\u0063\u0061\u006F']!==funcaoAntiga){openWarningModal(`Já existe uma função chamada "${_0x958f}" neste dia.`);return;}const _0x5ac6d=vinculos[ala]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcaoAntiga&&v['\u0064\u0069\u0061']===dia);if(_0x5ac6d&&_0x5ac6d['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']){openWarningModal(".o\xE3\xE7nuf atse arap adaeuqolb o\xE3\xE7idE".split("").reverse().join(""));cancelarEdicaoFuncaoDia(dia,ala,funcaoAntiga);return;}var _0x57g5gg=(936614^936611)+(890755^890758);const _0xea7dc=vinculos[ala]['\u0073\u006F\u006D\u0065'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcaoAntiga&&!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061"));_0x57g5gg=(334317^334315)+(399576^399583);if(_0xea7dc){openModal(`Esta função "${funcaoAntiga}" está no vínculo geral da Ala ${ala}. `+`Ao editar o nome apenas para o dia ${dia}, você criará uma função especial para este dia. `+`A função original "${funcaoAntiga}" continuará existindo nos outros dias. Deseja continuar?`,()=>{aplicarEdicaoFuncaoComVinculoGeral(dia,ala,funcaoAntiga,_0x958f);},()=>{cancelarEdicaoFuncaoDia(dia,ala,funcaoAntiga);});}else{aplicarEdicaoFuncao(dia,ala,funcaoAntiga,_0x958f);}}function aplicarEdicaoFuncao(dia,ala,funcaoAntiga,novoNome){var _0xb6ff=(464403^464403)+(837951^837951);const _0x71f1fc=vinculos[ala]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcaoAntiga&&v['\u0064\u0069\u0061']===dia);_0xb6ff=(167486^167479)+(744533^744535);if(_0x71f1fc){let _0x01d5cg;const _0x2c3d2c=_0x71f1fc['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C")?_0x71f1fc['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:_0x71f1fc['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D")?_0x71f1fc['\u006F\u0072\u0064\u0065\u006D']:funcoes['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](funcaoAntiga);_0x01d5cg=277970^277968;_0x71f1fc['\u0066\u0075\u006E\u0063\u0061\u006F']=novoNome;_0x71f1fc['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']=_0x2c3d2c;if(exclusoesDiarias[ala]&&exclusoesDiarias[ala][dia]){let _0xcd9f4g;const _0xg1259a=exclusoesDiarias[ala][dia]['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](funcaoAntiga);_0xcd9f4g=(343788^343789)+(340273^340276);if(_0xg1259a!==-(887829^887828)){exclusoesDiarias[ala][dia][_0xg1259a]=novoNome;}}salvarDadosPersistentes();gerarCalendario(!![]);}}function aplicarEdicaoFuncaoComVinculoGeral(dia,ala,funcaoAntiga,novoNome){var _0x90faf=(398870^398869)+(612822^612830);const _0xa9bbf=vinculos[ala]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===novoNome&&v['\u0064\u0069\u0061']===dia);_0x90faf=(857714^857717)+(572427^572429);if(_0xa9bbf){openWarningModal(`Já existe uma função chamada "${novoNome}" neste dia.`);cancelarEdicaoFuncaoDia(dia,ala,funcaoAntiga);return;}const _0x62b2b=vinculos[ala]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcaoAntiga&&v['\u0064\u0069\u0061']===dia);if(!_0x62b2b['\u006C\u0065\u006E\u0067\u0074\u0068']){cancelarEdicaoFuncaoDia(dia,ala,funcaoAntiga);return;}const _0x17ab=_0x62b2b['\u0066\u0069\u006E\u0064'](v=>v['\u0067\u0065\u0072\u0061\u0064\u006F\u0041\u0075\u0074\u006F\u006D\u0061\u0074\u0069\u0063\u0061\u006D\u0065\u006E\u0074\u0065']);let _0x12d6b,_0xf7g9a,_0x7b255g,_0xf4_0xadd,_0xedf,_0x8bb31c,_0x71g;if(_0x17ab){_0x12d6b=_0x17ab['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("lanigirOmedro".split("").reverse().join(""))?_0x17ab['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:_0x17ab['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("medro".split("").reverse().join(""))?_0x17ab['\u006F\u0072\u0064\u0065\u006D']:funcoes['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](funcaoAntiga);_0xf7g9a=_0x17ab['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'];_0x7b255g=_0x17ab['\u006F\u0072\u0069\u0067\u0069\u006E\u0061\u006C\u0052\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']||_0x17ab['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'];_0xf4_0xadd=_0x17ab['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']||664839^664847;_0xedf=_0x17ab['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']||389450^389442;_0x8bb31c=_0x17ab['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']||"lamroN".split("").reverse().join("");_0x71g=_0x17ab['\u006F\u0063\u0075\u006C\u0074\u0061\u0072']||false;}else{_0x12d6b=_0x62b2b[313817^313817]['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C")?_0x62b2b[706965^706965]['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:_0x62b2b[591167^591167]['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("medro".split("").reverse().join(""))?_0x62b2b[655007^655007]['\u006F\u0072\u0064\u0065\u006D']:funcoes['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](funcaoAntiga);_0xf7g9a=_0x62b2b[810130^810130]['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'];_0x7b255g=_0x62b2b[640505^640505]['\u006F\u0072\u0069\u0067\u0069\u006E\u0061\u006C\u0052\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']||_0x62b2b[448342^448342]['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'];_0xf4_0xadd=_0x62b2b[269851^269851]['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']||129518^129510;_0xedf=_0x62b2b[605389^605389]['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']||569809^569817;_0x8bb31c=_0x62b2b[557186^557186]['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']||"\u004E\u006F\u0072\u006D\u0061\u006C";_0x71g=_0x62b2b[631591^631591]['\u006F\u0063\u0075\u006C\u0074\u0061\u0072']||false;}registrarExclusao(ala,funcaoAntiga,dia);vinculos[ala]=vinculos[ala]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>!(v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcaoAntiga&&v['\u0064\u0069\u0061']===dia));vinculos[ala]['\u0070\u0075\u0073\u0068']({"funcao":novoNome,'\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C':_0xf7g9a,"dia":dia,"horaInicio":_0xf4_0xadd,'\u0068\u006F\u0072\u0061\u0046\u0069\u006D':_0xedf,'\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061':_0xedf,"remuneracao":_0x8bb31c,"geradoAutomaticamente":false,'\u006F\u0072\u0069\u0067\u0069\u006E\u0061\u006C\u0052\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C':_0x7b255g,"ordemOriginal":_0x12d6b,'\u006F\u0063\u0075\u006C\u0074\u0061\u0072':_0x71g});salvarDadosPersistentes();gerarCalendario(!![]);}function toggleBloqueioFuncao(ala,funcao,dia,requerConfirmacao=false,_0xb48g){const _0x12be=vinculos[ala]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&v['\u0064\u0069\u0061']===dia);_0xb48g=(480698^480690)+(317894^317894);if(!_0x12be)return;if(_0x12be['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']){if(_0x12be['\u0065\u0073\u0074\u0061\u0064\u006F\u0042\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u006F']){_0x12be['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']=_0x12be['\u0065\u0073\u0074\u0061\u0064\u006F\u0042\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u006F']['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'];_0x12be['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']=_0x12be['\u0065\u0073\u0074\u0061\u0064\u006F\u0042\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u006F']['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F'];_0x12be['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']=_0x12be['\u0065\u0073\u0074\u0061\u0064\u006F\u0042\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u006F']['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F'];_0x12be['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']=_0x12be['\u0065\u0073\u0074\u0061\u0064\u006F\u0042\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u006F']['\u0068\u006F\u0072\u0061\u0046\u0069\u006D'];_0x12be['\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061']=_0x12be['\u0065\u0073\u0074\u0061\u0064\u006F\u0042\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u006F']['\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061'];delete _0x12be['\u0065\u0073\u0074\u0061\u0064\u006F\u0042\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u006F'];}_0x12be['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']=false;salvarDadosPersistentes();gerarCalendario(!![]);}else if(requerConfirmacao){openModal(`Tem certeza de que deseja bloquear modificaçoes nesta função?\n`+`Enquanto estiver bloqueada, a função não poderá sofrer alterações, sejam elas manuais ou automáticas.`,()=>{_0x12be['\u0065\u0073\u0074\u0061\u0064\u006F\u0042\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u006F']={'\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C':_0x12be['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'],'\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F':_0x12be['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F'],"horaInicio":_0x12be['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F'],'\u0068\u006F\u0072\u0061\u0046\u0069\u006D':_0x12be['\u0068\u006F\u0072\u0061\u0046\u0069\u006D'],'\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061':_0x12be['\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061']};_0x12be['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']=!![];salvarDadosPersistentes();gerarCalendario(!![]);},()=>{});}}function atualizarHoraFimEscala(dia,ala,funcao,_0xeb592a){const _0xd2a=vinculos[ala]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&v['\u0064\u0069\u0061']===dia);_0xeb592a='\u006B\u006D\u0066\u0070\u0069\u0068';if(!_0xd2a)return;if(_0xd2a['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']){openWarningModal("\u0045\u0064\u0069\u00E7\u00E3\u006F\u0020\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061\u0020\u0070\u0061\u0072\u0061\u0020\u0065\u0073\u0074\u0061\u0020\u0066\u0075\u006E\u00E7\u00E3\u006F\u002E");return;}var _0x5_0xeab=(828112^828113)+(258536^258537);const _0xb45c=document['\u0067\u0065\u0074\u0045\u006C\u0065\u006D\u0065\u006E\u0074\u0042\u0079\u0049\u0064'](`hora-fim-escala-${dia}-${ala}-${funcao}`);_0x5_0xeab=(921440^921449)+(543526^543525);if(!_0xb45c)return;var _0xfa1dd=(148497^148496)+(443418^443416);const _0xa7faf=parseInt(_0xb45c['\u0076\u0061\u006C\u0075\u0065'],244710^244716);_0xfa1dd=(112262^112256)+(998729^998731);var _0xf25da=(555747^555751)+(248859^248862);const _0xad9e=isNaN(_0xa7faf)?382623^382615:_0xa7faf;_0xf25da='\u0064\u0069\u006B\u006A\u0066\u0061';_0xd2a['\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061']=_0xad9e;gerarEscala();salvarDadosPersistentes();}function toggleOcultar(dia,ala,funcao,marcado){const v=vinculos[ala]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&v['\u0064\u0069\u0061']===dia);if(v&&v['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']){openWarningModal(".o\xE3\xE7nuf atse arap adaeuqolb o\xE3\xE7idE".split("").reverse().join(""));const _0x77c=$(`ocultar-${dia}-${ala}-${funcao}`);if(_0x77c)_0x77c['\u0063\u0068\u0065\u0063\u006B\u0065\u0064']=!marcado;return;}if(v)v['\u006F\u0063\u0075\u006C\u0074\u0061\u0072']=marcado;if(calendarioGerado)gerarEscala();salvarDadosPersistentes();}function gerarVagasDisponiveis(_0x7ea,_0x3657bb,_0x7c3db,_0xc70dga,_0x7716b){const m=parseInt($("\u006D\u0065\u0073")['\u0076\u0061\u006C\u0075\u0065'],844757^844767);const a=parseInt($("\u0061\u006E\u006F")['\u0076\u0061\u006C\u0075\u0065'],624328^624322);_0x7ea=152845^152845;var _0x6_0xd23=(489108^489109)+(379141^379149);const _0xgg_0xa5g=new Date(a,m,960545^960545)['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']();_0x6_0xd23="bjpkpb".split("").reverse().join("");let _0xa3bc=parseInt($("alacsEoicini".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],199723^199713)||338580^338581;let _0x9219e=parseInt($("alacsEaDmif".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],141803^141793)||_0xgg_0xa5g;_0x3657bb='\u0070\u0064\u006E\u006D\u006E\u0069';_0xa3bc=Math['\u006D\u0061\u0078'](886094^886095,Math['\u006D\u0069\u006E'](_0xa3bc,_0xgg_0xa5g));_0x9219e=Math['\u006D\u0061\u0078'](507829^507828,Math['\u006D\u0069\u006E'](_0x9219e,_0xgg_0xa5g));if(_0x9219e<_0xa3bc)_0x9219e=_0xa3bc;const _0x4310a={};const _0x4c4cba=document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u0023\u0063\u0061\u006C\u0065\u006E\u0064\u0061\u0072\u0069\u006F\u0020\u0074\u0062\u006F\u0064\u0079\u0020\u0074\u0072");_0x7c3db="cgjqmh".split("").reverse().join("");_0x4c4cba['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](row=>{const _0x5740f=row['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("dt".split("").reverse().join(""));if(!_0x5740f[879070^879070])return;var _0x655b2f=(151992^151996)+(781583^781581);const _0xc3c94b=_0x5740f[962475^962475]['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("aid-atad.".split("").reverse().join(""));_0x655b2f="ebdqoi".split("").reverse().join("");const[dStr]=(_0xc3c94b?_0xc3c94b['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']:_0x5740f[377703^377703]['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'])['\u0073\u0070\u006C\u0069\u0074']("\u002F");let _0x4b1bb;const _0xd77ec=parseInt(dStr,797260^797254);_0x4b1bb=(301921^301921)+(214681^214681);if(isNaN(_0xd77ec)||_0xd77ec<_0xa3bc||_0xd77ec>_0x9219e)return;if(!_0x5740f[161443^161441])return;const _0xb3_0x796=_0x5740f[967593^967595]['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u0064\u0069\u0076\u005B\u0069\u0064\u005E\u003D\u0022\u0066\u0075\u006E\u0063\u0061\u006F\u002D\u0022\u005D");_0xb3_0x796['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](dv=>{let _0x0b189b;const _0x7g256d=dv['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u002E\u006C\u0069\u006E\u0068\u0061\u002D\u0066\u0075\u006E\u0063\u0061\u006F\u0020\u0073\u0074\u0072\u006F\u006E\u0067");_0x0b189b=672256^672263;if(!_0x7g256d)return;const _0x8ab=_0x7g256d['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']['\u0072\u0065\u0070\u006C\u0061\u0063\u0065']("\u003A",'')['\u0074\u0072\u0069\u006D']();var _0x9abe=(990761^990753)+(348423^348421);const _0xe2f=row['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u0074\u0064\u003A\u006E\u0074\u0068\u002D\u0063\u0068\u0069\u006C\u0064\u0028\u0032\u0029")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']['\u0074\u0072\u0069\u006D']();_0x9abe=(512530^512539)+(391283^391286);if(exclusoesDiarias[_0xe2f]&&exclusoesDiarias[_0xe2f][_0xd77ec]&&exclusoesDiarias[_0xe2f][_0xd77ec]['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x8ab))return;let _0x9c3a;const _0xd21e=dv['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u0073\u0065\u006C\u0065\u0063\u0074\u005B\u0064\u0061\u0074\u0061\u002D\u0072\u006F\u006C\u0065\u003D\u0022\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C\u002D\u0063\u0061\u006C\u0065\u006E\u0064\u0061\u0072\u0069\u006F\u0022\u005D")['\u0076\u0061\u006C\u0075\u0065'];_0x9c3a='\u006E\u006A\u0069\u006E\u006D\u0069';let _0x4bf5g;const _0x25ae5e=dv['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u0073\u0065\u006C\u0065\u0063\u0074\u005B\u0069\u0064\u005E\u003D\u0022\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F\u002D\u0022\u005D")['\u0076\u0061\u006C\u0075\u0065'];_0x4bf5g="cnjfdb".split("").reverse().join("");const _0xbg_0xf9d=parseInt(dv['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u0069\u006E\u0070\u0075\u0074\u005B\u0069\u0064\u005E\u003D\u0022\u0068\u006F\u0072\u0061\u002D\u0069\u006E\u0069\u0063\u0069\u006F\u002D\u0022\u005D")['\u0076\u0061\u006C\u0075\u0065'],812183^812189)||958942^958942;const _0x6a7e9f=parseInt(dv['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u0069\u006E\u0070\u0075\u0074\u005B\u0069\u0064\u005E\u003D\u0022\u0068\u006F\u0072\u0061\u002D\u0066\u0069\u006D\u002D\u0022\u005D")['\u0076\u0061\u006C\u0075\u0065'],192740^192750)||773207^773207;if(!_0xd21e&&(_0x25ae5e==="4CA".split("").reverse().join("")||_0x25ae5e==="\u0041\u0043\u0034\u002D\u0032"||_0x25ae5e==="aicn\xEAgeR - 4CA".split("").reverse().join(""))){_0x4310a[_0xd77ec]=_0x4310a[_0xd77ec]||[];_0x4310a[_0xd77ec]['\u0070\u0075\u0073\u0068']({'\u0066\u0075\u006E\u0063\u0061\u006F':_0x8ab,"horaInicio":_0xbg_0xf9d,'\u0068\u006F\u0072\u0061\u0046\u0069\u006D':_0x6a7e9f,'\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F':_0x25ae5e});}});});_0x7716b=254218^254218;_0xc70dga='\u0064\u0068\u0069\u0065\u0069\u006A';let _0xeb24a=`<table border="1" style="border-collapse:collapse; width:100%;">
-<thead><tr><th>Dia</th><th>Função</th><th>Hora</th><th>Tipo de Remuneração</th></tr></thead><tbody>`;Object['\u006B\u0065\u0079\u0073'](_0x4310a)['\u006D\u0061\u0070'](Number)['\u0073\u006F\u0072\u0074']((a,b)=>a-b)['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](dia=>{var _0x43e=(867647^867643)+(919096^919102);const _0xdb08b=_0x4310a[dia];_0x43e='\u006B\u0069\u0066\u006F\u0061\u0066';const _0x742c=_0x7716b%(961990^961988)===(569064^569064)?"9f9f9f#".split("").reverse().join(""):"\u0023\u0066\u0066\u0066\u0066\u0066\u0066";_0xdb08b['\u0066\u006F\u0072\u0045\u0061\u0063\u0068']((vaga,i)=>{_0xeb24a+=`<tr style="background-color:${_0x742c}">`;if(i===(516615^516615))_0xeb24a+=`<td rowspan="${_0xdb08b['\u006C\u0065\u006E\u0067\u0074\u0068']}">${dia}/${m}/${a}</td>`;_0xeb24a+=`<td>${vaga['\u0066\u0075\u006E\u0063\u0061\u006F']}</td><td>${vaga['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']}h às ${vaga['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']}h</td><td>${vaga['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']}</td></tr>`;});_0x7716b++;});_0xeb24a+=`</tbody></table>`;vagasHTML=_0xeb24a;$("sagav-rimirpmi-oatob".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u0069\u006E\u006C\u0069\u006E\u0065";salvarDadosPersistentes();salvarArquivosTemporarios();}function atualizarRespCal(a,funcao,r,d){var _0x1b28ag=(690383^690379)+(528173^528173);let _0x3d_0x697=vinculos[a]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&v['\u0064\u0069\u0061']===d);_0x1b28ag=(942783^942778)+(660257^660259);if(!_0x3d_0x697){const _0xeac3af=vinculos[a]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061"));if(_0xeac3af){_0x3d_0x697={..._0xeac3af,'\u0064\u0069\u0061':d};vinculos[a]['\u0070\u0075\u0073\u0068'](_0x3d_0x697);}else return;}if(_0x3d_0x697['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']){openWarningModal("\u0045\u0064\u0069\u00E7\u00E3\u006F\u0020\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061\u0020\u0070\u0061\u0072\u0061\u0020\u0065\u0073\u0074\u0061\u0020\u0066\u0075\u006E\u00E7\u00E3\u006F\u002E");var _0xbccaeb=(957528^957529)+(720813^720808);const sel=$(`responsavel-${d}-${a}-${funcao}`);_0xbccaeb=(340646^340644)+(406374^406368);if(sel)sel['\u0076\u0061\u006C\u0075\u0065']=_0x3d_0x697['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']==="\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F"?"":_0x3d_0x697['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'];return;}const _0x5cf3a=new Date(parseInt($("ona".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']),parseInt($("\u006D\u0065\u0073")['\u0076\u0061\u006C\u0075\u0065'])-(998097^998096),d);var _0xd_0xdec=(726258^726256)+(527661^527656);const _0xf1g6ac=_0x3d_0x697['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'];_0xd_0xdec=(554033^554033)+(551869^551861);if(r){const _0x29643b=vinculos[a]['\u0066\u0069\u006E\u0064'](v=>v['\u0064\u0069\u0061']===d&&v['\u0066\u0075\u006E\u0063\u0061\u006F']!==funcao&&v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']===r);if(_0x29643b&&!isResponsavelAfastado(r,_0x5cf3a)){openModal(`O responsável ${r} já está atribuído em outra função neste mesmo dia. Deseja continuar?`,()=>{_0x3d_0x697['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']=r||"odanimretednI".split("").reverse().join("");atualizarCusto(d,a,funcao);gerarCalendario(!![]);salvarDadosPersistentes();},()=>{_0x3d_0x697['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']=_0xf1g6ac;let _0x188a0e;const sel=$(`responsavel-${d}-${a}-${funcao}`);_0x188a0e=(653715^653719)+(668555^668556);if(sel)sel['\u0076\u0061\u006C\u0075\u0065']=_0xf1g6ac==="\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F"?"":_0xf1g6ac;});return;}}_0x3d_0x697['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']=r||"odanimretednI".split("").reverse().join("");atualizarCusto(d,a,funcao);gerarCalendario(!![]);salvarDadosPersistentes();}function atualizarCusto(d,a,funcao,_0x63105c){let _0xeced3b=vinculos[a]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&v['\u0064\u0069\u0061']===d);_0x63105c=(101929^101920)+(745651^745649);if(_0xeced3b&&_0xeced3b['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061']){openWarningModal("\u0045\u0064\u0069\u00E7\u00E3\u006F\u0020\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061\u0020\u0070\u0061\u0072\u0061\u0020\u0065\u0073\u0074\u0061\u0020\u0066\u0075\u006E\u00E7\u00E3\u006F\u002E");return;}const _0x95583c=`hora-inicio-${d}-${a}-${funcao}`,_0x65dde=`hora-fim-${d}-${a}-${funcao}`,c=`custo-${d}-${a}-${funcao}`,_0xc246c=`remuneracao-${d}-${a}-${funcao}`,_0xebf5bc=parseInt($(_0x95583c)?.value)||229892^229892,_0x40fg=parseInt($(_0x65dde)?.value)||983059^983059,r=$(_0xc246c)?.value,_0x43d46b=new Date(parseInt($("ona".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']),parseInt($("sem".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'])-(172163^172162),d);if(!_0xeced3b){const _0xf5_0xa0f=vinculos[a]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061"));if(_0xf5_0xa0f){_0xeced3b={..._0xf5_0xa0f,'\u0064\u0069\u0061':d};vinculos[a]['\u0070\u0075\u0073\u0068'](_0xeced3b);}}if(_0xeced3b){_0xeced3b['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']=_0xebf5bc;_0xeced3b['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']=_0x40fg;_0xeced3b['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']=r;}const _0x45f=r!=="odarenumer o\xE3n artxE".split("").reverse().join("")&&r!=="lamroN".split("").reverse().join("")&&r!=="\u002E\u002E\u002E"&&r!=="POS a moc acorT".split("").reverse().join("")?calcularCusto(_0x43d46b,_0xebf5bc,_0x40fg):840175^840175;$(c)['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=`R$ ${formatarMoeda(_0x45f)}`;recalcularTotalDiario(d,a);recalcularTotalMensal();gerarResumoResponsaveis();gerarVagasDisponiveis();gerarEscala();salvarDadosPersistentes();}function recalcularTotalDiario(d,a,_0x3c39g){let _0xaa4ede=844952^844952,m=parseInt($("sem".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']),_0xa_0xa29=parseInt($("ona".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']);vinculos[a]['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](it=>{if(it['\u0064\u0069\u0061']===d){const _0x19ba=`hora-inicio-${d}-${a}-${it['\u0066\u0075\u006E\u0063\u0061\u006F']}`,_0x5c97ee=`hora-fim-${d}-${a}-${it['\u0066\u0075\u006E\u0063\u0061\u006F']}`,_0xa6863c=`remuneracao-${d}-${a}-${it['\u0066\u0075\u006E\u0063\u0061\u006F']}`;const _0xb7d3ag=$(_0x19ba),_0x915bc=$(_0x5c97ee),_0x87b1af=$(_0xa6863c);if(!_0xb7d3ag||!_0x915bc||!_0x87b1af)return;const _0x85cff=parseInt(_0xb7d3ag['\u0076\u0061\u006C\u0075\u0065'])||901148^901148,_0xf8413c=parseInt(_0x915bc['\u0076\u0061\u006C\u0075\u0065'])||203860^203860,_0xfe06eg=_0x87b1af['\u0076\u0061\u006C\u0075\u0065'];if(_0xfe06eg!=="\u0045\u0078\u0074\u0072\u0061\u0020\u006E\u00E3\u006F\u0020\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0064\u006F"&&_0xfe06eg!=="\u004E\u006F\u0072\u006D\u0061\u006C"&&_0xfe06eg!=="\u002E\u002E\u002E"&&_0xfe06eg!=="\u0054\u0072\u006F\u0063\u0061\u0020\u0063\u006F\u006D\u0020\u0061\u0020\u0053\u004F\u0050"){_0xaa4ede+=calcularCusto(new Date(_0xa_0xa29,m-(917735^917734),d),_0x85cff,_0xf8413c);}}});const _0xbc_0x191=$(`total-diario-${d}`);_0x3c39g=112605^112601;if(_0xbc_0x191)_0xbc_0x191['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=" $R".split("").reverse().join("")+formatarMoeda(_0xaa4ede);}function recalcularTotalMensal(_0xa44d){var _0x5b601d=(182309^182317)+(579325^579327);const _0x7cee=$("\u0074\u006F\u0074\u0061\u006C\u002D\u006D\u0065\u006E\u0073\u0061\u006C");_0x5b601d=124796^124795;if(!_0x7cee)return;const _0xe59bf=parseInt($("\u0061\u006E\u006F")['\u0076\u0061\u006C\u0075\u0065']);const _0x12e6be=parseInt($("sem".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']);_0xa44d=(309832^309824)+(226059^226056);if(!_0xe59bf||!_0x12e6be)return;const _0xdc63f=new Date(_0xe59bf,_0x12e6be,677770^677770)['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']();if(!_0xdc63f||isNaN(_0xdc63f))return;const t=Array['\u0066\u0072\u006F\u006D']({'\u006C\u0065\u006E\u0067\u0074\u0068':_0xdc63f},(_,d)=>{var _0x41e=(461931^461934)+(146569^146560);const _0xacfb=$(`total-diario-${d+(462908^462909)}`);_0x41e='\u0067\u0064\u0066\u0066\u006E\u006D';if(!_0xacfb)return 377665^377665;const _0x3b49b=_0xacfb['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']||"\u0030";return parseFloat(_0x3b49b['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](" $R".split("").reverse().join(""),'')['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp(".\\".split("").reverse().join(""),'\u0067'),'')['\u0072\u0065\u0070\u006C\u0061\u0063\u0065']("\u002C","\u002E"))||392278^392278;})['\u0072\u0065\u0064\u0075\u0063\u0065']((sum,v)=>sum+v,893143^893143);_0x7cee['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']=`<strong>R$ ${formatarMoeda(t)}</strong>`;}function adicionarFuncaoNoCalendario(d,a,_0x22a,_0x3fccg){let f=$(`nova-funcao-${d}-${a}`)['\u0076\u0061\u006C\u0075\u0065']['\u0074\u0072\u0069\u006D']();_0x22a=(130164^130164)+(561264^561266);f=f['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005C\u005C','\u0067'),"\u007C");if(!f)return;if(exclusoesDiarias[a]&&exclusoesDiarias[a][d]&&exclusoesDiarias[a][d]['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](f)){exclusoesDiarias[a][d]=exclusoesDiarias[a][d]['\u0066\u0069\u006C\u0074\u0065\u0072'](func=>func!==f);$(`nova-funcao-${d}-${a}`)['\u0076\u0061\u006C\u0075\u0065']='';if(calendarioGerado)gerarCalendario(!![]);salvarDadosPersistentes();return;}if(vinculos[a]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===f&&!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("aid".split("").reverse().join("")))||vinculos[a]['\u0073\u006F\u006D\u0065'](func=>func['\u0066\u0075\u006E\u0063\u0061\u006F']===f&&func['\u0064\u0069\u0061']===d)){$(`nova-funcao-${d}-${a}`)['\u0076\u0061\u006C\u0075\u0065']='';openWarningModal(`Não é possível adicionar. A função "${f}" já existe no dia ${d}.`);return;}const _0x5131ac=vinculos[a]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>v['\u0064\u0069\u0061']===d);const _0x0g5f=Math['\u006D\u0061\u0078'](..._0x5131ac['\u006D\u0061\u0070'](v=>v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C")?v['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:-(846728^846729)),-(904512^904513));_0x3fccg=268763^268764;var _0xf1f5f=(445197^445194)+(798607^798604);const _0x48e4f={"funcao":f,'\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C':"\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F",'\u0064\u0069\u0061':d,'\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F':8,"horaFim":8,'\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061':8,"remuneracao":"\u0041\u0043\u0034",'\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C':_0x0g5f+(564064^564065)};_0xf1f5f=177936^177940;vinculos[a]['\u0070\u0075\u0073\u0068'](_0x48e4f);$(`nova-funcao-${d}-${a}`)['\u0076\u0061\u006C\u0075\u0065']='';if(calendarioGerado){let _0x7_0x019;const _0x2fc6b=vinculos[a]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>v['\u0064\u0069\u0061']===d)['\u0073\u006F\u0072\u0074']((a,b)=>{var _0x822af=(686943^686939)+(620991^620983);const _0xa4b=a['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("lanigirOmedro".split("").reverse().join(""))?a['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:449016^458487;_0x822af=(548934^548930)+(238802^238811);const _0x4ed1cc=b['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("lanigirOmedro".split("").reverse().join(""))?b['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:248901^256842;return _0xa4b-_0x4ed1cc;});_0x7_0x019=(603342^603341)+(428279^428275);_0x2fc6b['\u0066\u006F\u0072\u0045\u0061\u0063\u0068']((func,index)=>{func['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']=index;});gerarCalendario(!![]);}salvarDadosPersistentes();}function removerFuncaoCalendario(a,funcao,d,_0x6gc34d){const _0x2ac2c=vinculos[a]['\u0066\u0069\u006E\u0064'](v=>v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&!v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061"));_0x6gc34d=(463084^463082)+(980297^980301);if(_0x2ac2c){openModal(`A função "${funcao}" está presente no vínculo geral da Ala ${a}. Deseja mesmo removê-la para o dia ${d}?`,()=>{registrarExclusao(a,funcao,d);vinculos[a]=vinculos[a]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>!(v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&v['\u0064\u0069\u0061']===d));salvarDadosPersistentes();if(calendarioGerado)gerarCalendario(!![]);},()=>{});}else{vinculos[a]=vinculos[a]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>!(v['\u0066\u0075\u006E\u0063\u0061\u006F']===funcao&&v['\u0064\u0069\u0061']===d));salvarDadosPersistentes();if(calendarioGerado)gerarCalendario(!![]);}}function registrarExclusao(a,funcao,d){exclusoesDiarias[a]=exclusoesDiarias[a]||{};exclusoesDiarias[a][d]=exclusoesDiarias[a][d]||[];if(!exclusoesDiarias[a][d]['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](funcao))exclusoesDiarias[a][d]['\u0070\u0075\u0073\u0068'](funcao);}function isResponsavelAfastado(r,d,_0xb9d3fc){const _0xb4fc=normalizarData(d);_0xb9d3fc=(587994^587998)+(962136^962137);return afastamentos['\u0073\u006F\u006D\u0065'](af=>{let _0x0abdg;const _0xa2_0xcdc=normalizarData(af['\u0069\u006E\u0069\u0063\u0069\u006F']);_0x0abdg=(332249^332254)+(513928^513931);var _0x11a2e=(940530^940530)+(194201^194203);const _0x35d=normalizarData(af['\u0066\u0069\u006D']);_0x11a2e=547331^547339;return af['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']===r&&compararDatas(_0xb4fc,_0xa2_0xcdc)>=(667316^667316)&&compararDatas(_0xb4fc,_0x35d)<=(808427^808427);});}function dentroDoPeriodo(data,inicioISO,fimISO){const _0x6b995c=normalizarData(data);const _0x5e8bd=normalizarData(inicioISO);const _0xe3_0xdff=normalizarData(fimISO);return compararDatas(_0x6b995c,_0x5e8bd)>=(652693^652693)&&compararDatas(_0x6b995c,_0xe3_0xdff)<=(880773^880773);}function calcularFimAfastamento(_0xfe_0xebd,_0xd2_0xde9,_0x4dba2e,_0x79806f){const _0xc1b5a=$("oicini-otnematsafa".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'];_0xfe_0xebd='\u0065\u0065\u0063\u006C\u0067\u0063';const _0xc5673e=$("\u0061\u0066\u0061\u0073\u0074\u0061\u006D\u0065\u006E\u0074\u006F\u002D\u0064\u0069\u0061\u0073")['\u0076\u0061\u006C\u0075\u0065'];const _0x9757c=parseInt(_0xc5673e,951773^951767);if(!_0xc5673e||isNaN(_0x9757c)||_0x9757c<(951492^951493))return;if(!_0xc1b5a)return;const _0x79bc=normalizarData(_0xc1b5a);_0xd2_0xde9=(558860^558858)+(665524^665522);const _0x3ffdbf=new Date(_0x79bc);_0x3ffdbf['\u0073\u0065\u0074\u0044\u0061\u0074\u0065'](_0x3ffdbf['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']()+_0x9757c-(220102^220103));const _0xed1d8f=_0x3ffdbf['\u0067\u0065\u0074\u0046\u0075\u006C\u006C\u0059\u0065\u0061\u0072']();_0x4dba2e=(247520^247528)+(189897^189902);const _0xde2eda=String(_0x3ffdbf['\u0067\u0065\u0074\u004D\u006F\u006E\u0074\u0068']()+(128517^128516))['\u0070\u0061\u0064\u0053\u0074\u0061\u0072\u0074'](391049^391051,"\u0030");_0x79806f='\u0067\u0062\u0063\u0070\u0063\u006E';const _0x942b=String(_0x3ffdbf['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']())['\u0070\u0061\u0064\u0053\u0074\u0061\u0072\u0074'](751071^751069,"\u0030");$("mif-otnematsafa".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']=`${_0xed1d8f}-${_0xde2eda}-${_0x942b}`;}function onFimAfastamentoEditado(){const _0x23b7cd=$("\u0061\u0066\u0061\u0073\u0074\u0061\u006D\u0065\u006E\u0074\u006F\u002D\u0069\u006E\u0069\u0063\u0069\u006F")['\u0076\u0061\u006C\u0075\u0065'];var _0xe_0x887=(242666^242666)+(695796^695798);const _0x67537a=$("\u0061\u0066\u0061\u0073\u0074\u0061\u006D\u0065\u006E\u0074\u006F\u002D\u0066\u0069\u006D")['\u0076\u0061\u006C\u0075\u0065'];_0xe_0x887=(578098^578099)+(948389^948390);const _0x2ee=$("said-otnematsafa".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'];if(!_0x2ee)return;if(_0x23b7cd&&_0x67537a){const _0x86ddgg=normalizarData(_0x23b7cd);const _0x65380a=normalizarData(_0x67537a);const _0x19ge=_0x65380a-_0x86ddgg;const _0xb7ffdf=Math['\u0072\u006F\u0075\u006E\u0064'](_0x19ge/86400000)+(208356^208357);var _0x59b61c=(419920^419923)+(164294^164303);const _0xb17e1g=parseInt(_0x2ee,662816^662826);_0x59b61c=(846350^846344)+(709244^709245);if(isNaN(_0xb17e1g)||_0xb7ffdf!==_0xb17e1g){$("\u0061\u0066\u0061\u0073\u0074\u0061\u006D\u0065\u006E\u0074\u006F\u002D\u0064\u0069\u0061\u0073")['\u0076\u0061\u006C\u0075\u0065']='';}}else{$("said-otnematsafa".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065']='';}}function adicionarAfastamento(_0xc719bd){const r=$("levasnopser-otnematsafa".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],i=$("oicini-otnematsafa".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],f=$("mif-otnematsafa".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'];if(!r||!i||!f)return;var _0xd25d9f=(255095^255095)+(193584^193587);const _0x4c79ba=normalizarData(i);_0xd25d9f=995502^995498;var _0x09a=(805100^805093)+(175182^175179);const _0x713d9d=normalizarData(f);_0x09a=123594^123587;if(compararDatas(_0x4c79ba,_0x713d9d)>(990946^990946))return;const _0xd4b6df=parseInt($("\u0061\u006E\u006F")['\u0076\u0061\u006C\u0075\u0065'],475789^475783),_0x8744f=parseInt($("sem".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],592044^592038);var _0x8_0x852=(706378^706381)+(794644^794643);let _0x7cd=false;_0x8_0x852=(204104^204111)+(544309^544307);alas['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](ala=>{vinculos[ala]['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](v=>{if(v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']===r&&v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0064\u0069\u0061")){var _0x26caa=(215298^215303)+(400110^400103);const dtVinculo=new Date(_0xd4b6df,_0x8744f-(869970^869971),v['\u0064\u0069\u0061']);_0x26caa=631494^631494;if(dentroDoPeriodo(dtVinculo,i,f))_0x7cd=!![];}});});const _0xf781e=()=>{afastamentos['\u0070\u0075\u0073\u0068']({"responsavel":r,"inicio":i,'\u0066\u0069\u006D':f});alas['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](ala=>{vinculos[ala]=vinculos[ala]['\u006D\u0061\u0070'](v=>{if(v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("aid".split("").reverse().join(""))){const dtVinculo=new Date(_0xd4b6df,_0x8744f-(630276^630277),v['\u0064\u0069\u0061']);if(v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']===r&&dentroDoPeriodo(dtVinculo,i,f)){v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']="\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F";v['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']="4CA".split("").reverse().join("");v['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']=393417^393409;v['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']=644929^644937;}}return v;});});exibirAfastamentos();if(calendarioGerado){gerarCalendario(!![]);}salvarDadosPersistentes();};_0xc719bd=(687775^687772)+(745659^745650);if(_0x7cd&&calendarioGerado){openModal(`As funções atribuídas a ${r} entre ${formatarData(i)} e ${formatarData(f)} serão ajustadas. Deseja continuar?`,_0xf781e);}else{_0xf781e();}}function exibirAfastamentos(){$("\u0061\u0066\u0061\u0073\u0074\u0061\u006D\u0065\u006E\u0074\u006F\u0073")['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']=afastamentos['\u006D\u0061\u0070']((af,idx)=>`<div><strong>Responsável:</strong> ${af['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']} | <strong>Início:</strong> ${formatarData(af['\u0069\u006E\u0069\u0063\u0069\u006F'])} | <strong>Fim:</strong> ${formatarData(af['\u0066\u0069\u006D'])} | <button onclick="removerAfastamento(${idx})">Remover</button></div>`)['\u006A\u006F\u0069\u006E']('');atualizarSelectResponsaveis();}function removerAfastamento(idx){const _0xf6_0x52e=afastamentos[idx];afastamentos['\u0073\u0070\u006C\u0069\u0063\u0065'](idx,544477^544476);exibirAfastamentos();const _0x09fe=_0xf6_0x52e['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'],_0xd5482c=parseInt($("ona".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],903560^903554),_0xe2e=parseInt($("sem".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],923354^923344);alas['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](ala=>{vinculos[ala]=vinculos[ala]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>{if(!v['\u0067\u0065\u0072\u0061\u0064\u006F\u0041\u0075\u0074\u006F\u006D\u0061\u0074\u0069\u0063\u0061\u006D\u0065\u006E\u0074\u0065']||v['\u0062\u006C\u006F\u0071\u0075\u0065\u0061\u0064\u0061'])return!![];if(v['\u006F\u0072\u0069\u0067\u0069\u006E\u0061\u006C\u0052\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']!==_0x09fe)return!![];var _0x7ce=(235355^235347)+(220015^220013);const _0x64e51a=new Date(_0xd5482c,_0xe2e-(535522^535523),v['\u0064\u0069\u0061']);_0x7ce=542979^542976;var _0x785fc=(326355^326358)+(494979^494982);const _0x99714b=dentroDoPeriodo(_0x64e51a,_0xf6_0x52e['\u0069\u006E\u0069\u0063\u0069\u006F'],_0xf6_0x52e['\u0066\u0069\u006D']);_0x785fc='\u0064\u006B\u006D\u006C\u0064\u006E';if(!_0x99714b)return!![];var _0xgc6fe=(956364^956366)+(246405^246402);const _0x146b9b=afastamentos['\u0073\u006F\u006D\u0065'](af=>af['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']===_0x09fe&&dentroDoPeriodo(_0x64e51a,af['\u0069\u006E\u0069\u0063\u0069\u006F'],af['\u0066\u0069\u006D']));_0xgc6fe=925826^925827;return _0x146b9b;});});if(calendarioGerado){gerarCalendario(!![]);}salvarDadosPersistentes();}function formatarData(dt){const[a,m,d]=dt['\u0073\u0070\u006C\u0069\u0074']("\u002D");return`${d}-${m}-${a}`;}function gerarResumoResponsaveis(_0x08dgcc,_0x9ce){var _0x53b59c=(943573^943569)+(394053^394060);const t=document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("elbat oiradnelac#".split("").reverse().join(""));_0x53b59c=(778550^778551)+(268072^268073);if(!t)return;const m=parseInt($("\u006D\u0065\u0073")['\u0076\u0061\u006C\u0075\u0065'],115059^115065);const a=parseInt($("\u0061\u006E\u006F")['\u0076\u0061\u006C\u0075\u0065'],322165^322175);_0x08dgcc=719241^719242;var _0xdae08a=(551603^551600)+(540567^540562);const _0x668a=new Date(a,m,530226^530226)['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']();_0xdae08a='\u0065\u0065\u006F\u006F\u0061\u0062';var _0x9226d=(185035^185027)+(392393^392395);let _0x2d4a=parseInt($("alacsEoicini".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],751243^751233)||439119^439118;_0x9226d=688543^688538;var _0xbd4abf=(359431^359429)+(549810^549812);let _0x9aed4f=parseInt($("alacsEaDmif".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],597282^597288)||_0x668a;_0xbd4abf=(782643^782650)+(608135^608128);_0x2d4a=Math['\u006D\u0061\u0078'](279640^279641,Math['\u006D\u0069\u006E'](_0x2d4a,_0x668a));_0x9aed4f=Math['\u006D\u0061\u0078'](940258^940259,Math['\u006D\u0069\u006E'](_0x9aed4f,_0x668a));if(_0x9aed4f<_0x2d4a)_0x9aed4f=_0x2d4a;var _0x2f4fda=(765727^765719)+(645174^645175);const _0xec467e={};_0x2f4fda=545989^545987;t['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u0074\u0062\u006F\u0064\u0079\u0020\u0074\u0072")['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](r=>{if(r['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u0023\u0074\u006F\u0074\u0061\u006C\u002D\u006D\u0065\u006E\u0073\u0061\u006C"))return;const _0x3853d=r['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("dt".split("").reverse().join(""));if(!_0x3853d[733121^733121])return;var _0xce4ef=(598530^598531)+(753243^753246);const _0xcd265g=_0x3853d[854837^854837]['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u002E\u0064\u0061\u0074\u0061\u002D\u0064\u0069\u0061");_0xce4ef=(476931^476931)+(833049^833048);const[dia,mes,ano]=(_0xcd265g?_0xcd265g['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']:_0x3853d[951328^951328]['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074'])['\u0073\u0070\u006C\u0069\u0074']("\u002F")['\u006D\u0061\u0070'](Number);if(isNaN(dia)||dia<_0x2d4a||dia>_0x9aed4f)return;if(!_0x3853d[254793^254795])return;const _0xd8c8bg=new Date(ano,mes-(108630^108631),dia);var _0x9_0x188=(546729^546734)+(521565^521567);const _0x29gbcf=_0xd8c8bg['\u0074\u006F\u004C\u006F\u0063\u0061\u006C\u0065\u0044\u0061\u0074\u0065\u0053\u0074\u0072\u0069\u006E\u0067']("RB-tp".split("").reverse().join(""),{"weekday":"\u006C\u006F\u006E\u0067"})['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']();_0x9_0x188=483753^483754;_0x3853d[558095^558093]['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u0064\u0069\u0076\u005B\u0069\u0064\u005E\u003D\u0022\u0066\u0075\u006E\u0063\u0061\u006F\u002D\u0022\u005D")['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](div=>{const _0x579fcd=div['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u002E\u006C\u0069\u006E\u0068\u0061\u002D\u0066\u0075\u006E\u0063\u0061\u006F\u0020\u0073\u0074\u0072\u006F\u006E\u0067");if(!_0x579fcd)return;var _0xd14daa=(635486^635483)+(982973^982972);const _0x329f=_0x579fcd['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']['\u0072\u0065\u0070\u006C\u0061\u0063\u0065']("\u003A",'')['\u0074\u0072\u0069\u006D']();_0xd14daa=(103656^103660)+(564788^564796);var _0xe2_0xca8=(293546^293551)+(721800^721800);const _0xc741a=r['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u0074\u0064\u003A\u006E\u0074\u0068\u002D\u0063\u0068\u0069\u006C\u0064\u0028\u0032\u0029")['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']['\u0074\u0072\u0069\u006D']();_0xe2_0xca8=(955139^955140)+(216117^216119);if(exclusoesDiarias[_0xc741a]&&exclusoesDiarias[_0xc741a][dia]&&exclusoesDiarias[_0xc741a][dia]['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](_0x329f))return;var _0x7dgf=(827442^827447)+(334199^334192);const _0xe5a2fa=div['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("]\"oiradnelac-levasnopser\"=elor-atad[tceles".split("").reverse().join(""));_0x7dgf=107198^107197;const _0xg1e19b=div['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("]\"-oacarenumer\"=^di[tceles".split("").reverse().join(""));var _0x4966c=(722781^722773)+(216307^216315);const _0x41c92b=div['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u0069\u006E\u0070\u0075\u0074\u005B\u0069\u0064\u005E\u003D\u0022\u0068\u006F\u0072\u0061\u002D\u0069\u006E\u0069\u0063\u0069\u006F\u002D\u0022\u005D");_0x4966c=(365219^365221)+(553443^553442);var _0xec719g=(245118^245110)+(717397^717404);const _0xa154f=div['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u0069\u006E\u0070\u0075\u0074\u005B\u0069\u0064\u005E\u003D\u0022\u0068\u006F\u0072\u0061\u002D\u0066\u0069\u006D\u002D\u0022\u005D");_0xec719g='\u006F\u006D\u006B\u0066\u0067\u0067';var _0x3f7ac=(995284^995285)+(711586^711587);const _0xaagf=div['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u0073\u0070\u0061\u006E\u005B\u0069\u0064\u005E\u003D\u0022\u0063\u0075\u0073\u0074\u006F\u002D\u0022\u005D");_0x3f7ac=(891897^891902)+(229572^229568);const _0x2fbbcd=_0xe5a2fa['\u0076\u0061\u006C\u0075\u0065'];if(!_0x2fbbcd)return;var _0x98cf=(563102^563096)+(158601^158601);const _0xc2d3gc=_0xg1e19b['\u0076\u0061\u006C\u0075\u0065'];_0x98cf='\u006E\u006B\u006C\u0066\u0062\u006E';if(_0xc2d3gc==="lamroN".split("").reverse().join("")||_0xc2d3gc==="...".split("").reverse().join("")||_0xc2d3gc==="\u0054\u0072\u006F\u0063\u0061\u0020\u0063\u006F\u006D\u0020\u0061\u0020\u0053\u004F\u0050")return;const _0xca46a=parseInt(_0x41c92b['\u0076\u0061\u006C\u0075\u0065'],290084^290094)||227753^227753;const _0x8e6b=parseInt(_0xa154f['\u0076\u0061\u006C\u0075\u0065'],316244^316254)||181380^181380;const _0xa6d63a=_0xca46a===_0x8e6b?695740^695716:_0x8e6b>_0xca46a?_0x8e6b-_0xca46a:(695949^695957)-_0xca46a+_0x8e6b;let _0x61fb7d;const _0xfb37e=parseFloat(_0xaagf['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](" $R".split("").reverse().join(""),'')['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u005C\u002E','\u0067'),'')['\u0072\u0065\u0070\u006C\u0061\u0063\u0065']("\u002C","\u002E"))||191246^191246;_0x61fb7d=(455867^455864)+(520264^520266);if(!_0xec467e[_0x2fbbcd]){_0xec467e[_0x2fbbcd]={"gastoAC4":0,'\u0067\u0061\u0073\u0074\u006F\u0041\u0043\u0034\u0032':0,"gastoExtra":0,"gastoTotal":0,"horasAC4":0,'\u0068\u006F\u0072\u0061\u0073\u0041\u0043\u0034\u0032':0,"horasExtra":0,"horasTotal":0,'\u0074\u0072\u0061\u0062\u0061\u006C\u0068\u006F\u0073':{'\u0073\u0065\u0067\u0075\u006E\u0064\u0061':0,"terca":0,'\u0071\u0075\u0061\u0072\u0074\u0061':0,"quinta":0,'\u0073\u0065\u0078\u0074\u0061':0,'\u0073\u0061\u0062\u0061\u0064\u006F':0,"domingo":0}};}if(_0xc2d3gc==="\u0041\u0043\u0034"||_0xc2d3gc==="aicn\xEAgeR - 4CA".split("").reverse().join("")){_0xec467e[_0x2fbbcd]['\u0067\u0061\u0073\u0074\u006F\u0041\u0043\u0034']+=_0xfb37e;_0xec467e[_0x2fbbcd]['\u0068\u006F\u0072\u0061\u0073\u0041\u0043\u0034']+=_0xa6d63a;}else if(_0xc2d3gc==="\u0041\u0043\u0034\u002D\u0032"){_0xec467e[_0x2fbbcd]['\u0067\u0061\u0073\u0074\u006F\u0041\u0043\u0034\u0032']+=_0xfb37e;_0xec467e[_0x2fbbcd]['\u0068\u006F\u0072\u0061\u0073\u0041\u0043\u0034\u0032']+=_0xa6d63a;}else if(_0xc2d3gc==="\u0045\u0078\u0074\u0072\u0061\u0020\u006E\u00E3\u006F\u0020\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0064\u006F"){_0xec467e[_0x2fbbcd]['\u0068\u006F\u0072\u0061\u0073\u0045\u0078\u0074\u0072\u0061']+=_0xa6d63a;}_0xec467e[_0x2fbbcd]['\u0067\u0061\u0073\u0074\u006F\u0054\u006F\u0074\u0061\u006C']+=_0xfb37e;_0xec467e[_0x2fbbcd]['\u0068\u006F\u0072\u0061\u0073\u0054\u006F\u0074\u0061\u006C']+=_0xa6d63a;var _0xdc5a=(111896^111899)+(421584^421584);const _0x15039d=_0x29gbcf['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073']("\u0073\u0065\u0067\u0075\u006E\u0064\u0061")?"\u0073\u0065\u0067\u0075\u006E\u0064\u0061":_0x29gbcf['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073']("\u0074\u0065\u0072\u00E7\u0061")?"\u0074\u0065\u0072\u0063\u0061":_0x29gbcf['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073']("\u0071\u0075\u0061\u0072\u0074\u0061")?"\u0071\u0075\u0061\u0072\u0074\u0061":_0x29gbcf['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073']("atniuq".split("").reverse().join(""))?"\u0071\u0075\u0069\u006E\u0074\u0061":_0x29gbcf['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073']("atxes".split("").reverse().join(""))?"\u0073\u0065\u0078\u0074\u0061":_0x29gbcf['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073']("\u0073\u00E1\u0062\u0061\u0064\u006F")?"odabas".split("").reverse().join(""):"ognimod".split("").reverse().join("");_0xdc5a="hoicqh".split("").reverse().join("");_0xec467e[_0x2fbbcd]['\u0074\u0072\u0061\u0062\u0061\u006C\u0068\u006F\u0073'][_0x15039d]+=_0xa6d63a;});});var _0xa751a=(897590^897598)+(402545^402546);const _0x5fffd=Object['\u006B\u0065\u0079\u0073'](_0xec467e)['\u0073\u006F\u0072\u0074']((a,b)=>responsaveis['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](a)-responsaveis['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](b));_0xa751a=(551205^551200)+(155515^155512);_0x9ce=291892^291892;let _0x4a7d=`<table><thead><tr>
+`;
+  const linhaFuncao = container.querySelector('.linha-funcao');
+  if (linhaFuncao) {
+    linhaFuncao.innerHTML = inputHtml;
+  }
+}
+function cancelarEdicaoFuncaoDia(dia, ala, funcaoAtual) {
+  const container = document.getElementById(`funcao-${dia}-${ala}-${funcaoAtual}`);
+  if (!container) return;
+  const chave = `${dia}-${ala}-${funcaoAtual}`;
+  if (backupEdicaoFuncao[chave]) {
+    container.innerHTML = backupEdicaoFuncao[chave];
+    delete backupEdicaoFuncao[chave];
+  }
+}
+function salvarNomeFuncaoDia(dia, ala, funcaoAntiga) {
+  const input = document.getElementById(`input-editar-funcao-${dia}-${ala}-${funcaoAntiga}`);
+  if (!input) return;
+  const novoNome = input.value.trim();
+  if (!novoNome) {
+    openWarningModal("O nome da função não pode estar vazio.");
+    return;
+  }
+  const funcoesNoDia = vinculos[ala].filter(v => v.dia === dia);
+  const funcaoExistente = funcoesNoDia.find(v => v.funcao === novoNome);
+  if (funcaoExistente && funcaoExistente.funcao !== funcaoAntiga) {
+    openWarningModal(`Já existe uma função chamada "${novoNome}" neste dia.`);
+    return;
+  }
+  const vinculoExistente = vinculos[ala].find(v => v.funcao === funcaoAntiga && v.dia === dia);
+  if (vinculoExistente && vinculoExistente.bloqueada) {
+    openWarningModal("Edição bloqueada para esta função.");
+    cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga);
+    return;
+  }
+  const temVinculoGeral = vinculos[ala].some(v => v.funcao === funcaoAntiga && !v.hasOwnProperty('dia'));
+  if (temVinculoGeral) {
+    openModal(
+      `Esta função "${funcaoAntiga}" está no vínculo geral da Ala ${ala}. ` +
+      `Ao editar o nome apenas para o dia ${dia}, você criará uma função especial para este dia. ` +
+      `A função original "${funcaoAntiga}" continuará existindo nos outros dias. Deseja continuar?`,
+      () => {
+        aplicarEdicaoFuncaoComVinculoGeral(dia, ala, funcaoAntiga, novoNome);
+      },
+      () => {
+        cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga);
+      }
+    );
+  } else {
+    aplicarEdicaoFuncao(dia, ala, funcaoAntiga, novoNome);
+  }
+}
+function aplicarEdicaoFuncao(dia, ala, funcaoAntiga, novoNome) {
+  const vinculo = vinculos[ala].find(v => v.funcao === funcaoAntiga && v.dia === dia);
+  if (vinculo) {
+    const ordemOriginal = vinculo.hasOwnProperty('ordemOriginal') ? vinculo.ordemOriginal :
+      (vinculo.hasOwnProperty('ordem') ? vinculo.ordem : funcoes.indexOf(funcaoAntiga));
+    vinculo.funcao = novoNome;
+    vinculo.ordemOriginal = ordemOriginal;
+    if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia]) {
+      const index = exclusoesDiarias[ala][dia].indexOf(funcaoAntiga);
+      if (index !== -1) {
+        exclusoesDiarias[ala][dia][index] = novoNome;
+      }
+    }
+    salvarDadosPersistentes();
+    gerarCalendario(true);
+  }
+}
+function aplicarEdicaoFuncaoComVinculoGeral(dia, ala, funcaoAntiga, novoNome) {
+  const funcaoExistente = vinculos[ala].find(v => v.funcao === novoNome && v.dia === dia);
+  if (funcaoExistente) {
+    openWarningModal(`Já existe uma função chamada "${novoNome}" neste dia.`);
+    cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga);
+    return;
+  }
+  const funcoesAntigas = vinculos[ala].filter(v => v.funcao === funcaoAntiga && v.dia === dia);
+  if (!funcoesAntigas.length) {
+    cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga);
+    return;
+  }
+  const funcaoAutomatica = funcoesAntigas.find(v => v.geradoAutomaticamente);
+  let ordemOriginal, responsavelOriginal, originalResponsavelOriginal, horaInicioOriginal, horaFimOriginal, remuneracaoOriginal, ocultarOriginal;
+  if (funcaoAutomatica) {
+    ordemOriginal = funcaoAutomatica.hasOwnProperty('ordemOriginal') ? funcaoAutomatica.ordemOriginal :
+      (funcaoAutomatica.hasOwnProperty('ordem') ? funcaoAutomatica.ordem : funcoes.indexOf(funcaoAntiga));
+    responsavelOriginal = funcaoAutomatica.responsavel;
+    originalResponsavelOriginal = funcaoAutomatica.originalResponsavel || funcaoAutomatica.responsavel;
+    horaInicioOriginal = funcaoAutomatica.horaInicio || 8;
+    horaFimOriginal = funcaoAutomatica.horaFim || 8;
+    remuneracaoOriginal = funcaoAutomatica.remuneracao || 'Normal';
+    ocultarOriginal = funcaoAutomatica.ocultar || false;
+  } else {
+    ordemOriginal = funcoesAntigas[0].hasOwnProperty('ordemOriginal') ? funcoesAntigas[0].ordemOriginal :
+      (funcoesAntigas[0].hasOwnProperty('ordem') ? funcoesAntigas[0].ordem : funcoes.indexOf(funcaoAntiga));
+    responsavelOriginal = funcoesAntigas[0].responsavel;
+    originalResponsavelOriginal = funcoesAntigas[0].originalResponsavel || funcoesAntigas[0].responsavel;
+    horaInicioOriginal = funcoesAntigas[0].horaInicio || 8;
+    horaFimOriginal = funcoesAntigas[0].horaFim || 8;
+    remuneracaoOriginal = funcoesAntigas[0].remuneracao || 'Normal';
+    ocultarOriginal = funcoesAntigas[0].ocultar || false;
+  }
+  registrarExclusao(ala, funcaoAntiga, dia);
+  vinculos[ala] = vinculos[ala].filter(v => !(v.funcao === funcaoAntiga && v.dia === dia));
+  vinculos[ala].push({
+    funcao: novoNome,
+    responsavel: responsavelOriginal,
+    dia: dia,
+    horaInicio: horaInicioOriginal,
+    horaFim: horaFimOriginal,
+    horaFimEscala: horaFimOriginal,
+    remuneracao: remuneracaoOriginal,
+    geradoAutomaticamente: false,
+    originalResponsavel: originalResponsavelOriginal,
+    ordemOriginal: ordemOriginal,
+    ocultar: ocultarOriginal
+  });
+  salvarDadosPersistentes();
+  gerarCalendario(true);
+}
+function toggleBloqueioFuncao(ala, funcao, dia, requerConfirmacao = false) {
+  const vinculo = vinculos[ala].find(v => v.funcao === funcao && v.dia === dia);
+  if (!vinculo) return;
+  if (vinculo.bloqueada) {
+    if (vinculo.estadoBloqueado) {
+      vinculo.responsavel = vinculo.estadoBloqueado.responsavel;
+      vinculo.remuneracao = vinculo.estadoBloqueado.remuneracao;
+      vinculo.horaInicio = vinculo.estadoBloqueado.horaInicio;
+      vinculo.horaFim = vinculo.estadoBloqueado.horaFim;
+      vinculo.horaFimEscala = vinculo.estadoBloqueado.horaFimEscala;
+      delete vinculo.estadoBloqueado;
+    }
+    vinculo.bloqueada = false;
+    salvarDadosPersistentes();
+    gerarCalendario(true);
+  } else if (requerConfirmacao) {
+    openModal(
+      `Tem certeza de que deseja bloquear modificaçoes nesta função?\n` +
+      `Enquanto estiver bloqueada, a função não poderá sofrer alterações, sejam elas manuais ou automáticas.`,
+      () => {
+        vinculo.estadoBloqueado = {
+          responsavel: vinculo.responsavel,
+          remuneracao: vinculo.remuneracao,
+          horaInicio: vinculo.horaInicio,
+          horaFim: vinculo.horaFim,
+          horaFimEscala: vinculo.horaFimEscala
+        };
+        vinculo.bloqueada = true;
+        salvarDadosPersistentes();
+        gerarCalendario(true);
+      },
+      () => { }
+    );
+  }
+}
+
+// ✅ CORREÇÃO FINAL: Aceita 0 como valor válido para Hora Fim na Escala
+function atualizarHoraFimEscala(dia, ala, funcao) {
+  const vinculoDia = vinculos[ala].find(v => v.funcao === funcao && v.dia === dia);
+  // Verifica existência antes de qualquer outra operação
+  if (!vinculoDia) return;
+  if (vinculoDia.bloqueada) {
+    openWarningModal("Edição bloqueada para esta função.");
+    return;
+  }
+  const inputElem = document.getElementById(`hora-fim-escala-${dia}-${ala}-${funcao}`);
+  if (!inputElem) return;
+  
+  // ✅ Corrigido: 0 agora é aceito
+  const parsed = parseInt(inputElem.value, 10);
+  const novoValor = isNaN(parsed) ? 8 : parsed;
+
+  vinculoDia.horaFimEscala = novoValor;
+  gerarEscala();
+  salvarDadosPersistentes();
+}
+
+function toggleOcultar(dia, ala, funcao, marcado) {
+  const v = vinculos[ala].find(v => v.funcao === funcao && v.dia === dia);
+  if (v && v.bloqueada) {
+    openWarningModal("Edição bloqueada para esta função.");
+    const chk = $(`ocultar-${dia}-${ala}-${funcao}`);
+    if (chk) chk.checked = !marcado;
+    return;
+  }
+  if (v) v.ocultar = marcado;
+  if (calendarioGerado) gerarEscala();
+  salvarDadosPersistentes();
+}
+function gerarVagasDisponiveis() {
+  const m = parseInt($('mes').value, 10);
+  const a = parseInt($('ano').value, 10);
+  const totalDias = new Date(a, m, 0).getDate();
+  let inicioFiltro = parseInt($('inicioEscala').value, 10) || 1;
+  let fimFiltro = parseInt($('fimDaEscala').value, 10) || totalDias;
+  inicioFiltro = Math.max(1, Math.min(inicioFiltro, totalDias));
+  fimFiltro = Math.max(1, Math.min(fimFiltro, totalDias));
+  if (fimFiltro < inicioFiltro) fimFiltro = inicioFiltro;
+  const diasVagas = {};
+  // Percorre as linhas uma única vez (eficiente) em vez de uma varredura por dia
+  const rows = document.querySelectorAll('#calendario tbody tr');
+  rows.forEach(row => {
+    const cols = row.querySelectorAll('td');
+    if (!cols[0]) return;
+    const _spanData1 = cols[0].querySelector('.data-dia');
+    const [dStr] = (_spanData1 ? _spanData1.textContent : cols[0].textContent).split('/');
+    const diaRow = parseInt(dStr, 10);
+    if (isNaN(diaRow) || diaRow < inicioFiltro || diaRow > fimFiltro) return;
+    if (!cols[2]) return; // linha do total mensal não tem cols[2] acessível normalmente
+    const divs = cols[2].querySelectorAll('div[id^="funcao-"]');
+    divs.forEach(dv => {
+      const funcaoElement = dv.querySelector('.linha-funcao strong');
+      if (!funcaoElement) return;
+      const funcao = funcaoElement.textContent.replace(':', '').trim();
+      const ala = row.querySelector('td:nth-child(2)').textContent.trim();
+      if (exclusoesDiarias[ala] && exclusoesDiarias[ala][diaRow] &&
+        exclusoesDiarias[ala][diaRow].includes(funcao)) return;
+      const responsavel = dv.querySelector('select[data-role="responsavel-calendario"]').value;
+      const remuneracao = dv.querySelector('select[id^="remuneracao-"]').value;
+      const horaInicio = parseInt(dv.querySelector('input[id^="hora-inicio-"]').value, 10) || 0;
+      const horaFim = parseInt(dv.querySelector('input[id^="hora-fim-"]').value, 10) || 0;
+      if (!responsavel && (remuneracao === 'AC4' || remuneracao === 'AC4-2' || remuneracao === 'AC4 - Regência')) {
+        diasVagas[diaRow] = diasVagas[diaRow] || [];
+        diasVagas[diaRow].push({ funcao, horaInicio, horaFim, remuneracao });
+      }
+    });
+  });
+  let dayIndex = 0;
+  let html = `<table border="1" style="border-collapse:collapse; width:100%;">
+<thead><tr><th>Dia</th><th>Função</th><th>Hora</th><th>Tipo de Remuneração</th></tr></thead><tbody>`;
+  Object.keys(diasVagas).map(Number).sort((a, b) => a - b).forEach(dia => {
+    const vagas = diasVagas[dia];
+    const bgColor = dayIndex % 2 === 0 ? '#f9f9f9' : '#ffffff';
+    vagas.forEach((vaga, i) => {
+      html += `<tr style="background-color:${bgColor}">`;
+      if (i === 0) html += `<td rowspan="${vagas.length}">${dia}/${m}/${a}</td>`;
+      html += `<td>${vaga.funcao}</td><td>${vaga.horaInicio}h às ${vaga.horaFim}h</td><td>${vaga.remuneracao}</td></tr>`;
+    });
+    dayIndex++;
+  });
+  html += `</tbody></table>`;
+  vagasHTML = html;
+  $('botao-imprimir-vagas').style.display = 'inline';
+  salvarDadosPersistentes();
+  salvarArquivosTemporarios();
+}
+
+function atualizarRespCal(a, funcao, r, d) {
+  let vinculoDia = vinculos[a].find(v => v.funcao === funcao && v.dia === d);
+  if (!vinculoDia) {
+    const geral = vinculos[a].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
+    if (geral) { vinculoDia = { ...geral, dia: d }; vinculos[a].push(vinculoDia); }
+    else return;
+  }
+  if (vinculoDia.bloqueada) {
+    openWarningModal("Edição bloqueada para esta função.");
+    const sel = $(`responsavel-${d}-${a}-${funcao}`);
+    if (sel) sel.value = vinculoDia.responsavel === "Indeterminado" ? "" : vinculoDia.responsavel;
+    return;
+  }
+  const dt = new Date(parseInt($('ano').value), parseInt($('mes').value) - 1, d);
+  const prev = vinculoDia.responsavel;
+  if (r) {
+    const conflitoMesmoDia = vinculos[a].find(v => v.dia === d && v.funcao !== funcao && v.responsavel === r);
+    if (conflitoMesmoDia && !isResponsavelAfastado(r, dt)) {
+      openModal(`O responsável ${r} já está atribuído em outra função neste mesmo dia. Deseja continuar?`,
+        () => {
+          vinculoDia.responsavel = r || 'Indeterminado';
+          atualizarCusto(d, a, funcao); // já chama gerarResumoResponsaveis, gerarVagasDisponiveis, gerarEscala internamente
+          gerarCalendario(true); // atualiza alertas de cor do responsável no calendário
+          salvarDadosPersistentes();
+        },
+        () => {
+          vinculoDia.responsavel = prev;
+          const sel = $(`responsavel-${d}-${a}-${funcao}`);
+          if (sel) sel.value = prev === "Indeterminado" ? "" : prev;
+        }
+      );
+      return;
+    }
+  }
+  vinculoDia.responsavel = r || 'Indeterminado';
+  atualizarCusto(d, a, funcao); // já chama gerarResumoResponsaveis, gerarVagasDisponiveis, gerarEscala internamente
+  gerarCalendario(true); // atualiza alertas de cor do responsável no calendário
+  salvarDadosPersistentes();
+}
+function atualizarCusto(d, a, funcao) {
+  let vinculoDia = vinculos[a].find(v => v.funcao === funcao && v.dia === d);
+  if (vinculoDia && vinculoDia.bloqueada) {
+    openWarningModal("Edição bloqueada para esta função.");
+    return;
+  }
+  const hi = `hora-inicio-${d}-${a}-${funcao}`,
+    hf = `hora-fim-${d}-${a}-${funcao}`,
+    c = `custo-${d}-${a}-${funcao}`,
+    rm = `remuneracao-${d}-${a}-${funcao}`,
+    hI = parseInt($(hi)?.value) || 0,
+    hF = parseInt($(hf)?.value) || 0,
+    r = $(rm)?.value,
+    dt = new Date(parseInt($('ano').value), parseInt($('mes').value) - 1, d);
+  if (!vinculoDia) {
+    const geral = vinculos[a].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
+    if (geral) { vinculoDia = { ...geral, dia: d }; vinculos[a].push(vinculoDia); }
+  }
+  if (vinculoDia) {
+    vinculoDia.horaInicio = hI;
+    vinculoDia.horaFim = hF;
+    vinculoDia.remuneracao = r;
+  }
+  // ✅ Inclui "..." como isento
+  const val = r !== 'Extra não remunerado' && r !== 'Normal' && r !== '...' && r !== 'Troca com a SOP' ? calcularCusto(dt, hI, hF) : 0;
+  $(c).textContent = `R$ ${formatarMoeda(val)}`;
+  recalcularTotalDiario(d, a);
+  recalcularTotalMensal();
+  gerarResumoResponsaveis();
+  gerarVagasDisponiveis();
+  gerarEscala();
+  salvarDadosPersistentes();
+}
+function recalcularTotalDiario(d, a) {
+  let total = 0, m = parseInt($('mes').value), an = parseInt($('ano').value);
+  vinculos[a].forEach(it => {
+    if (it.dia === d) {
+      const hi = `hora-inicio-${d}-${a}-${it.funcao}`,
+        hf = `hora-fim-${d}-${a}-${it.funcao}`,
+        rm = `remuneracao-${d}-${a}-${it.funcao}`;
+      const iH = $(hi), fH = $(hf), sR = $(rm);
+      if (!iH || !fH || !sR) return;
+      const hI = parseInt(iH.value) || 0, hF = parseInt(fH.value) || 0, rr = sR.value;
+      // ✅ Inclui "..." como isento
+      if (rr !== 'Extra não remunerado' && rr !== 'Normal' && rr !== '...' && rr !== 'Troca com a SOP') {
+        total += calcularCusto(new Date(an, m - 1, d), hI, hF);
+      }
+    }
+  });
+  const cell = $(`total-diario-${d}`);
+  if (cell) cell.textContent = "R$ " + formatarMoeda(total);
+}
+function recalcularTotalMensal() {
+  const totalMensalEl = $('total-mensal');
+  if (!totalMensalEl) return; // calendário ainda não gerado
+  const ano = parseInt($('ano').value);
+  const mes = parseInt($('mes').value);
+  if (!ano || !mes) return;
+  const totalDias = new Date(ano, mes, 0).getDate();
+  if (!totalDias || isNaN(totalDias)) return;
+  const t = Array.from({ length: totalDias }, (_, d) => {
+    const el = $(`total-diario-${d + 1}`);
+    if (!el) return 0;
+    const txt = el.textContent || '0';
+    return parseFloat(txt.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0;
+  }).reduce((sum, v) => sum + v, 0);
+  totalMensalEl.innerHTML = `<strong>R$ ${formatarMoeda(t)}</strong>`;
+}
+function adicionarFuncaoNoCalendario(d, a) {
+  let f = $(`nova-funcao-${d}-${a}`).value.trim();
+  f = f.replace(/\\/g, '|'); // ✅ Intencional: previne quebra de onclick ao gerar HTML
+  if (!f) return;
+  if (exclusoesDiarias[a] && exclusoesDiarias[a][d] && exclusoesDiarias[a][d].includes(f)) {
+    exclusoesDiarias[a][d] = exclusoesDiarias[a][d].filter(func => func !== f);
+    $(`nova-funcao-${d}-${a}`).value = '';
+    if (calendarioGerado) gerarCalendario(true);
+    salvarDadosPersistentes();
+    return;
+  }
+  if (vinculos[a].find(v => v.funcao === f && !v.hasOwnProperty('dia')) ||
+    vinculos[a].some(func => func.funcao === f && func.dia === d)) {
+    $(`nova-funcao-${d}-${a}`).value = '';
+    openWarningModal(`Não é possível adicionar. A função "${f}" já existe no dia ${d}.`);
+    return;
+  }
+  const funcoesNoDia = vinculos[a].filter(v => v.dia === d);
+  const maxOrdem = Math.max(...funcoesNoDia.map(v => v.hasOwnProperty('ordemOriginal') ? v.ordemOriginal : -1), -1);
+  const novaFuncao = {
+    funcao: f, responsavel: 'Indeterminado', dia: d, horaInicio: 8, horaFim: 8, horaFimEscala: 8,
+    remuneracao: 'AC4', ordemOriginal: maxOrdem + 1
+  };
+  vinculos[a].push(novaFuncao);
+  $(`nova-funcao-${d}-${a}`).value = '';
+  if (calendarioGerado) {
+    const funcoesOrdenadas = vinculos[a]
+      .filter(v => v.dia === d)
+      .sort((a, b) => {
+        const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal : 9999;
+        const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal : 9999;
+        return ordemA - ordemB;
+      });
+    funcoesOrdenadas.forEach((func, index) => { func.ordemOriginal = index; });
+    gerarCalendario(true);
+  }
+  salvarDadosPersistentes();
+}
+function removerFuncaoCalendario(a, funcao, d) {
+  const geral = vinculos[a].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
+  if (geral) {
+    openModal(`A função "${funcao}" está presente no vínculo geral da Ala ${a}. Deseja mesmo removê-la para o dia ${d}?`,
+      () => {
+        registrarExclusao(a, funcao, d);
+        vinculos[a] = vinculos[a].filter(v => !(v.funcao === funcao && v.dia === d));
+        salvarDadosPersistentes();
+        if (calendarioGerado) gerarCalendario(true);
+      },
+      () => { }
+    );
+  } else {
+    vinculos[a] = vinculos[a].filter(v => !(v.funcao === funcao && v.dia === d));
+    salvarDadosPersistentes();
+    if (calendarioGerado) gerarCalendario(true);
+  }
+}
+function registrarExclusao(a, funcao, d) {
+  exclusoesDiarias[a] = exclusoesDiarias[a] || {};
+  exclusoesDiarias[a][d] = exclusoesDiarias[a][d] || [];
+  if (!exclusoesDiarias[a][d].includes(funcao)) exclusoesDiarias[a][d].push(funcao);
+}
+function isResponsavelAfastado(r, d) {
+  const dataVerificar = normalizarData(d);
+  return afastamentos.some(af => {
+    const di = normalizarData(af.inicio);
+    const df = normalizarData(af.fim);
+    return af.responsavel === r && compararDatas(dataVerificar, di) >= 0 && compararDatas(dataVerificar, df) <= 0;
+  });
+}
+function dentroDoPeriodo(data, inicioISO, fimISO) {
+  const dataVerificar = normalizarData(data);
+  const di = normalizarData(inicioISO);
+  const df = normalizarData(fimISO);
+  return compararDatas(dataVerificar, di) >= 0 && compararDatas(dataVerificar, df) <= 0;
+}
+function calcularFimAfastamento() {
+  const inicio = $('afastamento-inicio').value;
+  const diasVal = $('afastamento-dias').value;
+  const dias = parseInt(diasVal, 10);
+
+  // Se o campo dias estiver vazio, não faz nada no fim
+  if (!diasVal || isNaN(dias) || dias < 1) return;
+
+  if (!inicio) return;
+
+  const dataInicio = normalizarData(inicio);
+  const dataFim = new Date(dataInicio);
+  dataFim.setDate(dataFim.getDate() + dias - 1);
+  const ano = dataFim.getFullYear();
+  const mes = String(dataFim.getMonth() + 1).padStart(2, '0');
+  const dia = String(dataFim.getDate()).padStart(2, '0');
+  $('afastamento-fim').value = `${ano}-${mes}-${dia}`;
+}
+
+function onFimAfastamentoEditado() {
+  const inicio = $('afastamento-inicio').value;
+  const fim = $('afastamento-fim').value;
+  const diasVal = $('afastamento-dias').value;
+  if (!diasVal) return; // campo dias já vazio, nada a fazer
+
+  // Recalcula quantos dias seriam e compara com o campo
+  if (inicio && fim) {
+    const di = normalizarData(inicio);
+    const df = normalizarData(fim);
+    const diffMs = df - di;
+    const diffDias = Math.round(diffMs / 86400000) + 1; // conta o dia de início
+    const diasAtual = parseInt(diasVal, 10);
+    if (isNaN(diasAtual) || diffDias !== diasAtual) {
+      $('afastamento-dias').value = '';
+    }
+  } else {
+    $('afastamento-dias').value = '';
+  }
+}
+
+function adicionarAfastamento() {
+  const r = $('afastamento-responsavel').value,
+    i = $('afastamento-inicio').value,
+    f = $('afastamento-fim').value;
+  if (!r || !i || !f) return;
+  const dataInicio = normalizarData(i);
+  const dataFim = normalizarData(f);
+  if (compararDatas(dataInicio, dataFim) > 0) return;
+  const ano = parseInt($('ano').value, 10), mes = parseInt($('mes').value, 10);
+  let temFuncoesAfetadas = false;
+  alas.forEach(ala => {
+    vinculos[ala].forEach(v => {
+      if (v.responsavel === r && v.hasOwnProperty('dia')) {
+        const dtVinculo = new Date(ano, mes - 1, v.dia);
+        if (dentroDoPeriodo(dtVinculo, i, f)) temFuncoesAfetadas = true;
+      }
+    });
+  });
+  const aplicarAfastamento = () => {
+    afastamentos.push({ responsavel: r, inicio: i, fim: f });
+    alas.forEach(ala => {
+      vinculos[ala] = vinculos[ala].map(v => {
+        if (v.hasOwnProperty('dia')) {
+          const dtVinculo = new Date(ano, mes - 1, v.dia);
+          if (v.responsavel === r && dentroDoPeriodo(dtVinculo, i, f)) {
+            v.responsavel = 'Indeterminado';
+            v.remuneracao = 'AC4';
+            v.horaInicio = 8;
+            v.horaFim = 8;
+          }
+        }
+        return v;
+      });
+    });
+    exibirAfastamentos();
+    if (calendarioGerado) {
+      gerarCalendario(true);
+    }
+    salvarDadosPersistentes();
+  };
+  if (temFuncoesAfetadas && calendarioGerado) {
+    openModal(`As funções atribuídas a ${r} entre ${formatarData(i)} e ${formatarData(f)} serão ajustadas. Deseja continuar?`, aplicarAfastamento);
+  } else {
+    aplicarAfastamento();
+  }
+}
+function exibirAfastamentos() {
+  $('afastamentos').innerHTML = afastamentos
+    .map((af, idx) => `<div><strong>Responsável:</strong> ${af.responsavel} | <strong>Início:</strong> ${formatarData(af.inicio)} | <strong>Fim:</strong> ${formatarData(af.fim)} | <button onclick="removerAfastamento(${idx})">Remover</button></div>`)
+    .join('');
+  atualizarSelectResponsaveis();
+}
+function removerAfastamento(idx) {
+  const afastamentoRemovido = afastamentos[idx];
+  afastamentos.splice(idx, 1);
+  exibirAfastamentos();
+  const responsavelAfast = afastamentoRemovido.responsavel,
+    ano = parseInt($('ano').value, 10),
+    mes = parseInt($('mes').value, 10);
+  alas.forEach(ala => {
+    vinculos[ala] = vinculos[ala].filter(v => {
+      if (!v.geradoAutomaticamente || v.bloqueada) return true; // preserva manuais e bloqueados
+      if (v.originalResponsavel !== responsavelAfast) return true;
+      const dtVinculo = new Date(ano, mes - 1, v.dia);
+      const eraDestePeriodo = dentroDoPeriodo(dtVinculo, afastamentoRemovido.inicio, afastamentoRemovido.fim);
+      if (!eraDestePeriodo) return true;
+      const aindaTemOutro = afastamentos.some(af =>
+        af.responsavel === responsavelAfast && dentroDoPeriodo(dtVinculo, af.inicio, af.fim)
+      );
+      return aindaTemOutro;
+    });
+  });
+  if (calendarioGerado) {
+    gerarCalendario(true);
+  }
+  salvarDadosPersistentes();
+}
+function formatarData(dt) {
+  const [a, m, d] = dt.split('-');
+  return `${d}-${m}-${a}`;
+}
+function gerarResumoResponsaveis() {
+  const t = document.querySelector('#calendario table');
+  if (!t) return;
+  const m = parseInt($('mes').value, 10);
+  const a = parseInt($('ano').value, 10);
+  const totalDias = new Date(a, m, 0).getDate();
+  let inicioFiltro = parseInt($('inicioEscala').value, 10) || 1;
+  let fimFiltro = parseInt($('fimDaEscala').value, 10) || totalDias;
+  inicioFiltro = Math.max(1, Math.min(inicioFiltro, totalDias));
+  fimFiltro = Math.max(1, Math.min(fimFiltro, totalDias));
+  if (fimFiltro < inicioFiltro) fimFiltro = inicioFiltro;
+  const rs = {};
+  t.querySelectorAll('tbody tr').forEach(r => {
+    if (r.querySelector('#total-mensal')) return;
+    const cols = r.querySelectorAll('td');
+    if (!cols[0]) return;
+    const _spanData2 = cols[0].querySelector('.data-dia');
+    const [dia, mes, ano] = (_spanData2 ? _spanData2.textContent : cols[0].textContent).split('/').map(Number);
+    if (isNaN(dia) || dia < inicioFiltro || dia > fimFiltro) return;
+    if (!cols[2]) return; // linha do total mensal
+    const data = new Date(ano, mes - 1, dia);
+    const weekday = data.toLocaleDateString('pt-BR', { weekday: 'long' }).toLowerCase();
+    cols[2].querySelectorAll('div[id^="funcao-"]').forEach(div => {
+      const funcaoElement = div.querySelector('.linha-funcao strong');
+      if (!funcaoElement) return;
+      const funcao = funcaoElement.textContent.replace(':', '').trim();
+      const ala = r.querySelector('td:nth-child(2)').textContent.trim();
+      if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
+        exclusoesDiarias[ala][dia].includes(funcao)) return;
+      const sel = div.querySelector('select[data-role="responsavel-calendario"]');
+      const remuSel = div.querySelector('select[id^="remuneracao-"]');
+      const hiInput = div.querySelector('input[id^="hora-inicio-"]');
+      const hfInput = div.querySelector('input[id^="hora-fim-"]');
+      const custoSpan = div.querySelector('span[id^="custo-"]');
+      const resp = sel.value;
+      if (!resp) return;
+      const remu = remuSel.value;
+      // ✅ "..." é tratado como Normal → não entra no resumo
+      if (remu === 'Normal' || remu === '...' || remu === 'Troca com a SOP') return;
+      const hi = parseInt(hiInput.value, 10) || 0;
+      const hf = parseInt(hfInput.value, 10) || 0;
+      const horasTrabalhadas = hi === hf ? 24 : hf > hi ? hf - hi : 24 - hi + hf;
+      const custo = parseFloat(custoSpan.textContent.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0;
+      if (!rs[resp]) {
+        rs[resp] = {
+          gastoAC4: 0, gastoAC42: 0, gastoExtra: 0,
+          gastoTotal: 0, horasAC4: 0, horasAC42: 0,
+          horasExtra: 0, horasTotal: 0,
+          trabalhos: { segunda: 0, terca: 0, quarta: 0, quinta: 0, sexta: 0, sabado: 0, domingo: 0 }
+        };
+      }
+      if (remu === 'AC4' || remu === 'AC4 - Regência') {
+        rs[resp].gastoAC4 += custo;
+        rs[resp].horasAC4 += horasTrabalhadas;
+      } else if (remu === 'AC4-2') {
+        rs[resp].gastoAC42 += custo;
+        rs[resp].horasAC42 += horasTrabalhadas;
+      } else if (remu === 'Extra não remunerado') {
+        rs[resp].horasExtra += horasTrabalhadas;
+      }
+      rs[resp].gastoTotal += custo;
+      rs[resp].horasTotal += horasTrabalhadas;
+      const diaSemana = weekday.includes('segunda') ? 'segunda'
+        : weekday.includes('terça') ? 'terca'
+          : weekday.includes('quarta') ? 'quarta'
+            : weekday.includes('quinta') ? 'quinta'
+              : weekday.includes('sexta') ? 'sexta'
+                : weekday.includes('sábado') ? 'sabado'
+                  : 'domingo';
+      rs[resp].trabalhos[diaSemana] += horasTrabalhadas;
+    });
+  });
+  const ordenados = Object.keys(rs).sort((a, b) => responsaveis.indexOf(a) - responsaveis.indexOf(b));
+  let rowIndex = 0;
+  let html = `<table><thead><tr>
 <th>Responsável</th><th>Gasto AC4 (R$)</th><th>Gasto AC4-2 (R$)</th><th>Gasto Total (R$)</th>
-<th>Total Horas Extras</th><th>Horas por Dia da Semana</th></tr></thead><tbody>`;_0x5fffd['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](r=>{const d=_0xec467e[r];const _0x75g5a=_0x9ce%(223896^223898)===(915122^915122)?"9f9f9f#".split("").reverse().join(""):"ffffff#".split("").reverse().join("");const _0x960d2f=`Seg: ${d['\u0074\u0072\u0061\u0062\u0061\u006C\u0068\u006F\u0073']['\u0073\u0065\u0067\u0075\u006E\u0064\u0061']}h, Ter: ${d['\u0074\u0072\u0061\u0062\u0061\u006C\u0068\u006F\u0073']['\u0074\u0065\u0072\u0063\u0061']}h, Qua: ${d['\u0074\u0072\u0061\u0062\u0061\u006C\u0068\u006F\u0073']['\u0071\u0075\u0061\u0072\u0074\u0061']}h, `+`Qui: ${d['\u0074\u0072\u0061\u0062\u0061\u006C\u0068\u006F\u0073']['\u0071\u0075\u0069\u006E\u0074\u0061']}h, Sex: ${d['\u0074\u0072\u0061\u0062\u0061\u006C\u0068\u006F\u0073']['\u0073\u0065\u0078\u0074\u0061']}h, Sáb: ${d['\u0074\u0072\u0061\u0062\u0061\u006C\u0068\u006F\u0073']['\u0073\u0061\u0062\u0061\u0064\u006F']}h, Dom: ${d['\u0074\u0072\u0061\u0062\u0061\u006C\u0068\u006F\u0073']['\u0064\u006F\u006D\u0069\u006E\u0067\u006F']}h`;_0x4a7d+=`<tr style="background-color:${_0x75g5a}">
-<td>${r}</td><td>${formatarMoeda(d['\u0067\u0061\u0073\u0074\u006F\u0041\u0043\u0034'])}</td><td>${formatarMoeda(d['\u0067\u0061\u0073\u0074\u006F\u0041\u0043\u0034\u0032'])}</td>
-<td>${formatarMoeda(d['\u0067\u0061\u0073\u0074\u006F\u0054\u006F\u0074\u0061\u006C'])}</td><td>${d['\u0068\u006F\u0072\u0061\u0073\u0054\u006F\u0074\u0061\u006C']}h</td><td>${_0x960d2f}</td></tr>`;_0x9ce++;});_0x4a7d+=`</tbody></table>`;resumoHTML=_0x4a7d;$("\u0062\u006F\u0074\u0061\u006F\u002D\u0069\u006D\u0070\u0072\u0069\u006D\u0069\u0072\u002D\u0072\u0065\u0073\u0075\u006D\u006F")['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u0069\u006E\u006C\u0069\u006E\u0065";salvarDadosPersistentes();salvarArquivosTemporarios();}function gerarEscala(_0xb451f,_0xdae,_0x584a){if(!calendarioGerado)return;const m=parseInt($("\u006D\u0065\u0073")['\u0076\u0061\u006C\u0075\u0065'],228654^228644);_0xb451f=(732510^732503)+(739278^739270);const a=parseInt($("ona".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],357150^357140);let s=parseInt($("alacsEoicini".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],244852^244862)||533495^533494;_0xdae='\u0067\u0067\u006B\u0068\u006C\u0068';let f=parseInt($("alacsEaDmif".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],256328^256322)||729455^729455;const _0xf2e=new Date(a,m,284499^284499)['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']();if(!f)f=_0xf2e;s=Math['\u006D\u0061\u0078'](877239^877238,Math['\u006D\u0069\u006E'](s,_0xf2e));f=Math['\u006D\u0061\u0078'](495590^495591,Math['\u006D\u0069\u006E'](f,_0xf2e));if(f<s)f=s;var _0x92a79b=(630068^630068)+(842910^842907);const _0x64g={};_0x92a79b=(559605^559602)+(447177^447182);for(let dia=s;dia<=f;dia++){var _0x7ced2b=(917504^917513)+(817122^817121);const _0x53d=new Date(a,m-(574718^574719),dia);_0x7ced2b='\u0068\u0064\u006F\u0066\u006F\u006B';var _0xd637ae=(530331^530334)+(367355^367347);const _0x3a4a1c=(Math['\u0066\u006C\u006F\u006F\u0072']((_0x53d-new Date(707973^707181,590480^590482,480519^480530))/86400000)%alas['\u006C\u0065\u006E\u0067\u0074\u0068']+alas['\u006C\u0065\u006E\u0067\u0074\u0068'])%alas['\u006C\u0065\u006E\u0067\u0074\u0068'];_0xd637ae=(285019^285022)+(921357^921359);var _0xfc57bc=(716469^716471)+(203213^203214);const _0xc09e1d=alas[_0x3a4a1c];_0xfc57bc=306340^306339;var _0xgd_0x7da=(835542^835539)+(567421^567421);const _0x88cabc=[];_0xgd_0x7da=(585501^585499)+(798211^798208);const _0xac836c=vinculos[_0xc09e1d]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>v['\u0064\u0069\u0061']===dia);_0xac836c['\u0073\u006F\u0072\u0074']((a,b)=>{var _0x78f38a=(708079^708079)+(924869^924868);const _0xad_0xgfe=a['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C")?a['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:a['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("medro".split("").reverse().join(""))?a['\u006F\u0072\u0064\u0065\u006D']:funcoes['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](a['\u0066\u0075\u006E\u0063\u0061\u006F']);_0x78f38a=(483353^483354)+(127207^127215);var _0xf7605c=(816004^816005)+(516692^516701);const _0x157a=b['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C")?b['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:b['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("medro".split("").reverse().join(""))?b['\u006F\u0072\u0064\u0065\u006D']:funcoes['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](b['\u0066\u0075\u006E\u0063\u0061\u006F']);_0xf7605c=942851^942854;return _0xad_0xgfe-_0x157a;});_0xac836c['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](v=>{if(v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']&&v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']!=="\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F"){if(v['\u006F\u0063\u0075\u006C\u0074\u0061\u0072'])return;if(exclusoesDiarias[_0xc09e1d]&&exclusoesDiarias[_0xc09e1d][dia]&&exclusoesDiarias[_0xc09e1d][dia]['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](v['\u0066\u0075\u006E\u0063\u0061\u006F'])&&v['\u0067\u0065\u0072\u0061\u0064\u006F\u0041\u0075\u0074\u006F\u006D\u0061\u0074\u0069\u0063\u0061\u006D\u0065\u006E\u0074\u0065'])return;const hI=v['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']??381304^381296;const hF=dia===f&&v['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061")?v['\u0068\u006F\u0072\u0061\u0046\u0069\u006D\u0045\u0073\u0063\u0061\u006C\u0061']:v['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']??234686^234678;_0x88cabc['\u0070\u0075\u0073\u0068']({"funcao":v['\u0066\u0075\u006E\u0063\u0061\u006F'],"responsavel":v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'],"tipo":v['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F'],'\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F':hI,'\u0068\u006F\u0072\u0061\u0046\u0069\u006D':hF});}});if(_0x88cabc['\u006C\u0065\u006E\u0067\u0074\u0068'])_0x64g[dia]={'\u0064\u0069\u0061':dia,'\u0061\u006C\u0061':_0xc09e1d,'\u006C\u0069\u006E\u0065\u0073':_0x88cabc};}var _0xe82f4d=(982077^982079)+(306887^306887);let _0x4919d=`<table border="1" style="border-collapse:collapse;"><thead><tr>`+`<th>Dia</th><th>Ala</th><th>Função</th><th>Responsável</th><th>Tipo</th><th>Horário</th></tr></thead><tbody>`;_0xe82f4d="pihpki".split("").reverse().join("");_0x584a=604404^604404;for(let dia=s;dia<=f;dia++){const _0xf67d=_0x64g[dia];if(!_0xf67d){_0x584a++;continue;}var _0xd69db=(829608^829615)+(915670^915678);const _0xg3f32g=_0x584a%(857661^857663)===(758018^758018)?"\u0023\u0066\u0039\u0066\u0039\u0066\u0039":"\u0023\u0066\u0066\u0066\u0066\u0066\u0066";_0xd69db=(549060^549058)+(918015^918014);var _0x10_0x542=(311422^311417)+(300733^300731);const _0xd9583a=_0xf67d['\u006C\u0069\u006E\u0065\u0073']['\u006C\u0065\u006E\u0067\u0074\u0068'];_0x10_0x542=250036^250034;_0xf67d['\u006C\u0069\u006E\u0065\u0073']['\u0066\u006F\u0072\u0045\u0061\u0063\u0068']((ln,i)=>{_0x4919d+=`<tr style="background-color:${_0xg3f32g};">`;if(i===(354620^354620))_0x4919d+=`<td rowspan="${_0xd9583a}">${dia}/${m}/${a}</td><td rowspan="${_0xd9583a}">${_0xf67d['\u0061\u006C\u0061']}</td>`;var _0x0eab=(510739^510747)+(363170^363169);const hI=String(Math['\u006D\u0061\u0078'](717224^717224,Math['\u006D\u0069\u006E'](613429^613410,parseInt(ln['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F'])||979198^979198)))['\u0070\u0061\u0064\u0053\u0074\u0061\u0072\u0074'](917350^917348,"\u0030");_0x0eab=279329^279331;var _0x251f9g=(956616^956621)+(336130^336131);const hF=String(Math['\u006D\u0061\u0078'](622547^622547,Math['\u006D\u0069\u006E'](915130^915117,parseInt(ln['\u0068\u006F\u0072\u0061\u0046\u0069\u006D'])||231860^231860)))['\u0070\u0061\u0064\u0053\u0074\u0061\u0072\u0074'](402281^402283,"\u0030");_0x251f9g=(223405^223407)+(855365^855367);_0x4919d+=`<td>${ln['\u0066\u0075\u006E\u0063\u0061\u006F']}</td><td>${ln['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']}</td><td>${ln['\u0074\u0069\u0070\u006F']}</td><td>${hI}h às ${hF}h</td></tr>`;});_0x584a++;}_0x4919d+=`</tbody></table>`;escalaHTML=_0x4919d;$("alacse-rimirpmi-oatob".split("").reverse().join(""))['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="\u0069\u006E\u006C\u0069\u006E\u0065";salvarArquivosTemporarios();buildEscalaAC4HTML();salvarDadosPersistentes();}function buildEscalaAC4HTML(_0x475d){if(!calendarioGerado)return;const m=parseInt($("sem".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],537160^537154);var _0x8d_0xd79=(455942^455942)+(429112^429113);const a=parseInt($("\u0061\u006E\u006F")['\u0076\u0061\u006C\u0075\u0065'],975238^975244);_0x8d_0xd79=(945968^945974)+(613402^613406);var _0x12b18c=(425720^425726)+(963869^963861);let s=parseInt($("\u0069\u006E\u0069\u0063\u0069\u006F\u0045\u0073\u0063\u0061\u006C\u0061")['\u0076\u0061\u006C\u0075\u0065'],415784^415778)||261811^261810;_0x12b18c=(817953^817960)+(197127^197127);var _0x9e6eaa=(623313^623314)+(559770^559773);let f=parseInt($("alacsEaDmif".split("").reverse().join(""))['\u0076\u0061\u006C\u0075\u0065'],709724^709718)||273031^273031;_0x9e6eaa=535854^535854;const _0xc1211c=new Date(a,m,573329^573329)['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']();_0x475d=(469660^469653)+(548210^548215);if(!f)f=_0xc1211c;s=Math['\u006D\u0061\u0078'](590091^590090,Math['\u006D\u0069\u006E'](s,_0xc1211c));f=Math['\u006D\u0061\u0078'](581694^581695,Math['\u006D\u0069\u006E'](f,_0xc1211c));if(f<s)f=s;let _0xc813e=469026^469026,_0x9bc=625558^625558;let _0xc7f=`<table border="1" style="border-collapse:collapse;">
+<th>Total Horas Extras</th><th>Horas por Dia da Semana</th></tr></thead><tbody>`;
+  ordenados.forEach(r => {
+    const d = rs[r];
+    const bgColor = rowIndex % 2 === 0 ? '#f9f9f9' : '#ffffff';
+    const txtDias = `Seg: ${d.trabalhos.segunda}h, Ter: ${d.trabalhos.terca}h, Qua: ${d.trabalhos.quarta}h, ` +
+      `Qui: ${d.trabalhos.quinta}h, Sex: ${d.trabalhos.sexta}h, Sáb: ${d.trabalhos.sabado}h, Dom: ${d.trabalhos.domingo}h`;
+    html += `<tr style="background-color:${bgColor}">
+<td>${r}</td><td>${formatarMoeda(d.gastoAC4)}</td><td>${formatarMoeda(d.gastoAC42)}</td>
+<td>${formatarMoeda(d.gastoTotal)}</td><td>${d.horasTotal}h</td><td>${txtDias}</td></tr>`;
+    rowIndex++;
+  });
+  html += `</tbody></table>`;
+  resumoHTML = html;
+  $('botao-imprimir-resumo').style.display = 'inline';
+  salvarDadosPersistentes();
+  salvarArquivosTemporarios();
+}
+
+function gerarEscala() {
+  if (!calendarioGerado) return;
+  const m = parseInt($('mes').value, 10);
+  const a = parseInt($('ano').value, 10);
+  let s = parseInt($('inicioEscala').value, 10) || 1;
+  let f = parseInt($('fimDaEscala').value, 10) || 0;
+  const dMax = new Date(a, m, 0).getDate();
+  // Se fimDaEscala estiver vazio, usa o último dia do mês (não 0)
+  if (!f) f = dMax;
+  s = Math.max(1, Math.min(s, dMax));
+  f = Math.max(1, Math.min(f, dMax));
+  if (f < s) f = s;
+
+  const dayData = {};
+  for (let dia = s; dia <= f; dia++) {
+    const dt = new Date(a, m - 1, dia);
+    const idx = ((Math.floor((dt - new Date(2024, 2, 21)) / 86400000)) % alas.length + alas.length) % alas.length;
+    const ala = alas[idx];
+    const lines = [];
+    const funcoesDoDia = vinculos[ala].filter(v => v.dia === dia);
+    funcoesDoDia.sort((a, b) => {
+      const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal :
+        (a.hasOwnProperty('ordem') ? a.ordem : funcoes.indexOf(a.funcao));
+      const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal :
+        (b.hasOwnProperty('ordem') ? b.ordem : funcoes.indexOf(b.funcao));
+      return ordemA - ordemB;
+    });
+    funcoesDoDia.forEach(v => {
+      if (v.responsavel && v.responsavel !== 'Indeterminado') {
+        if (v.ocultar) return;
+        if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
+          exclusoesDiarias[ala][dia].includes(v.funcao) && v.geradoAutomaticamente) return;
+
+        const hI = v.horaInicio ?? 8;
+        // Usa horaFimEscala SOMENTE no último dia do período da escala (dia === f)
+        const hF = (dia === f && v.hasOwnProperty('horaFimEscala'))
+          ? v.horaFimEscala
+          : (v.horaFim ?? 8);
+
+        lines.push({ funcao: v.funcao, responsavel: v.responsavel, tipo: v.remuneracao, horaInicio: hI, horaFim: hF });
+      }
+    });
+    if (lines.length) dayData[dia] = { dia, ala, lines };
+  }
+
+  let html = `<table border="1" style="border-collapse:collapse;"><thead><tr>` +
+    `<th>Dia</th><th>Ala</th><th>Função</th><th>Responsável</th><th>Tipo</th><th>Horário</th></tr></thead><tbody>`;
+  let dayIndex = 0;
+  for (let dia = s; dia <= f; dia++) {
+    const info = dayData[dia];
+    if (!info) { dayIndex++; continue; }
+    const bgColor = dayIndex % 2 === 0 ? '#f9f9f9' : '#ffffff';
+    const rSpan = info.lines.length;
+    info.lines.forEach((ln, i) => {
+      html += `<tr style="background-color:${bgColor};">`;
+      if (i === 0) html += `<td rowspan="${rSpan}">${dia}/${m}/${a}</td><td rowspan="${rSpan}">${info.ala}</td>`;
+      
+      // ✅ Garante que 0 vire "00"
+      const hI = String(Math.max(0, Math.min(23, parseInt(ln.horaInicio) || 0))).padStart(2, '0');
+      const hF = String(Math.max(0, Math.min(23, parseInt(ln.horaFim) || 0))).padStart(2, '0');
+      
+      html += `<td>${ln.funcao}</td><td>${ln.responsavel}</td><td>${ln.tipo}</td><td>${hI}h às ${hF}h</td></tr>`;
+    });
+    dayIndex++;
+  }
+  html += `</tbody></table>`;
+  escalaHTML = html;
+  $('botao-imprimir-escala').style.display = 'inline';
+  salvarArquivosTemporarios();
+  buildEscalaAC4HTML();
+  salvarDadosPersistentes();
+}
+
+function buildEscalaAC4HTML() {
+  if (!calendarioGerado) return;
+  const m = parseInt($('mes').value, 10);
+  const a = parseInt($('ano').value, 10);
+  let s = parseInt($('inicioEscala').value, 10) || 1;
+  let f = parseInt($('fimDaEscala').value, 10) || 0;
+  const dMax = new Date(a, m, 0).getDate();
+  // Se fimDaEscala estiver vazio, usa o último dia do mês (não 0)
+  if (!f) f = dMax;
+  s = Math.max(1, Math.min(s, dMax));
+  f = Math.max(1, Math.min(f, dMax));
+  if (f < s) f = s;
+  let dayIndex = 0, valorTotal = 0;
+  let html = `<table border="1" style="border-collapse:collapse;">
 <thead><tr><th>RG</th><th>Responsável</th><th>Dia Início</th><th>Dia Fim</th>
-<th>Horário Início</th><th>Horário Fim</th><th>Função</th><th>Valor</th></tr></thead><tbody>`;for(let _0x9c755a=s;_0x9c755a<=f;_0x9c755a++){const _0x4ceg6a=new Date(a,m-(746571^746570),_0x9c755a);var _0x8ff=(536210^536213)+(173152^173153);const _0xd9dc6g=(Math['\u0066\u006C\u006F\u006F\u0072']((_0x4ceg6a-new Date(420974^420742,747367^747365,524857^524844))/86400000)%alas['\u006C\u0065\u006E\u0067\u0074\u0068']+alas['\u006C\u0065\u006E\u0067\u0074\u0068'])%alas['\u006C\u0065\u006E\u0067\u0074\u0068'];_0x8ff=510917^510915;const _0x37_0x248=alas[_0xd9dc6g];let _0x4ce=[];var _0xfc77c=(158897^158903)+(753971^753972);const _0x0ecfg=vinculos[_0x37_0x248]['\u0066\u0069\u006C\u0074\u0065\u0072'](v=>v['\u0064\u0069\u0061']===_0x9c755a);_0xfc77c=536924^536924;_0x0ecfg['\u0073\u006F\u0072\u0074']((a,b)=>{const _0x6ecdfc=a['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("lanigirOmedro".split("").reverse().join(""))?a['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:a['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D")?a['\u006F\u0072\u0064\u0065\u006D']:funcoes['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](a['\u0066\u0075\u006E\u0063\u0061\u006F']);var _0xc61cfg=(975102^975094)+(884511^884502);const _0x7bced=b['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C")?b['\u006F\u0072\u0064\u0065\u006D\u004F\u0072\u0069\u0067\u0069\u006E\u0061\u006C']:b['\u0068\u0061\u0073\u004F\u0077\u006E\u0050\u0072\u006F\u0070\u0065\u0072\u0074\u0079']("\u006F\u0072\u0064\u0065\u006D")?b['\u006F\u0072\u0064\u0065\u006D']:funcoes['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](b['\u0066\u0075\u006E\u0063\u0061\u006F']);_0xc61cfg=427430^427438;return _0x6ecdfc-_0x7bced;});_0x0ecfg['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](v=>{if(v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']&&v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C']!=="\u0049\u006E\u0064\u0065\u0074\u0065\u0072\u006D\u0069\u006E\u0061\u0064\u006F"){if(exclusoesDiarias[_0x37_0x248]&&exclusoesDiarias[_0x37_0x248][_0x9c755a]&&exclusoesDiarias[_0x37_0x248][_0x9c755a]['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](v['\u0066\u0075\u006E\u0063\u0061\u006F'])&&v['\u0067\u0065\u0072\u0061\u0064\u006F\u0041\u0075\u0074\u006F\u006D\u0061\u0074\u0069\u0063\u0061\u006D\u0065\u006E\u0074\u0065'])return;if(v['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']==="4CA".split("").reverse().join("")||v['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']==="2-4CA".split("").reverse().join("")||v['\u0072\u0065\u006D\u0075\u006E\u0065\u0072\u0061\u0063\u0061\u006F']==="\u0041\u0043\u0034\u0020\u002D\u0020\u0052\u0065\u0067\u00EA\u006E\u0063\u0069\u0061"){var _0x529ff=(740275^740279)+(325770^325769);const _0xb4_0x76a=v['\u0068\u006F\u0072\u0061\u0049\u006E\u0069\u0063\u0069\u006F']??349818^349810;_0x529ff=(399520^399527)+(724223^724218);let _0x9b76e;const _0x982abb=v['\u0068\u006F\u0072\u0061\u0046\u0069\u006D']??178817^178825;_0x9b76e=(697847^697854)+(593511^593510);const _0x0bec9b=calcularCusto(_0x4ceg6a,_0xb4_0x76a,_0x982abb);_0x4ce['\u0070\u0075\u0073\u0068']({"dt":_0x4ceg6a,"func":v['\u0066\u0075\u006E\u0063\u0061\u006F'],"resp":v['\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C'],"hI":_0xb4_0x76a,'\u0068\u0046':_0x982abb,'\u0076\u0061\u006C\u006F\u0072':_0x0bec9b});_0x9bc+=_0x0bec9b;}}});if(_0x4ce['\u006C\u0065\u006E\u0067\u0074\u0068']){var _0xee7f3b=(107063^107060)+(324405^324401);const _0xcb2f1a=_0xc813e%(521049^521051)===(947346^947346)?"\u0023\u0066\u0039\u0066\u0039\u0066\u0039":"\u0023\u0066\u0066\u0066\u0066\u0066\u0066";_0xee7f3b=(903540^903538)+(675111^675119);_0x4ce['\u0066\u006F\u0072\u0045\u0061\u0063\u0068']((ln,i)=>{const _0x3971a=ln['\u0064\u0074'];var _0xac4aab=(111794^111793)+(246648^246650);const _0xcbcea=new Date(_0x3971a);_0xac4aab=957643^957634;if(ln['\u0068\u0046']<=ln['\u0068\u0049'])_0xcbcea['\u0073\u0065\u0074\u0044\u0061\u0074\u0065'](_0xcbcea['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']()+(572915^572914));let _0x695fe;const _0x7e9abb=`${String(_0x3971a['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']())['\u0070\u0061\u0064\u0053\u0074\u0061\u0072\u0074'](726796^726798,"\u0030")}/${String(_0x3971a['\u0067\u0065\u0074\u004D\u006F\u006E\u0074\u0068']()+(467313^467312))['\u0070\u0061\u0064\u0053\u0074\u0061\u0072\u0074'](877184^877186,"\u0030")}/${_0x3971a['\u0067\u0065\u0074\u0046\u0075\u006C\u006C\u0059\u0065\u0061\u0072']()}`;_0x695fe=(502993^502999)+(815650^815654);const _0xbd6f=`${String(_0xcbcea['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']())['\u0070\u0061\u0064\u0053\u0074\u0061\u0072\u0074'](226713^226715,"\u0030")}/${String(_0xcbcea['\u0067\u0065\u0074\u004D\u006F\u006E\u0074\u0068']()+(295568^295569))['\u0070\u0061\u0064\u0053\u0074\u0061\u0072\u0074'](745335^745333,"\u0030")}/${_0xcbcea['\u0067\u0065\u0074\u0046\u0075\u006C\u006C\u0059\u0065\u0061\u0072']()}`;var _0x360a7b=(151424^151425)+(337764^337760);const _0x7a3ad=String(ln['\u0068\u0049'])['\u0070\u0061\u0064\u0053\u0074\u0061\u0072\u0074'](928376^928378,"\u0030")+"\u003A\u0030\u0030\u003A\u0030\u0030";_0x360a7b=(233085^233086)+(484514^484515);var _0x58a3d=(905230^905227)+(592981^592988);const _0x125fd=String(ln['\u0068\u0046'])['\u0070\u0061\u0064\u0053\u0074\u0061\u0072\u0074'](954080^954082,"\u0030")+"\u003A\u0030\u0030\u003A\u0030\u0030";_0x58a3d=436708^436717;var _0x856f=(629827^629830)+(855967^855959);const _0x846fd=ln['\u0072\u0065\u0073\u0070']['\u006D\u0061\u0074\u0063\u0068'](new RegExp(")}5,4{d\\|}3{d\\.\\}2,1{d\\(".split("").reverse().join(""),""));_0x856f=399096^399100;const _0x5cb1ef=_0x846fd?_0x846fd[682447^682446]:'';_0xc7f+=`<tr style="background-color:${_0xcb2f1a}">
-<td>${_0x5cb1ef}</td><td>${ln['\u0072\u0065\u0073\u0070']}</td><td>${_0x7e9abb}</td><td>${_0xbd6f}</td>
-<td>${_0x7a3ad}</td><td>${_0x125fd}</td><td>${ln['\u0066\u0075\u006E\u0063']}</td><td>R$ ${formatarMoeda(ln['\u0076\u0061\u006C\u006F\u0072'])}</td></tr>`;});_0xc813e++;}}_0xc7f+=`<tr><td colspan="7" style="text-align:right;"><strong>Total:</strong></td>
-<td><strong>R$ ${formatarMoeda(_0x9bc)}</strong></td></tr></tbody></table>`;escalaAC4HTML=_0xc7f;$("\u0062\u006F\u0074\u0061\u006F\u002D\u0069\u006D\u0070\u0072\u0069\u006D\u0069\u0072\u002D\u0065\u0073\u0063\u0061\u006C\u0061\u002D\u0061\u0063\u0034")['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="enilni".split("").reverse().join("");salvarDadosPersistentes();}function calcularCusto(data,hIni,hFim){let _0x7d282e=541623^541623,_0x39_0x030=new Date(data),_0x289ff=new Date(_0x39_0x030);if(hFim<=hIni)_0x289ff['\u0073\u0065\u0074\u0044\u0061\u0074\u0065'](_0x289ff['\u0067\u0065\u0074\u0044\u0061\u0074\u0065']()+(162211^162210));function _0x7b682e(d,h){const _0xg3a6c=d['\u0067\u0065\u0074\u0044\u0061\u0079'](),_0x25c=_0xg3a6c===(251797^251792)&&h>=(663411^663414)||_0xg3a6c===(821960^821966)||_0xg3a6c===(674312^674312)||_0xg3a6c===(987228^987229)&&h<(519754^519759),_0x59ed1a=h>=(421102^421112)||h<(179389^179384)?"onruton".split("").reverse().join(""):"\u0064\u0069\u0075\u0072\u006E\u006F";return _0x25c?taxas['\u0076\u0065\u0072\u006D\u0065\u006C\u0068\u0061'][_0x59ed1a]:taxas['\u0061\u007A\u0075\u006C'][_0x59ed1a];}var _0x011a=(971209^971211)+(713178^713177);const _0xf97f=hFim>hIni?Array['\u0066\u0072\u006F\u006D']({"length":hFim-hIni},(_,h)=>({'\u0064':_0x39_0x030,'\u0068':h+hIni})):[...Array((393044^393036)-hIni)['\u006B\u0065\u0079\u0073']()]['\u006D\u0061\u0070'](h=>({'\u0064':_0x39_0x030,'\u0068':h+hIni}))['\u0063\u006F\u006E\u0063\u0061\u0074']([...Array(hFim)['\u006B\u0065\u0079\u0073']()]['\u006D\u0061\u0070'](h=>({'\u0064':_0x289ff,'\u0068':h})));_0x011a=(870152^870155)+(292381^292378);_0xf97f['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](e=>_0x7d282e+=_0x7b682e(e['\u0064'],e['\u0068']));return _0x7d282e;}document['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u006C\u0069\u0063\u006B",function(e){if(!e['\u0074\u0061\u0072\u0067\u0065\u0074']['\u0063\u006C\u006F\u0073\u0065\u0073\u0074']("repparw-sc.".split("").reverse().join(""))){document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("nepo-sc.nwodpord-sc.".split("").reverse().join(""))['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](d=>d['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0063\u0073\u002D\u006F\u0070\u0065\u006E"));}});function ativarCustomSelect(sel,_0x4914a){if(sel['\u005F\u0063\u0073\u0041\u0074\u0069\u0076\u0061\u0064\u006F'])return;sel['\u005F\u0063\u0073\u0041\u0074\u0069\u0076\u0061\u0064\u006F']=!![];sel['\u0073\u0074\u0079\u006C\u0065']['\u0064\u0069\u0073\u0070\u006C\u0061\u0079']="enon".split("").reverse().join("");const _0xc9684d=document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("vid".split("").reverse().join(""));_0xc9684d['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065']="repparw-sc".split("").reverse().join("");sel['\u0070\u0061\u0072\u0065\u006E\u0074\u004E\u006F\u0064\u0065']['\u0069\u006E\u0073\u0065\u0072\u0074\u0042\u0065\u0066\u006F\u0072\u0065'](_0xc9684d,sel);_0xc9684d['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](sel);const _0xg47fb=document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("tupni".split("").reverse().join(""));_0x4914a='\u0071\u0067\u0070\u0066\u0068\u006A';_0xg47fb['\u0074\u0079\u0070\u0065']="txet".split("").reverse().join("");_0xg47fb['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065']="\u0063\u0073\u002D\u0069\u006E\u0070\u0075\u0074";_0xg47fb['\u0070\u006C\u0061\u0063\u0065\u0068\u006F\u006C\u0064\u0065\u0072']="\u0050\u0065\u0073\u0071\u0075\u0069\u0073\u0061\u0072\u0020\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u00E1\u0076\u0065\u006C\u002E\u002E\u002E";if(sel['\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064']){_0xg47fb['\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064']=!![];_0xg47fb['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0069\u006E\u0070\u0075\u0074\u002D\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064");}const _0xb5_0xeca=document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("\u0064\u0069\u0076");_0xb5_0xeca['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065']="\u0063\u0073\u002D\u0064\u0072\u006F\u0070\u0064\u006F\u0077\u006E";_0xc9684d['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0xg47fb);_0xc9684d['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0xb5_0xeca);function _0x11_0xedc(_0xef8b2b){const _0xdd2=sel['\u006F\u0070\u0074\u0069\u006F\u006E\u0073'][sel['\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064\u0049\u006E\u0064\u0065\u0078']];_0xef8b2b=(715981^715977)+(155180^155177);_0xg47fb['\u0076\u0061\u006C\u0075\u0065']=_0xdd2&&_0xdd2['\u0076\u0061\u006C\u0075\u0065']?_0xdd2['\u0074\u0065\u0078\u0074']:'';}_0x11_0xedc();function _0xd3f(filtro,_0xc1c2a,_0xf2af){filtro=(filtro||'')['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']();_0xb5_0xeca['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']='';var _0x67c9bd=(479191^479185)+(510443^510447);const _0xb24f=document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("vid".split("").reverse().join(""));_0x67c9bd=(539717^539712)+(350777^350778);_0xb24f['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065']="raelc-noitpo-sc noitpo-sc".split("").reverse().join("");_0xb24f['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\u2014\u0020\u004E\u0065\u006E\u0068\u0075\u006D\u0020\u2014";_0xb24f['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("nwodesuom".split("").reverse().join(""),e=>{e['\u0070\u0072\u0065\u0076\u0065\u006E\u0074\u0044\u0065\u0066\u0061\u0075\u006C\u0074']();sel['\u0076\u0061\u006C\u0075\u0065']='';sel['\u0064\u0069\u0073\u0070\u0061\u0074\u0063\u0068\u0045\u0076\u0065\u006E\u0074'](new Event("\u0063\u0068\u0061\u006E\u0067\u0065",{"bubbles":!![]}));_0xg47fb['\u0076\u0061\u006C\u0075\u0065']='';_0xb5_0xeca['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("nepo-sc".split("").reverse().join(""));});_0xb5_0xeca['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0xb24f);_0xf2af=640428^640428;_0xc1c2a=116689^116693;Array['\u0066\u0072\u006F\u006D'](sel['\u006F\u0070\u0074\u0069\u006F\u006E\u0073'])['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](opt=>{if(!opt['\u0076\u0061\u006C\u0075\u0065'])return;if(filtro&&!opt['\u0074\u0065\u0078\u0074']['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']()['\u0069\u006E\u0063\u006C\u0075\u0064\u0065\u0073'](filtro))return;_0xf2af++;const _0x74cg=document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("vid".split("").reverse().join(""));_0x74cg['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065']="\u0063\u0073\u002D\u006F\u0070\u0074\u0069\u006F\u006E";if(opt['\u0076\u0061\u006C\u0075\u0065']===sel['\u0076\u0061\u006C\u0075\u0065'])_0x74cg['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("detceles-sc".split("").reverse().join(""));if(filtro){const _0x2d8b=opt['\u0074\u0065\u0078\u0074']['\u0074\u006F\u004C\u006F\u0077\u0065\u0072\u0043\u0061\u0073\u0065']()['\u0069\u006E\u0064\u0065\u0078\u004F\u0066'](filtro);_0x74cg['\u0069\u006E\u006E\u0065\u0072\u0048\u0054\u004D\u004C']=_esc(opt['\u0074\u0065\u0078\u0074']['\u0073\u006C\u0069\u0063\u0065'](722297^722297,_0x2d8b))+">kram<".split("").reverse().join("")+_esc(opt['\u0074\u0065\u0078\u0074']['\u0073\u006C\u0069\u0063\u0065'](_0x2d8b,_0x2d8b+filtro['\u006C\u0065\u006E\u0067\u0074\u0068']))+">kram/<".split("").reverse().join("")+_esc(opt['\u0074\u0065\u0078\u0074']['\u0073\u006C\u0069\u0063\u0065'](_0x2d8b+filtro['\u006C\u0065\u006E\u0067\u0074\u0068']));}else{_0x74cg['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']=opt['\u0074\u0065\u0078\u0074'];}_0x74cg['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u006D\u006F\u0075\u0073\u0065\u0064\u006F\u0077\u006E",e=>{e['\u0070\u0072\u0065\u0076\u0065\u006E\u0074\u0044\u0065\u0066\u0061\u0075\u006C\u0074']();sel['\u0076\u0061\u006C\u0075\u0065']=opt['\u0076\u0061\u006C\u0075\u0065'];sel['\u0064\u0069\u0073\u0070\u0061\u0074\u0063\u0068\u0045\u0076\u0065\u006E\u0074'](new Event("egnahc".split("").reverse().join(""),{'\u0062\u0075\u0062\u0062\u006C\u0065\u0073':!![]}));_0xg47fb['\u0076\u0061\u006C\u0075\u0065']=opt['\u0074\u0065\u0078\u0074'];_0xb5_0xeca['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0063\u0073\u002D\u006F\u0070\u0065\u006E");});_0xb5_0xeca['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0x74cg);});if(_0xf2af===(678840^678840)&&filtro){const _0x81gaff=document['\u0063\u0072\u0065\u0061\u0074\u0065\u0045\u006C\u0065\u006D\u0065\u006E\u0074']("\u0064\u0069\u0076");_0x81gaff['\u0063\u006C\u0061\u0073\u0073\u004E\u0061\u006D\u0065']="\u0063\u0073\u002D\u006F\u0070\u0074\u0069\u006F\u006E\u0020\u0063\u0073\u002D\u0065\u006D\u0070\u0074\u0079";_0x81gaff['\u0074\u0065\u0078\u0074\u0043\u006F\u006E\u0074\u0065\u006E\u0074']="\" arap odatluser muhneN".split("").reverse().join("")+filtro+"\u0022";_0xb5_0xeca['\u0061\u0070\u0070\u0065\u006E\u0064\u0043\u0068\u0069\u006C\u0064'](_0x81gaff);}}_0xg47fb['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0066\u006F\u0063\u0075\u0073",()=>{document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u002E\u0063\u0073\u002D\u0064\u0072\u006F\u0070\u0064\u006F\u0077\u006E\u002E\u0063\u0073\u002D\u006F\u0070\u0065\u006E")['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](d=>{if(d!==_0xb5_0xeca)d['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0063\u0073\u002D\u006F\u0070\u0065\u006E");});_0xd3f(_0xg47fb['\u0076\u0061\u006C\u0075\u0065']===(sel['\u006F\u0070\u0074\u0069\u006F\u006E\u0073'][sel['\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064\u0049\u006E\u0064\u0065\u0078']]&&sel['\u006F\u0070\u0074\u0069\u006F\u006E\u0073'][sel['\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064\u0049\u006E\u0064\u0065\u0078']]['\u0076\u0061\u006C\u0075\u0065']?sel['\u006F\u0070\u0074\u0069\u006F\u006E\u0073'][sel['\u0073\u0065\u006C\u0065\u0063\u0074\u0065\u0064\u0049\u006E\u0064\u0065\u0078']]['\u0074\u0065\u0078\u0074']:'')?'':_0xg47fb['\u0076\u0061\u006C\u0075\u0065']);_0xb5_0xeca['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("\u0063\u0073\u002D\u006F\u0070\u0065\u006E");});_0xg47fb['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("tupni".split("").reverse().join(""),()=>{_0xd3f(_0xg47fb['\u0076\u0061\u006C\u0075\u0065']);_0xb5_0xeca['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0061\u0064\u0064']("nepo-sc".split("").reverse().join(""));});_0xg47fb['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("nwodyek".split("").reverse().join(""),e=>{if(e['\u006B\u0065\u0079']==="epacsE".split("").reverse().join("")){_0xb5_0xeca['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0072\u0065\u006D\u006F\u0076\u0065']("\u0063\u0073\u002D\u006F\u0070\u0065\u006E");_0xg47fb['\u0062\u006C\u0075\u0072']();}if(e['\u006B\u0065\u0079']==="\u0045\u006E\u0074\u0065\u0072"){let _0x46176b;const _0x5e_0x649=_0xb5_0xeca['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072']("\u002E\u0063\u0073\u002D\u006F\u0070\u0074\u0069\u006F\u006E\u003A\u006E\u006F\u0074\u0028\u002E\u0063\u0073\u002D\u006F\u0070\u0074\u0069\u006F\u006E\u002D\u0063\u006C\u0065\u0061\u0072\u0029\u003A\u006E\u006F\u0074\u0028\u002E\u0063\u0073\u002D\u0065\u006D\u0070\u0074\u0079\u0029");_0x46176b=(536214^536210)+(118211^118214);if(_0x5e_0x649)_0x5e_0x649['\u0064\u0069\u0073\u0070\u0061\u0074\u0063\u0068\u0045\u0076\u0065\u006E\u0074'](new MouseEvent("\u006D\u006F\u0075\u0073\u0065\u0064\u006F\u0077\u006E"));}});sel['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0063\u0068\u0061\u006E\u0067\u0065",_0x11_0xedc);var _0xcc7f=(682917^682918)+(628856^628863);const _0x3c_0xeb5=new MutationObserver(()=>{_0xg47fb['\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064']=sel['\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064'];_0xg47fb['\u0063\u006C\u0061\u0073\u0073\u004C\u0069\u0073\u0074']['\u0074\u006F\u0067\u0067\u006C\u0065']("\u0069\u006E\u0070\u0075\u0074\u002D\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064",sel['\u0064\u0069\u0073\u0061\u0062\u006C\u0065\u0064']);});_0xcc7f=(589581^589583)+(711378^711386);_0x3c_0xeb5['\u006F\u0062\u0073\u0065\u0072\u0076\u0065'](sel,{'\u0061\u0074\u0074\u0072\u0069\u0062\u0075\u0074\u0065\u0073':!![],"attributeFilter":["delbasid".split("").reverse().join("")]});sel['\u005F\u0063\u0073\u0053\u0079\u006E\u0063']=_0x11_0xedc;}function _esc(str){return str['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u0026','\u0067'),"\u0026\u0061\u006D\u0070\u003B")['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u003C','\u0067'),";tl&".split("").reverse().join(""))['\u0072\u0065\u0070\u006C\u0061\u0063\u0065'](new RegExp('\u003E','\u0067'),"\u0026\u0067\u0074\u003B");}function ativarTodosCustomSelects(){document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u0073\u0065\u006C\u0065\u0063\u0074\u005B\u0064\u0061\u0074\u0061\u002D\u0072\u006F\u006C\u0065\u003D\u0022\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C\u002D\u0076\u0069\u006E\u0063\u0075\u006C\u006F\u0022\u005D\u002C\u0020\u0073\u0065\u006C\u0065\u0063\u0074\u005B\u0064\u0061\u0074\u0061\u002D\u0072\u006F\u006C\u0065\u003D\u0022\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C\u002D\u0063\u0061\u006C\u0065\u006E\u0064\u0061\u0072\u0069\u006F\u0022\u005D\u002C\u0020\u0023\u0061\u0066\u0061\u0073\u0074\u0061\u006D\u0065\u006E\u0074\u006F\u002D\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C")['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](sel=>ativarCustomSelect(sel));}var _0xd7dge=(339191^339198)+(522308^522307);const _origAtualizarSelectResponsaveis=atualizarSelectResponsaveis;_0xd7dge=(860441^860441)+(672491^672492);atualizarSelectResponsaveis=function(){_origAtualizarSelectResponsaveis['\u0061\u0070\u0070\u006C\u0079'](this,arguments);setTimeout(()=>{document['\u0071\u0075\u0065\u0072\u0079\u0053\u0065\u006C\u0065\u0063\u0074\u006F\u0072\u0041\u006C\u006C']("\u0073\u0065\u006C\u0065\u0063\u0074\u005B\u0064\u0061\u0074\u0061\u002D\u0072\u006F\u006C\u0065\u003D\u0022\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C\u002D\u0076\u0069\u006E\u0063\u0075\u006C\u006F\u0022\u005D\u002C\u0020\u0073\u0065\u006C\u0065\u0063\u0074\u005B\u0064\u0061\u0074\u0061\u002D\u0072\u006F\u006C\u0065\u003D\u0022\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C\u002D\u0063\u0061\u006C\u0065\u006E\u0064\u0061\u0072\u0069\u006F\u0022\u005D\u002C\u0020\u0023\u0061\u0066\u0061\u0073\u0074\u0061\u006D\u0065\u006E\u0074\u006F\u002D\u0072\u0065\u0073\u0070\u006F\u006E\u0073\u0061\u0076\u0065\u006C")['\u0066\u006F\u0072\u0045\u0061\u0063\u0068'](sel=>{if(sel['\u005F\u0063\u0073\u0041\u0074\u0069\u0076\u0061\u0064\u006F']&&sel['\u005F\u0063\u0073\u0053\u0079\u006E\u0063'])sel['\u005F\u0063\u0073\u0053\u0079\u006E\u0063']();else ativarCustomSelect(sel);});},994924^994924);};document['\u0061\u0064\u0064\u0045\u0076\u0065\u006E\u0074\u004C\u0069\u0073\u0074\u0065\u006E\u0065\u0072']("\u0044\u004F\u004D\u0043\u006F\u006E\u0074\u0065\u006E\u0074\u004C\u006F\u0061\u0064\u0065\u0064",()=>{setTimeout(ativarTodosCustomSelects,547811^547535);});
+<th>Horário Início</th><th>Horário Fim</th><th>Função</th><th>Valor</th></tr></thead><tbody>`;
+  for (let dia = s; dia <= f; dia++) {
+    const dt = new Date(a, m - 1, dia);
+    const idx = ((Math.floor((dt - new Date(2024, 2, 21)) / 86400000)) % alas.length + alas.length) % alas.length;
+    const ala = alas[idx];
+    let linhasAC4 = [];
+    const funcoesDoDia = vinculos[ala].filter(v => v.dia === dia);
+    funcoesDoDia.sort((a, b) => {
+      const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal :
+        (a.hasOwnProperty('ordem') ? a.ordem : funcoes.indexOf(a.funcao));
+      const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal :
+        (b.hasOwnProperty('ordem') ? b.ordem : funcoes.indexOf(b.funcao));
+      return ordemA - ordemB;
+    });
+    funcoesDoDia.forEach(v => {
+      if (v.responsavel && v.responsavel !== 'Indeterminado') {
+        if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
+          exclusoesDiarias[ala][dia].includes(v.funcao) && v.geradoAutomaticamente) return;
+        // ✅ Inclui "AC4 - Regência" como AC4
+        if (v.remuneracao === 'AC4' || v.remuneracao === 'AC4-2' || v.remuneracao === 'AC4 - Regência') {
+          const hI = v.horaInicio ?? 8;
+          const hF = v.horaFim ?? 8; // ✅ Intencional: escala AC4 usa sempre horaFim (não horaFimEscala)
+          const valor = calcularCusto(dt, hI, hF);
+          linhasAC4.push({ dt, func: v.funcao, resp: v.responsavel, hI, hF, valor });
+          valorTotal += valor;
+        }
+      }
+    });
+    if (linhasAC4.length) {
+      const bgColor = dayIndex % 2 === 0 ? '#f9f9f9' : '#ffffff';
+      linhasAC4.forEach((ln, i) => {
+        const dtIni = ln.dt;
+        const dtFim = new Date(dtIni);
+        if (ln.hF <= ln.hI) dtFim.setDate(dtFim.getDate() + 1);
+        const diaIniStr = `${String(dtIni.getDate()).padStart(2,'0')}/${String(dtIni.getMonth()+1).padStart(2,'0')}/${dtIni.getFullYear()}`;
+        const diaFimStr = `${String(dtFim.getDate()).padStart(2,'0')}/${String(dtFim.getMonth()+1).padStart(2,'0')}/${dtFim.getFullYear()}`;
+        const hIstr = String(ln.hI).padStart(2,'0') + ':00:00';
+        const hFstr = String(ln.hF).padStart(2,'0') + ':00:00';
+        const match = ln.resp.match(/(\d{1,2}\.\d{3}|\d{4,5})/);
+        const rg = match ? match[1] : '';
+        html += `<tr style="background-color:${bgColor}">
+<td>${rg}</td><td>${ln.resp}</td><td>${diaIniStr}</td><td>${diaFimStr}</td>
+<td>${hIstr}</td><td>${hFstr}</td><td>${ln.func}</td><td>R$ ${formatarMoeda(ln.valor)}</td></tr>`;
+      });
+      dayIndex++;
+    }
+  }
+  html += `<tr><td colspan="7" style="text-align:right;"><strong>Total:</strong></td>
+<td><strong>R$ ${formatarMoeda(valorTotal)}</strong></td></tr></tbody></table>`;
+  escalaAC4HTML = html;
+  $('botao-imprimir-escala-ac4').style.display = 'inline';
+  salvarDadosPersistentes();
+}
+
+
+function calcularCusto(data, hIni, hFim) {
+  // ✅ Intencional: quando hFim <= hIni (incluindo hFim === hIni), representa plantão de 24h.
+  // Ex: início 8h fim 8h = 24h de trabalho. É o comportamento esperado para escalas de plantão.
+  let total = 0, d1 = new Date(data), d2 = new Date(d1);
+  if (hFim <= hIni) d2.setDate(d2.getDate() + 1);
+  function getTaxa(d, h) {
+    const diaSemana = d.getDay(),
+      verm = (diaSemana === 5 && h >= 5) || diaSemana === 6 || diaSemana === 0 || (diaSemana === 1 && h < 5),
+      periodo = h >= 22 || h < 5 ? 'noturno' : 'diurno';
+    return verm ? taxas.vermelha[periodo] : taxas.azul[periodo];
+  }
+  const horas = hFim > hIni
+    ? Array.from({ length: hFim - hIni }, (_, h) => ({ d: d1, h: h + hIni }))
+    : [...Array(24 - hIni).keys()].map(h => ({ d: d1, h: h + hIni })).concat([...Array(hFim).keys()].map(h => ({ d: d2, h })));
+  horas.forEach(e => total += getTaxa(e.d, e.h));
+  return total;
+}
+
+// ============================================================
+// SELETOR COM PESQUISA (CustomSelect)
+// Substitui <select data-role="responsavel-*"> por um widget
+// de input com dropdown filtrável.
+// ============================================================
+
+// Fecha todos os dropdowns abertos ao clicar fora
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.cs-wrapper')) {
+    document.querySelectorAll('.cs-dropdown.cs-open').forEach(d => d.classList.remove('cs-open'));
+  }
+});
+
+/**
+ * Converte um <select data-role="responsavel-*"> em CustomSelect.
+ * Preserva o <select> original oculto para compatibilidade com o
+ * código existente (onchange, value, etc.).
+ */
+function ativarCustomSelect(sel) {
+  if (sel._csAtivado) return;
+  sel._csAtivado = true;
+  sel.style.display = 'none';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'cs-wrapper';
+  sel.parentNode.insertBefore(wrapper, sel);
+  wrapper.appendChild(sel);
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'cs-input';
+  input.placeholder = 'Pesquisar responsável...';
+  if (sel.disabled) { input.disabled = true; input.classList.add('input-disabled'); }
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'cs-dropdown';
+
+  wrapper.appendChild(input);
+  wrapper.appendChild(dropdown);
+
+  // Sincroniza o texto do input com o valor atual do select
+  function sincronizarInput() {
+    const opt = sel.options[sel.selectedIndex];
+    input.value = (opt && opt.value) ? opt.text : '';
+  }
+  sincronizarInput();
+
+  function renderOpcoes(filtro) {
+    filtro = (filtro || '').toLowerCase();
+    dropdown.innerHTML = '';
+
+    // Opção "limpar"
+    const limpar = document.createElement('div');
+    limpar.className = 'cs-option cs-option-clear';
+    limpar.textContent = '— Nenhum —';
+    limpar.addEventListener('mousedown', e => {
+      e.preventDefault();
+      sel.value = '';
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+      input.value = '';
+      dropdown.classList.remove('cs-open');
+    });
+    dropdown.appendChild(limpar);
+
+    let count = 0;
+    Array.from(sel.options).forEach(opt => {
+      if (!opt.value) return; // pula o placeholder
+      if (filtro && !opt.text.toLowerCase().includes(filtro)) return;
+      count++;
+      const div = document.createElement('div');
+      div.className = 'cs-option';
+      if (opt.value === sel.value) div.classList.add('cs-selected');
+
+      // Destaque do trecho encontrado
+      if (filtro) {
+        const idx = opt.text.toLowerCase().indexOf(filtro);
+        div.innerHTML =
+          _esc(opt.text.slice(0, idx)) +
+          '<mark>' + _esc(opt.text.slice(idx, idx + filtro.length)) + '</mark>' +
+          _esc(opt.text.slice(idx + filtro.length));
+      } else {
+        div.textContent = opt.text;
+      }
+
+      div.addEventListener('mousedown', e => {
+        e.preventDefault();
+        sel.value = opt.value;
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+        input.value = opt.text;
+        dropdown.classList.remove('cs-open');
+      });
+      dropdown.appendChild(div);
+    });
+
+    if (count === 0 && filtro) {
+      const vazio = document.createElement('div');
+      vazio.className = 'cs-option cs-empty';
+      vazio.textContent = 'Nenhum resultado para "' + filtro + '"';
+      dropdown.appendChild(vazio);
+    }
+  }
+
+  input.addEventListener('focus', () => {
+    // Fecha outros abertos
+    document.querySelectorAll('.cs-dropdown.cs-open').forEach(d => {
+      if (d !== dropdown) d.classList.remove('cs-open');
+    });
+    renderOpcoes(input.value === (sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].value ? sel.options[sel.selectedIndex].text : '') ? '' : input.value);
+    dropdown.classList.add('cs-open');
+  });
+
+  input.addEventListener('input', () => {
+    renderOpcoes(input.value);
+    dropdown.classList.add('cs-open');
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { dropdown.classList.remove('cs-open'); input.blur(); }
+    if (e.key === 'Enter') {
+      const first = dropdown.querySelector('.cs-option:not(.cs-option-clear):not(.cs-empty)');
+      if (first) first.dispatchEvent(new MouseEvent('mousedown'));
+    }
+  });
+
+  // Quando o <select> muda externamente, sincroniza o input
+  sel.addEventListener('change', sincronizarInput);
+
+  // Observa mudanças no disabled
+  const obs = new MutationObserver(() => {
+    input.disabled = sel.disabled;
+    input.classList.toggle('input-disabled', sel.disabled);
+  });
+  obs.observe(sel, { attributes: true, attributeFilter: ['disabled'] });
+
+  // Guarda referência para resinc externa
+  sel._csSync = sincronizarInput;
+}
+
+function _esc(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/**
+ * Reativa todos os selects de responsável na página.
+ * Chamada após gerarCalendario, exibirVinculos, etc.
+ */
+function ativarTodosCustomSelects() {
+  document.querySelectorAll(
+    'select[data-role="responsavel-vinculo"], select[data-role="responsavel-calendario"], #afastamento-responsavel'
+  ).forEach(sel => ativarCustomSelect(sel));
+}
+
+// ── Monkey-patch em atualizarSelectResponsaveis para reativar após rebuild ──
+const _origAtualizarSelectResponsaveis = atualizarSelectResponsaveis;
+atualizarSelectResponsaveis = function() {
+  _origAtualizarSelectResponsaveis.apply(this, arguments);
+  // Após rebuild do innerHTML, reativa e sincroniza
+  setTimeout(() => {
+    document.querySelectorAll(
+      'select[data-role="responsavel-vinculo"], select[data-role="responsavel-calendario"], #afastamento-responsavel'
+    ).forEach(sel => {
+      if (sel._csAtivado && sel._csSync) sel._csSync();
+      else ativarCustomSelect(sel);
+    });
+  }, 0);
+};
+
+// Ativa após DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(ativarTodosCustomSelects, 300);
+});

@@ -912,7 +912,131 @@ table .cs-wrapper {
 
 
 
-/* ========== AFASTAMENTO DIAS — centralizado ========== */
+/* ========== PAINEL: ADICIONAR FUNÇÃO EXCLUSIVA POR ALA ========== */
+.painel-adicionar-funcao-ala {
+  margin-top: 12px;
+  border: 1px dashed #007bff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.painel-adicionar-funcao-ala-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  background: #e8f0fe;
+  color: #1a3c7a;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.painel-adicionar-funcao-ala-titulo:hover {
+  background: #d0e2ff;
+}
+
+.seta-painel {
+  font-size: 11px;
+  margin-left: 8px;
+}
+
+.painel-adicionar-funcao-ala-corpo {
+  padding: 12px 14px;
+  background: #f8fbff;
+  border-top: 1px dashed #007bff;
+}
+
+.painel-funcao-campos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.painel-funcao-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 180px;
+}
+
+.painel-funcao-campo label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #444;
+  white-space: nowrap;
+}
+
+.painel-funcao-campo input[type="text"] {
+  width: 100%;
+  margin-top: 0;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.painel-funcao-campo select {
+  width: 100%;
+  margin-top: 0;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.painel-funcao-campo-btn {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+}
+
+.btn-adicionar-funcao-ala {
+  background: #28a745;
+  color: white;
+  padding: 7px 18px;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 0;
+  white-space: nowrap;
+  width: auto;
+}
+
+.btn-adicionar-funcao-ala:hover {
+  background: #1e7e34;
+}
+
+.btn-remover-funcao-ala {
+  background: #dc3545;
+  color: white;
+  padding: 4px 10px;
+  font-size: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 0;
+  white-space: nowrap;
+}
+
+.btn-remover-funcao-ala:hover {
+  background: #b02a37;
+}
+
+.vinculos-exclusivos-titulo {
+  margin: 12px 0 4px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a3c7a;
+}
+
+.erro-funcao-ala {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #c62828;
+  font-weight: 600;
+}
+
+
 .afastamento-field-dias {
   display: flex;
   flex-direction: column;
