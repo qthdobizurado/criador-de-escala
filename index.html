@@ -271,9 +271,8 @@
       document.getElementById('cfgHoraInicio').value = hi;
       _atualizarPreviewConfig();
     }
-  </script>
 
-
+    document.addEventListener('DOMContentLoaded', function() {
       const anoAtual = new Date().getFullYear();
       document.getElementById('ano').value = anoAtual;
       const rodape = document.getElementById('rodapeTexto');
