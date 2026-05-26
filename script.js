@@ -1,6 +1,8 @@
 // ============================================================
-// BACKEND: Firebase (firebase-auth.js)
-// Não há mais URL do Apps Script — tudo via Firestore SDK.
+// CONFIGURAÇÃO - Altere a URL abaixo para a URL do seu
+// Google Apps Script implantado como "Web App"
+// ============================================================
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxN0e8H7u-5eMRasYqnnGturWdpHc_q4mAvmipBtvjBs25LGBoGgkJ4EXzc94rPwxiFfg/exec';
 // ============================================================
 
 const alas = ['Alpha', 'Bravo', 'Charlie', 'Delta'];
@@ -29,9 +31,9 @@ let resumoHTML = '',
 const $ = id => document.getElementById(id);
 const backupEdicaoFuncao = {};
 
-// Estado de autenticação (Firebase user object)
-let usuarioAtual = null; // uid do Firebase
-let _fbUser = null;      // objeto user do Firebase Auth (tem .displayName, .email)
+// Estado de autenticação
+let usuarioAtual = null;
+let senhaAtual = null;
 
 (function () {
   const style = document.createElement('style');
@@ -66,68 +68,54 @@ let _fbUser = null;      // objeto user do Firebase Auth (tem .displayName, .ema
 })();
 
 // ============================================================
-// LOGIN / LOGOUT / CADASTRO  (Firebase Auth)
+// LOGIN / LOGOUT
 // ============================================================
-
-// ============================================================
-// LOGIN / LOGOUT  (Google Auth)
-// ============================================================
-
-function iniciarListenerAuth() {
-  window._fbAuth.onAuthStateChanged(user => {
-    if (user) {
-      _aoEntrar(user);
-    } else {
-      _aoSair();
-    }
-  });
-}
-
-function _aoEntrar(user) {
-  _fbUser      = user;
-  usuarioAtual = user.uid;
-  const nome   = user.displayName || user.email;
-  $('loginOverlay').style.display = 'none';
-  $('appContent').style.display   = 'block';
-  $('usuarioLogado').textContent  = '👤 ' + nome;
-  carregarDadosPersistentes();
-  _listarSlots(user.uid).then(slots => {
-    _slotsCache = slots;
-    _atualizarSelectAutoSave();
-  }).catch(console.error);
-}
-
-function _aoSair() {
-  _fbUser      = null;
-  usuarioAtual = null;
-  $('loginOverlay').style.display = 'flex';
-  $('appContent').style.display   = 'none';
-  // Reseta o botão e mensagens da tela de login
-  const btn = $('btnLogin');
-  if (btn) btn.disabled = false;
-  const erro   = $('loginErro');
-  const status = $('loginStatus');
-  if (erro)   erro.textContent   = '';
-  if (status) status.textContent = '';
-}
-
 async function fazerLogin() {
+  const usuario = $('loginUsuario').value.trim();
+  const senha = $('loginSenha').value.trim();
+  $('loginErro').textContent = '';
+  if (!usuario || !senha) {
+    $('loginErro').textContent = 'Preencha usuário e senha.';
+    return;
+  }
   const btn = $('btnLogin');
   btn.disabled = true;
-  $('loginErro').textContent   = '';
-  $('loginStatus').textContent = 'Abrindo Google...';
+  $('loginStatus').textContent = 'Verificando...';
   try {
-    await loginComGoogle();
-    // onAuthStateChanged cuida do resto após o popup fechar
+    const res = await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ acao: 'login', usuario, senha })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      usuarioAtual = usuario;
+      senhaAtual = senha;
+      _slotsCache = data.slots || [];
+      $('loginOverlay').style.display = 'none';
+      $('appContent').style.display = 'block';
+      $('usuarioLogado').textContent = '👤 ' + usuario;
+      carregarDadosPersistentes();
+      _atualizarSelectAutoSave();
+    } else {
+      $('loginErro').textContent = data.erro || 'Usuário ou senha incorretos.';
+      $('loginStatus').textContent = '';
+    }
   } catch (err) {
-    $('loginErro').textContent   = traduzirErroFirebase(err.code);
+    $('loginErro').textContent = 'Erro ao conectar com o servidor. Verifique a URL do Apps Script.';
     $('loginStatus').textContent = '';
-    btn.disabled = false;
+    console.error(err);
   }
+  btn.disabled = false;
 }
 
-async function fazerLogout() {
-  await logoutUsuario();
+function fazerLogout() {
+  usuarioAtual = null;
+  senhaAtual = null;
+  $('loginOverlay').style.display = 'flex';
+  $('appContent').style.display = 'none';
+  $('loginSenha').value = '';
+  $('loginErro').textContent = '';
+  $('loginStatus').textContent = '';
 }
 
 // ============================================================
@@ -183,15 +171,12 @@ function importarBackup() {
 function processarImportacao(event) {
   const file = event.target.files[0];
   if (!file) return;
-  // Guarda o nome do arquivo (sem extensão) para sugerir como nome do slot
-  const nomeArquivo = file.name.replace(/\.json$/i, '');
   const reader = new FileReader();
   reader.onload = function (e) {
     try {
       const dados = JSON.parse(e.target.result);
       aplicarDados(dados);
-      // Após importar, pergunta se quer salvar na nuvem
-      _perguntarSalvarNuvemAposImport(nomeArquivo);
+      openWarningModal('Backup importado com sucesso!');
     } catch (err) {
       openWarningModal('Erro ao ler o arquivo de backup. Verifique se é um JSON válido.');
     }
@@ -200,67 +185,21 @@ function processarImportacao(event) {
   event.target.value = '';
 }
 
-// Abre o modal de salvar na nuvem pré-configurado após importação
-async function _perguntarSalvarNuvemAposImport(nomeArquivo) {
-  // Mostra modal de confirmação primeiro
-  openModal(
-    'Backup importado com sucesso! Deseja salvar este arquivo na nuvem agora?',
-    async () => {
-      // Usuário confirmou — abre modal de salvar na nuvem
-      $('modalSalvarNuvem').style.display = 'block';
-      $('nuvemSalvarStatus').textContent = 'Carregando slots...';
-      try {
-        await _listarSlots();
-        const cheio = _slotsCache.length >= 12;
-
-        // Pré-preenche o nome com o nome do arquivo
-        $('inputNomeNovoSlot').value = nomeArquivo;
-
-        // Se cheio, força modo substituir e pré-seleciona o slot mais antigo
-        if (cheio) {
-          $('radioModoSubstituir').checked = true;
-          $('radioModoNovo').disabled = true;
-          $('labelModoNovo').style.opacity = '0.45';
-          // Pré-seleciona o último slot (mais antigo, pois lista vem por data desc)
-          const sel = $('selectSlotSubstituir');
-          sel.innerHTML = '<option value="">-- Selecione o slot --</option>' +
-            _slotsCache.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
-          // Seleciona o último da lista
-          sel.value = _slotsCache[_slotsCache.length - 1].nome;
-        } else {
-          $('radioModoNovo').checked = true;
-          $('radioModoNovo').disabled = false;
-          $('labelModoNovo').style.opacity = '1';
-        }
-
-        _renderModalSalvar('', false);
-        // Sobrescreve o nome que _renderModalSalvar limpa
-        $('inputNomeNovoSlot').value = nomeArquivo;
-        // Marca flag para perguntar sobre auto-save após salvar
-        _salvarAposImport = true;
-      } catch (err) {
-        $('nuvemSalvarStatus').textContent = '❌ Erro de conexão.';
-        console.error(err);
-      }
-    },
-    null // cancelar não faz nada
-  );
-}
-
-// Flag que indica que o save veio de uma importação (para perguntar sobre auto-save)
-let _salvarAposImport = false;
-
 // ============================================================
 // NUVEM - ESTADO COMPARTILHADO
 // ============================================================
 let _slotsCache = [];         // cache dos slots após listar
 let _slotAutoSave = null;     // nome do slot de auto-save selecionado
 
-async function _listarSlots(uid) {
-  uid = uid || usuarioAtual;
-  const slots = await listarSlots(uid);
-  _slotsCache = slots;
-  return slots;
+async function _listarSlots() {
+  const res = await fetch(SHEETS_URL, {
+    method: 'POST',
+    body: JSON.stringify({ acao: 'listar', usuario: usuarioAtual, senha: senhaAtual })
+  });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.erro || 'Erro ao listar slots');
+  _slotsCache = data.slots || [];
+  return _slotsCache;
 }
 
 // ============================================================
@@ -354,35 +293,32 @@ async function confirmarSalvarNuvem() {
   $('nuvemSalvarStatus').textContent = 'Salvando...';
   $('nuvemSalvarStatus').style.color = '#555';
   try {
-    await salvarSlot(usuarioAtual, nomeSlot, dados, substituir || null);
-    // Atualiza auto-save se foi o slot monitorado
-    if (_slotAutoSave && substituir && substituir === _slotAutoSave) _slotAutoSave = nomeSlot;
-    $('nuvemSalvarStatus').textContent = '✅ Salvo com sucesso!';
-    $('nuvemSalvarStatus').style.color = '#2e7d32';
-    await _listarSlots();
-    _atualizarSelectAutoSave();
-
-    const veioDeImport = _salvarAposImport;
-    _salvarAposImport = false;
-
-    setTimeout(() => {
-      fecharModalNuvem('modalSalvarNuvem');
-      // Se veio de importação, pergunta sobre auto-save
-      if (veioDeImport) {
-        openModal(
-          `Deseja ativar o auto-save para "${nomeSlot}"? As alterações serão salvas automaticamente na nuvem.`,
-          () => {
-            _slotAutoSave = nomeSlot;
-            localStorage.setItem('escala_autosave_slot_' + usuarioAtual, nomeSlot);
-            _atualizarSelectAutoSave();
-            openWarningModal(`✅ Auto-save ativado para "${nomeSlot}"!`);
-          },
-          null
-        );
-      }
-    }, 1000);
+    const res = await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        acao: 'salvar',
+        usuario: usuarioAtual,
+        senha: senhaAtual,
+        nomeSlot,
+        substituir,
+        dados
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      // Atualiza auto-save se foi o slot monitorado
+      if (_slotAutoSave && substituir && substituir === _slotAutoSave) _slotAutoSave = nomeSlot;
+      $('nuvemSalvarStatus').textContent = '✅ Salvo com sucesso!';
+      $('nuvemSalvarStatus').style.color = '#2e7d32';
+      await _listarSlots();
+      _atualizarSelectAutoSave();
+      setTimeout(() => fecharModalNuvem('modalSalvarNuvem'), 1300);
+    } else {
+      $('nuvemSalvarStatus').textContent = '❌ ' + data.erro;
+      $('nuvemSalvarStatus').style.color = '#c62828';
+    }
   } catch (err) {
-    $('nuvemSalvarStatus').textContent = '❌ ' + (err.message || 'Erro ao salvar.');
+    $('nuvemSalvarStatus').textContent = '❌ Erro de conexão.';
     $('nuvemSalvarStatus').style.color = '#c62828';
     console.error(err);
   }
@@ -428,26 +364,23 @@ function _renderListaCarregar() {
 async function carregarSlotNuvem(nomeSlot) {
   $('nuvemCarregarStatus').textContent = 'Carregando "' + nomeSlot + '"...';
   try {
-    const dadosRaw = await carregarSlot(usuarioAtual, nomeSlot);
-    const dadosCarregados = (typeof dadosRaw === 'string')
-      ? await descomprimirDaNuvem(dadosRaw)
-      : dadosRaw;
-    aplicarDados(dadosCarregados);
-    // Marca hash como salvo para não disparar auto-save logo após carregar
-    _ultimoHashSalvo = JSON.stringify(coletarDadosParaNuvem());
-    fecharModalNuvem('modalCarregarNuvem');
-    // Pergunta sobre auto-save
-    openModal(
-      `"${nomeSlot}" carregado com sucesso! Deseja ativar o auto-save para este arquivo?`,
-      () => {
-        _slotAutoSave = nomeSlot;
-        _atualizarSelectAutoSave();
-        openWarningModal(`✅ Auto-save ativado para "${nomeSlot}"!`);
-      },
-      null
-    );
+    const res = await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ acao: 'carregar', usuario: usuarioAtual, senha: senhaAtual, nomeSlot })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      const dadosCarregados = (typeof data.dados === 'string')
+        ? await descomprimirDaNuvem(data.dados)
+        : data.dados;
+      aplicarDados(dadosCarregados);
+      fecharModalNuvem('modalCarregarNuvem');
+      openWarningModal('✅ "' + nomeSlot + '" carregado com sucesso!');
+    } else {
+      $('nuvemCarregarStatus').textContent = '❌ ' + data.erro;
+    }
   } catch (err) {
-    $('nuvemCarregarStatus').textContent = '❌ ' + (err.message || 'Erro ao carregar.');
+    $('nuvemCarregarStatus').textContent = '❌ Erro de conexão.';
     console.error(err);
   }
 }
@@ -456,23 +389,32 @@ async function carregarSlotNuvem(nomeSlot) {
 // NUVEM - APAGAR
 // ============================================================
 async function apagarSlotNuvem(nomeSlot) {
+  // Confirmação antes de apagar
   openModal(
     `Tem certeza que deseja apagar o save "${nomeSlot}" da nuvem? Esta ação não pode ser desfeita.`,
     async () => {
       $('nuvemCarregarStatus').textContent = 'Apagando "' + nomeSlot + '"...';
       try {
-        await apagarSlot(usuarioAtual, nomeSlot);
-        if (_slotAutoSave === nomeSlot) {
-          _slotAutoSave = null;
-          localStorage.removeItem('escala_autosave_slot_' + usuarioAtual);
+        const res = await fetch(SHEETS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ acao: 'apagar', usuario: usuarioAtual, senha: senhaAtual, nomeSlot })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          if (_slotAutoSave === nomeSlot) {
+            _slotAutoSave = null;
+            localStorage.removeItem('escala_autosave_slot_' + usuarioAtual);
+            _atualizarSelectAutoSave();
+          }
+          await _listarSlots();
+          _renderListaCarregar();
           _atualizarSelectAutoSave();
+          $('nuvemCarregarStatus').textContent = `✅ "${nomeSlot}" apagado. ${_slotsCache.length} save(s) restantes.`;
+        } else {
+          $('nuvemCarregarStatus').textContent = '❌ ' + data.erro;
         }
-        await _listarSlots();
-        _renderListaCarregar();
-        _atualizarSelectAutoSave();
-        $('nuvemCarregarStatus').textContent = `✅ "${nomeSlot}" apagado. ${_slotsCache.length} save(s) restantes.`;
       } catch (err) {
-        $('nuvemCarregarStatus').textContent = '❌ ' + (err.message || 'Erro ao apagar.');
+        $('nuvemCarregarStatus').textContent = '❌ Erro de conexão.';
         console.error(err);
       }
     }
@@ -523,6 +465,75 @@ function onChangeAutoSave() {
   _atualizarIndicadorAutoSave();
 }
 
+// Flag que impede _atualizarIndicadorAutoSave de sobrescrever o status "Salvando..."
+let _autoSaveEmAndamento = false;
+
+async function _autoSaveNuvem() {
+  if (!_slotAutoSave || !usuarioAtual) return;
+  // Verifica se o slot ainda existe
+  const existe = _slotsCache.some(s => s.nome === _slotAutoSave);
+  if (!existe) return;
+
+  _autoSaveEmAndamento = true;
+
+  // Mostra toast flutuante de "Salvando..." — mais visível que o indicador pequeno
+  _mostrarToastAutoSave('salvando');
+
+  // Atualiza também o indicador inline
+  const ind = $('indicadorAutoSave');
+  if (ind) {
+    ind.textContent = '💾 Salvando na nuvem...';
+    ind.style.color = '#e65100';
+    ind.style.fontSize = '13px';
+    ind.style.fontWeight = '600';
+    ind.classList.add('salvando');
+  }
+
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        acao: 'salvar',
+        usuario: usuarioAtual,
+        senha: senhaAtual,
+        nomeSlot: _slotAutoSave,
+        substituir: _slotAutoSave,
+        dados: await comprimirParaNuvem(coletarDadosParaNuvem()).catch(e => { throw e; })
+      })
+    });
+    _mostrarToastAutoSave('ok');
+  } catch (err) {
+    console.warn('Auto-save falhou:', err);
+    _mostrarToastAutoSave('erro');
+  } finally {
+    _autoSaveEmAndamento = false;
+    if (ind) ind.classList.remove('salvando');
+    _atualizarIndicadorAutoSave();
+  }
+}
+
+function _mostrarToastAutoSave(estado) {
+  let toast = $('toastAutoSave');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toastAutoSave';
+    document.body.appendChild(toast);
+  }
+  if (estado === 'salvando') {
+    toast.textContent = '💾 Salvando na nuvem...';
+    toast.className = 'toast-autosave toast-salvando';
+    toast.style.display = 'block';
+    toast._clearTimer && clearTimeout(toast._clearTimer);
+  } else if (estado === 'ok') {
+    toast.textContent = '✅ Salvo na nuvem!';
+    toast.className = 'toast-autosave toast-ok';
+    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
+  } else {
+    toast.textContent = '❌ Auto-save falhou. Verifique a conexão.';
+    toast.className = 'toast-autosave toast-erro';
+    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 4000);
+  }
+}
 
 function fecharModalNuvem(id) {
   $(id).style.display = 'none';
@@ -674,139 +685,40 @@ function aplicarDados(dados) {
   salvarDadosPersistentes();
 }
 
-// ============================================================
-// AUTO-SAVE — 30s debounce + hash para evitar saves desnecessários
-// ============================================================
-
-// Estados possíveis: 'salvo' | 'pendente' | 'salvando' | 'erro'
-let _autoSaveEstado = 'salvo';
-let _autoSaveEmAndamento = false;
-let _autoSaveTimer = null;
-let _ultimoHashSalvo = null; // hash dos dados no último save bem-sucedido
-
-// Chamado toda vez que dados mudam
-function _marcarPendente() {
-  if (!_slotAutoSave || !usuarioAtual) return;
-  _autoSaveEstado = 'pendente';
-  _mostrarToastAutoSave('pendente');
-  // Reinicia o timer de 30s
-  clearTimeout(_autoSaveTimer);
-  _autoSaveTimer = setTimeout(_autoSaveNuvem, 30000);
-}
-
-// Debounce público (chamado por salvarDadosPersistentes)
+// Debounce para auto-save na nuvem (evita chamadas excessivas)
 const _autoSaveDebounced = (function() {
-  return function() { _marcarPendente(); };
+  let t;
+  return function() { clearTimeout(t); t = setTimeout(_autoSaveNuvem, 4000); };
 })();
 
-async function _autoSaveNuvem() {
-  if (!_slotAutoSave || !usuarioAtual) return;
-  if (_autoSaveEmAndamento) return;
-  const existe = _slotsCache.some(s => s.nome === _slotAutoSave);
-  if (!existe) return;
-
-  // Compara hash — se nada mudou desde o último save, não envia
-  const hashAtual = JSON.stringify(coletarDadosParaNuvem());
-  if (hashAtual === _ultimoHashSalvo) {
-    _autoSaveEstado = 'salvo';
-    _mostrarToastAutoSave('none');
-    _atualizarIndicadorAutoSave();
-    return;
-  }
-
-  _autoSaveEmAndamento = true;
-  _autoSaveEstado = 'salvando';
-  _mostrarToastAutoSave('salvando');
-
-  const ind = $('indicadorAutoSave');
-  if (ind) {
-    ind.textContent = '💾 Salvando na nuvem...';
-    ind.style.color = '#e65100';
-    ind.style.fontSize = '13px';
-    ind.style.fontWeight = '600';
-    ind.classList.add('salvando');
-  }
-
-  try {
-    const dados = await comprimirParaNuvem(hashAtual === null ? coletarDadosParaNuvem() : JSON.parse(hashAtual)).catch(e => { throw e; });
-    // Tenta salvar — em caso de falha aguarda 10s e tenta mais uma vez
-    try {
-      await salvarSlot(usuarioAtual, _slotAutoSave, dados, _slotAutoSave);
-    } catch (errPrimeiro) {
-      console.warn('Auto-save: primeira tentativa falhou, tentando novamente em 10s...', errPrimeiro);
-      await new Promise(r => setTimeout(r, 10000));
-      await salvarSlot(usuarioAtual, _slotAutoSave, dados, _slotAutoSave);
-    }
-    _ultimoHashSalvo = hashAtual; // atualiza hash só após save bem-sucedido
-    _autoSaveEstado = 'salvo';
-    _mostrarToastAutoSave('ok');
-  } catch (err) {
-    console.warn('Auto-save falhou:', err);
-    _autoSaveEstado = 'erro';
-    _mostrarToastAutoSave('erro');
-  } finally {
-    _autoSaveEmAndamento = false;
-    if (ind) ind.classList.remove('salvando');
-    _atualizarIndicadorAutoSave();
-  }
-}
-
-function _mostrarToastAutoSave(estado) {
-  let toast = $('toastAutoSave');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'toastAutoSave';
-    document.body.appendChild(toast);
-  }
-  // Cancela timer anterior e contagem regressiva
-  if (toast._clearTimer) { clearTimeout(toast._clearTimer); toast._clearTimer = null; }
-  if (estado !== 'pendente' && toast._contagemTimer) { clearInterval(toast._contagemTimer); toast._contagemTimer = null; }
-
-  if (estado === 'pendente') {
-    toast.className = 'toast-autosave toast-pendente';
-    toast.style.display = 'block';
-    // Inicia contagem regressiva de 30s
-    let segundos = 30;
-    toast.textContent = `⏳ Aguarde o salvamento automático. Restam ${segundos}s. Mantenha a página aberta.`;
-    if (toast._contagemTimer) clearInterval(toast._contagemTimer);
-    toast._contagemTimer = setInterval(() => {
-      segundos--;
-      if (segundos <= 0) {
-        clearInterval(toast._contagemTimer);
-        toast._contagemTimer = null;
-      } else {
-        toast.textContent = `⏳ Aguarde o salvamento automático. Restam ${segundos}s. Mantenha a página aberta.`;
-      }
-    }, 1000);
-  } else if (estado === 'salvando') {
-    toast.textContent = '💾 Salvando na nuvem...';
-    toast.className = 'toast-autosave toast-salvando';
-    toast.style.display = 'block';
-  } else if (estado === 'ok') {
-    toast.textContent = '✅ Arquivo salvo na nuvem!';
-    toast.className = 'toast-autosave toast-ok';
-    toast.style.display = 'block';
-    // Some após 3s se não houver novas alterações
-    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 3000);
-  } else if (estado === 'erro') {
-    toast.textContent = '❌ Auto-save falhou. Verifique a conexão.';
-    toast.className = 'toast-autosave toast-erro';
-    toast.style.display = 'block';
-    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 5000);
-  } else {
-    toast.style.display = 'none';
-  }
-}
-
 function salvarDadosPersistentes() {
+  try {
+    const dados = coletarDadosParaSalvar();
+    localStorage.setItem('escala_dados_' + (usuarioAtual || 'guest'), JSON.stringify(dados));
+  } catch (err) {
+    console.warn('Não foi possível salvar no localStorage:', err);
+  }
   // Dispara auto-save na nuvem se um slot estiver selecionado
   if (_slotAutoSave && usuarioAtual) _autoSaveDebounced();
 }
 
 function carregarDadosPersistentes() {
-  // Não restaura dados nem auto-save do localStorage.
-  // O usuário escolhe o arquivo a carregar após o login.
-  _atualizarIndicadorAutoSave();
+  // Restaura preferência de auto-save
+  try {
+    const savedSlot = localStorage.getItem('escala_autosave_slot_' + (usuarioAtual || 'guest'));
+    if (savedSlot) {
+      _slotAutoSave = savedSlot;
+      _atualizarIndicadorAutoSave();
+    }
+  } catch(_) {}
+  try {
+    const raw = localStorage.getItem('escala_dados_' + (usuarioAtual || 'guest'));
+    if (!raw) return;
+    const dados = JSON.parse(raw);
+    aplicarDados(dados);
+  } catch (err) {
+    console.warn('Erro ao carregar do localStorage:', err);
+  }
 }
 
 // ============================================================
@@ -1461,8 +1373,8 @@ function gerarCalendarioInterno(mantemEd) {
           remuneracao = 'AC4';
         }
         const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].includes(funcao);
-        const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.turnoInicio === hInicioTurno && !v.geradoAutomaticamente);
-        const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.turnoInicio === hInicioTurno && v.geradoAutomaticamente);
+        const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && !v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
+        const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
         if (excluida || jaExisteManual) return;
         if (!jaExisteAutomatica) {
           let ocultarValue = false;
@@ -1491,8 +1403,8 @@ function gerarCalendarioInterno(mantemEd) {
           remuneracao = 'AC4';
         }
         const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].includes(funcao);
-        const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.turnoInicio === hInicioTurno && !v.geradoAutomaticamente);
-        const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.turnoInicio === hInicioTurno && v.geradoAutomaticamente);
+        const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && !v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
+        const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
         if (excluida || jaExisteManual) return;
         if (!jaExisteAutomatica) {
           let ocultarValue = false;
@@ -1518,7 +1430,12 @@ function gerarCalendarioInterno(mantemEd) {
         });
       }
 
-      const vincDia = vinculos[ala].filter(v => v.dia === dia && (v.turnoInicio === hInicioTurno || (!v.hasOwnProperty('turnoInicio') && turnos.length === 1)));
+      const vincDia = vinculos[ala].filter(v =>
+        v.dia === dia && (
+          v.turnoInicio === hInicioTurno ||
+          (!v.hasOwnProperty('turnoInicio') && (turnos.length === 1 || turno === turnos[0]))
+        )
+      );
       const vincDiaFiltrado = vincDia.filter(v => {
         if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia]) {
           if (v.geradoAutomaticamente && exclusoesDiarias[ala][dia].includes(v.funcao)) return false;
@@ -2401,7 +2318,10 @@ function gerarEscala() {
     for (const turno of turnos) {
       const ala = turno.ala;
       const funcoesDoDia = vinculos[ala].filter(v =>
-        v.dia === dia && (turnos.length === 1 || v.turnoInicio === turno.horaInicio)
+        v.dia === dia && (
+          v.turnoInicio === turno.horaInicio ||
+          (!v.hasOwnProperty('turnoInicio') && (turnos.length === 1 || turno === turnos[0]))
+        )
       );
       funcoesDoDia.sort((a, b) => {
         const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal : (a.hasOwnProperty('ordem') ? a.ordem : funcoes.indexOf(a.funcao));
@@ -2478,7 +2398,10 @@ function buildEscalaAC4HTML() {
       const ala = turno.ala;
       let linhasAC4 = [];
       const funcoesDoDia = vinculos[ala].filter(v =>
-        v.dia === dia && (turnos.length === 1 || v.turnoInicio === turno.horaInicio)
+        v.dia === dia && (
+          v.turnoInicio === turno.horaInicio ||
+          (!v.hasOwnProperty('turnoInicio') && (turnos.length === 1 || turno === turnos[0]))
+        )
       );
       funcoesDoDia.sort((a, b) => {
         const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal : (a.hasOwnProperty('ordem') ? a.ordem : funcoes.indexOf(a.funcao));
@@ -2733,13 +2656,4 @@ atualizarSelectResponsaveis = function() {
 // Ativa após DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(ativarTodosCustomSelects, 300);
-
-  // Inicializa Firebase e escuta autenticação
-  initFirebase().then(() => {
-    iniciarListenerAuth();
-  }).catch(err => {
-    console.error('Erro ao inicializar Firebase:', err);
-    const el = document.getElementById('loginErro');
-    if (el) el.textContent = 'Erro ao conectar com o Firebase. Verifique a configuração.';
-  });
 });
