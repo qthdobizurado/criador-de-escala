@@ -800,6 +800,7 @@ function copiarColuna(colIdx) {
       cursor:pointer;white-space:nowrap;transition:background 0.15s;
     }
     .btn-copiar-col:hover{background:#dbeafe;}
+    @media print { .linha-copiar { display: none; } }
   </style>`;
 
   const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Escala de AC4</title>${style}</head><body>${htmlComBotoes}${script}</body></html>`;
