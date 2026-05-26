@@ -1203,15 +1203,19 @@ function calcularAlasTurnosDia(dt) {
     const ala = alasAtivas[Math.floor(pos / diasPorAla)];
     return [{ ala, horaInicio: hi, horaFim: hi }];
   } else {
+    // Para escalas sub-diárias (ex: 12×36):
+    // Cada ala trabalha 1 turno e folga (cicloHoras/horasOn - 1) turnos.
+    // A sequência de turnos é simplesmente Alpha, Bravo, Charlie, Delta, Alpha, ...
     const turnosPorDia = 24 / horasOn;
+    const nAlas = alasAtivas.length;
+    const diasDesdeRef = Math.floor((dt - refDate) / 86400000);
+    const turnosBase = diasDesdeRef * turnosPorDia;
     const turnos = [];
     for (let t = 0; t < turnosPorDia; t++) {
       const horaInicioTurno = (hi + t * horasOn) % 24;
       const horaFimTurno = (hi + (t + 1) * horasOn) % 24;
-      const diasDesdeRef = Math.floor((dt - refDate) / 86400000);
-      const horasDesdeRef = diasDesdeRef * 24 + (horaInicioTurno - hi + 24) % 24;
-      const posNoCicloTotal = ((horasDesdeRef % cicloTotal) + cicloTotal) % cicloTotal;
-      const ala = alasAtivas[Math.floor(posNoCicloTotal / cicloHoras)];
+      const turnoAbsoluto = turnosBase + t;
+      const ala = alasAtivas[((turnoAbsoluto % nAlas) + nAlas) % nAlas];
       turnos.push({ ala, horaInicio: horaInicioTurno, horaFim: horaFimTurno });
     }
     return turnos;
