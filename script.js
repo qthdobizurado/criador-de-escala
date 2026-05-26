@@ -762,7 +762,7 @@ function _mostrarToastAutoSave(estado) {
   if (toast._clearTimer) { clearTimeout(toast._clearTimer); toast._clearTimer = null; }
 
   if (estado === 'pendente') {
-    toast.textContent = '⏳ Alterações pendentes — salvando em instantes...';
+    toast.textContent = '⏳ Aguarde o salvamento automático. Mantenha a página aberta até esta notificação desaparecer.';
     toast.className = 'toast-autosave toast-pendente';
     toast.style.display = 'block';
     // Fica visível até salvar
