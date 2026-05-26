@@ -183,12 +183,15 @@ function importarBackup() {
 function processarImportacao(event) {
   const file = event.target.files[0];
   if (!file) return;
+  // Guarda o nome do arquivo (sem extensão) para sugerir como nome do slot
+  const nomeArquivo = file.name.replace(/\.json$/i, '');
   const reader = new FileReader();
   reader.onload = function (e) {
     try {
       const dados = JSON.parse(e.target.result);
       aplicarDados(dados);
-      openWarningModal('Backup importado com sucesso!');
+      // Após importar, pergunta se quer salvar na nuvem
+      _perguntarSalvarNuvemAposImport(nomeArquivo);
     } catch (err) {
       openWarningModal('Erro ao ler o arquivo de backup. Verifique se é um JSON válido.');
     }
@@ -196,6 +199,56 @@ function processarImportacao(event) {
   reader.readAsText(file);
   event.target.value = '';
 }
+
+// Abre o modal de salvar na nuvem pré-configurado após importação
+async function _perguntarSalvarNuvemAposImport(nomeArquivo) {
+  // Mostra modal de confirmação primeiro
+  openModal(
+    'Backup importado com sucesso! Deseja salvar este arquivo na nuvem agora?',
+    async () => {
+      // Usuário confirmou — abre modal de salvar na nuvem
+      $('modalSalvarNuvem').style.display = 'block';
+      $('nuvemSalvarStatus').textContent = 'Carregando slots...';
+      try {
+        await _listarSlots();
+        const cheio = _slotsCache.length >= 12;
+
+        // Pré-preenche o nome com o nome do arquivo
+        $('inputNomeNovoSlot').value = nomeArquivo;
+
+        // Se cheio, força modo substituir e pré-seleciona o slot mais antigo
+        if (cheio) {
+          $('radioModoSubstituir').checked = true;
+          $('radioModoNovo').disabled = true;
+          $('labelModoNovo').style.opacity = '0.45';
+          // Pré-seleciona o último slot (mais antigo, pois lista vem por data desc)
+          const sel = $('selectSlotSubstituir');
+          sel.innerHTML = '<option value="">-- Selecione o slot --</option>' +
+            _slotsCache.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
+          // Seleciona o último da lista
+          sel.value = _slotsCache[_slotsCache.length - 1].nome;
+        } else {
+          $('radioModoNovo').checked = true;
+          $('radioModoNovo').disabled = false;
+          $('labelModoNovo').style.opacity = '1';
+        }
+
+        _renderModalSalvar('', false);
+        // Sobrescreve o nome que _renderModalSalvar limpa
+        $('inputNomeNovoSlot').value = nomeArquivo;
+        // Marca flag para perguntar sobre auto-save após salvar
+        _salvarAposImport = true;
+      } catch (err) {
+        $('nuvemSalvarStatus').textContent = '❌ Erro de conexão.';
+        console.error(err);
+      }
+    },
+    null // cancelar não faz nada
+  );
+}
+
+// Flag que indica que o save veio de uma importação (para perguntar sobre auto-save)
+let _salvarAposImport = false;
 
 // ============================================================
 // NUVEM - ESTADO COMPARTILHADO
@@ -308,7 +361,26 @@ async function confirmarSalvarNuvem() {
     $('nuvemSalvarStatus').style.color = '#2e7d32';
     await _listarSlots();
     _atualizarSelectAutoSave();
-    setTimeout(() => fecharModalNuvem('modalSalvarNuvem'), 1300);
+
+    const veioDeImport = _salvarAposImport;
+    _salvarAposImport = false;
+
+    setTimeout(() => {
+      fecharModalNuvem('modalSalvarNuvem');
+      // Se veio de importação, pergunta sobre auto-save
+      if (veioDeImport) {
+        openModal(
+          `Deseja ativar o auto-save para "${nomeSlot}"? As alterações serão salvas automaticamente na nuvem.`,
+          () => {
+            _slotAutoSave = nomeSlot;
+            localStorage.setItem('escala_autosave_slot_' + usuarioAtual, nomeSlot);
+            _atualizarSelectAutoSave();
+            openWarningModal(`✅ Auto-save ativado para "${nomeSlot}"!`);
+          },
+          null
+        );
+      }
+    }, 1000);
   } catch (err) {
     $('nuvemSalvarStatus').textContent = '❌ ' + (err.message || 'Erro ao salvar.');
     $('nuvemSalvarStatus').style.color = '#c62828';
