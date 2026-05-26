@@ -758,14 +758,26 @@ function _mostrarToastAutoSave(estado) {
     toast.id = 'toastAutoSave';
     document.body.appendChild(toast);
   }
-  // Cancela timer anterior
+  // Cancela timer anterior e contagem regressiva
   if (toast._clearTimer) { clearTimeout(toast._clearTimer); toast._clearTimer = null; }
+  if (estado !== 'pendente' && toast._contagemTimer) { clearInterval(toast._contagemTimer); toast._contagemTimer = null; }
 
   if (estado === 'pendente') {
-    toast.textContent = '⏳ Aguarde o salvamento automático. Mantenha a página aberta até esta notificação desaparecer.';
     toast.className = 'toast-autosave toast-pendente';
     toast.style.display = 'block';
-    // Fica visível até salvar
+    // Inicia contagem regressiva de 30s
+    let segundos = 30;
+    toast.textContent = `⏳ Aguarde o salvamento automático. Restam ${segundos}s. Mantenha a página aberta.`;
+    if (toast._contagemTimer) clearInterval(toast._contagemTimer);
+    toast._contagemTimer = setInterval(() => {
+      segundos--;
+      if (segundos <= 0) {
+        clearInterval(toast._contagemTimer);
+        toast._contagemTimer = null;
+      } else {
+        toast.textContent = `⏳ Aguarde o salvamento automático. Restam ${segundos}s. Mantenha a página aberta.`;
+      }
+    }, 1000);
   } else if (estado === 'salvando') {
     toast.textContent = '💾 Salvando na nuvem...';
     toast.className = 'toast-autosave toast-salvando';
