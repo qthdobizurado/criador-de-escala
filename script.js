@@ -1464,7 +1464,7 @@ ${funHtml}
 <div class="input-container">
 <label for="nova-funcao-${dia}-${ala}${turnoSufixo}">Nova Função:</label>
 <input type="text" id="nova-funcao-${dia}-${ala}${turnoSufixo}" placeholder="Adicionar função">
-<button onclick="adicionarFuncaoNoCalendario(${dia},'${ala}')">Adicionar Função</button>
+<button onclick="adicionarFuncaoNoCalendario(${dia},'${ala}',${hInicioTurno},${hFimTurno})">Adicionar Função</button>
 </div>
 </div>`;
     } // fim loop turnos
@@ -1932,34 +1932,43 @@ function recalcularTotalMensal() {
   }).reduce((sum, v) => sum + v, 0);
   totalMensalEl.innerHTML = `<strong>R$ ${formatarMoeda(t)}</strong>`;
 }
-function adicionarFuncaoNoCalendario(d, a) {
-  let f = $(`nova-funcao-${d}-${a}`).value.trim();
-  f = f.replace(/\\/g, '|'); // ✅ Intencional: previne quebra de onclick ao gerar HTML
+function adicionarFuncaoNoCalendario(d, a, hInicioTurno, hFimTurno) {
+  // Para escalas com múltiplos turnos por dia, o input tem sufixo _tHH
+  const turnoSufixo = (hInicioTurno !== undefined && calcularAlasTurnosDia(new Date(parseInt($('ano').value), parseInt($('mes').value) - 1, d)).length > 1)
+    ? `_t${hInicioTurno}` : '';
+  const inputEl = $(`nova-funcao-${d}-${a}${turnoSufixo}`);
+  if (!inputEl) return;
+  let f = inputEl.value.trim();
+  f = f.replace(/\\/g, '|');
   if (!f) return;
+  const hi = hInicioTurno ?? configEscala.horaInicio;
+  const hf = hFimTurno ?? configEscala.horaInicio;
   if (exclusoesDiarias[a] && exclusoesDiarias[a][d] && exclusoesDiarias[a][d].includes(f)) {
     exclusoesDiarias[a][d] = exclusoesDiarias[a][d].filter(func => func !== f);
-    $(`nova-funcao-${d}-${a}`).value = '';
+    inputEl.value = '';
     if (calendarioGerado) gerarCalendario(true);
     salvarDadosPersistentes();
     return;
   }
   if (vinculos[a].find(v => v.funcao === f && !v.hasOwnProperty('dia')) ||
-    vinculos[a].some(func => func.funcao === f && func.dia === d)) {
-    $(`nova-funcao-${d}-${a}`).value = '';
-    openWarningModal(`Não é possível adicionar. A função "${f}" já existe no dia ${d}.`);
+    vinculos[a].some(func => func.funcao === f && func.dia === d && func.turnoInicio === hi)) {
+    inputEl.value = '';
+    openWarningModal(`Não é possível adicionar. A função "${f}" já existe neste turno do dia ${d}.`);
     return;
   }
-  const funcoesNoDia = vinculos[a].filter(v => v.dia === d);
+  const funcoesNoDia = vinculos[a].filter(v => v.dia === d && v.turnoInicio === hi);
   const maxOrdem = Math.max(...funcoesNoDia.map(v => v.hasOwnProperty('ordemOriginal') ? v.ordemOriginal : -1), -1);
   const novaFuncao = {
-    funcao: f, responsavel: 'Indeterminado', dia: d, horaInicio: 8, horaFim: 8, horaFimEscala: 8,
+    funcao: f, responsavel: 'Indeterminado', dia: d,
+    horaInicio: hi, horaFim: hf, horaFimEscala: hf,
+    turnoInicio: hi,
     remuneracao: 'AC4', ordemOriginal: maxOrdem + 1
   };
   vinculos[a].push(novaFuncao);
-  $(`nova-funcao-${d}-${a}`).value = '';
+  inputEl.value = '';
   if (calendarioGerado) {
     const funcoesOrdenadas = vinculos[a]
-      .filter(v => v.dia === d)
+      .filter(v => v.dia === d && v.turnoInicio === hi)
       .sort((a, b) => {
         const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal : 9999;
         const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal : 9999;
