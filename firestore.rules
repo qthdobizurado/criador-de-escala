@@ -1,0 +1,28 @@
+// ============================================================
+// REGRAS DE SEGURANÇA DO FIRESTORE
+// Cole estas regras em:
+//   Firebase Console > Firestore Database > Regras
+// ============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Cada usuário acessa apenas seus próprios dados
+    match /usuarios/{userId} {
+
+      // O próprio usuário pode ler e escrever seu perfil
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Slots: somente o dono pode ler/criar/editar/apagar
+      match /slots/{slotId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Bloqueia qualquer outra coleção não declarada
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

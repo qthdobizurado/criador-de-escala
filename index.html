@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Gerador de Escala</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="firebase-auth.js"></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- ========== TELA DE LOGIN (Google) ========== -->
+  <div id="loginOverlay">
+    <div id="painelLogin">
+      <div class="auth-logo">🗓</div>
+      <h1>Gerador de Escala</h1>
+      <p class="auth-subtitulo">Faça login com sua conta Google para continuar</p>
+
+      <div id="loginErro" class="auth-erro"></div>
+      <p id="loginStatus" class="auth-status"></p>
+
+      <button id="btnLogin" onclick="fazerLogin()" class="btn-google">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20" height="20">
+        Entrar com Google
+      </button>
+    </div>
+  </div><!-- fim #loginOverlay -->
+
+  <!-- ========== CONTEÚDO PRINCIPAL (oculto até login) ========== -->
+  <div id="appContent" style="display:none;">
+
+    <!-- Cabeçalho com usuário logado -->
+    <div id="topBar">
+      <span id="usuarioLogado"></span>
+      <button onclick="fazerLogout()" class="btn-logout">Sair</button>
+    </div>
+
+    <!-- Botões de Backup Local -->
+    <div class="action-bar">
+      <strong>Backup Local:</strong>
+      <button onclick="exportarBackup()">⬇ Exportar para PC</button>
+      <button onclick="importarBackup()">⬆ Importar do PC</button>
+      <input type="file" id="inputImportarBackup" accept=".json" style="display:none;" onchange="processarImportacao(event)">
+    </div>
+
+    <!-- Botões de Nuvem + Auto-save -->
+    <div class="action-bar">
+      <strong>Nuvem:</strong>
+      <button onclick="abrirModalSalvarNuvem()">☁ Salvar na Nuvem</button>
+      <button onclick="abrirModalCarregarNuvem()">☁ Carregar / Gerenciar</button>
+      <strong>Auto-save:</strong>
+      <select id="selectAutoSave" onchange="onChangeAutoSave()">
+        <option value="">-- Desativado --</option>
+      </select>
+      <span id="indicadorAutoSave">Auto-save desativado.</span>
+    </div>
+
+    <h1>Gerador de Escala</h1>
+
+    <h2>1. Cadastrar funções</h2>
+    <textarea id="funcoes" placeholder="Uma função por linha. Exemplo: Motorista"></textarea>
+
+    <h2>2. Cadastrar os militares</h2>
+    <textarea id="responsaveis" placeholder="Um militar por linha. Exemplo: Sd Stivado"></textarea>
+
+    <h2>3. Gerar vínculos entre alas, funções e militares</h2>
+    <div id="vinculos"></div>
+
+    <h2>4. Cadastrar afastamentos</h2>
+    <div class="afastamento-row">
+      <div class="afastamento-field afastamento-field-resp">
+        <label for="afastamento-responsavel">Responsável:</label>
+        <select id="afastamento-responsavel">
+          <option value="">Selecione um responsável</option>
+        </select>
+      </div>
+      <div class="afastamento-field">
+        <label for="afastamento-inicio">Início:</label>
+        <input type="date" id="afastamento-inicio" onchange="calcularFimAfastamento()">
+      </div>
+      <div class="afastamento-field afastamento-field-dias">
+        <label for="afastamento-dias">Quantidade de dias para calcular o fim (opcional):</label>
+        <input type="number" id="afastamento-dias" min="1" placeholder="—" oninput="calcularFimAfastamento()">
+      </div>
+      <div class="afastamento-field">
+        <label for="afastamento-fim">Fim:</label>
+        <input type="date" id="afastamento-fim" onchange="onFimAfastamentoEditado()">
+      </div>
+      <div class="afastamento-field">
+        <button onclick="adicionarAfastamento()" style="margin-top:20px;">Adicionar Afastamento</button>
+      </div>
+    </div>
+    <div id="afastamentos"></div>
+
+    <h2>5. Preencher calendário de funções</h2>
+    <div class="input-inline">
+      <label for="mes">Mês:</label>
+      <select id="mes">
+        <option value="">Selecione um mês</option>
+        <option value="1">Janeiro</option>
+        <option value="2">Fevereiro</option>
+        <option value="3">Março</option>
+        <option value="4">Abril</option>
+        <option value="5">Maio</option>
+        <option value="6">Junho</option>
+        <option value="7">Julho</option>
+        <option value="8">Agosto</option>
+        <option value="9">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
+    </div>
+    <div class="input-inline">
+      <label for="ano">Ano:</label>
+      <input type="number" id="ano" min="1900" max="2100">
+    </div>
+    <div class="input-inline">
+      <button onclick="gerarCalendario(false)">Gerar Calendário</button>
+      <button onclick="abrirModalConfigEscala()" class="btn-config-escala" title="Configurar horas de plantão e folga">⚙ Configurar Escala</button>
+      <div id="calendarioError" style="color:red; margin-top:10px;"></div>
+    </div>
+    <div id="calendario"></div>
+
+    <button id="botao-imprimir-resumo" style="display:none;" onclick="abrirResumoNoNavegador()">Abrir Resumo dos Responsáveis</button>
+    <button id="botao-imprimir-vagas" style="display:none;" onclick="abrirVagasNoNavegador()">Abrir Vagas Disponíveis</button>
+
+    <h2>6. Escala</h2>
+    <div class="input-inline">
+      <label for="inicioEscala">Início da Escala:</label>
+      <input type="number" id="inicioEscala" value="1" style="width:60px;">
+      <label for="fimDaEscala">Fim da Escala:</label>
+      <input type="number" id="fimDaEscala" style="width:60px;">
+    </div>
+
+    <button id="botao-imprimir-escala" style="display:none;" onclick="abrirEscalaNoNavegador()">Abrir Escala</button>
+    <button id="botao-imprimir-escala-ac4" style="display:none;" onclick="abrirEscalaAC4NoNavegador()">Abrir Somente Escala de AC4</button>
+
+    <footer>
+      <p id="rodapeTexto">© 2025 - Desenvolvido por BM Fernandes 04032.</p>
+    </footer>
+
+  </div><!-- fim #appContent -->
+
+  <!-- ========== MODAIS PADRÃO ========== -->
+  <div id="myModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <p id="modalMessage"></p>
+      <button id="confirmBtn">Confirmar</button>
+      <button id="cancelBtn">Cancelar</button>
+    </div>
+  </div>
+  <div id="warningModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <p id="warningMessage"></p>
+      <button id="warningConfirmBtn">OK</button>
+    </div>
+  </div>
+
+  <!-- ========== MODAL: SALVAR NA NUVEM ========== -->
+  <div id="modalSalvarNuvem" class="modal" style="display:none;">
+    <div class="modal-content modal-nuvem">
+      <h3>☁ Salvar na Nuvem</h3>
+      <div class="nuvem-modo-select">
+        <label class="radio-label" id="labelModoNovo">
+          <input type="radio" name="modoSalvar" id="radioModoNovo" value="novo" checked
+            onchange="_atualizarVisibilidadeModoSalvar()">
+          Criar novo save
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="modoSalvar" id="radioModoSubstituir" value="substituir"
+            onchange="_atualizarVisibilidadeModoSalvar()">
+          Substituir existente
+        </label>
+      </div>
+      <div id="campoSubstituirSlot" class="nuvem-form" style="display:none;">
+        <label>Slot a substituir:</label>
+        <select id="selectSlotSubstituir">
+          <option value="">-- Selecione o slot --</option>
+        </select>
+      </div>
+      <div class="nuvem-form" style="margin-top:10px;">
+        <label id="labelNomeNovoSlot">Nome do novo save:</label>
+        <input type="text" id="inputNomeNovoSlot" placeholder="Ex: Escala Junho 2025" maxlength="50">
+      </div>
+      <div id="nuvemSalvarStatus" style="margin-top:10px;font-size:13px;"></div>
+      <div style="margin-top:14px;">
+        <button onclick="confirmarSalvarNuvem()">💾 Salvar</button>
+        <button onclick="fecharModalNuvem('modalSalvarNuvem')" style="background:#6c757d;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MODAL: CARREGAR DA NUVEM ========== -->
+  <div id="modalCarregarNuvem" class="modal" style="display:none;">
+    <div class="modal-content modal-nuvem">
+      <h3>☁ Carregar / Gerenciar Saves</h3>
+      <div id="slotsParaCarregar"><p>Carregando slots...</p></div>
+      <div id="nuvemCarregarStatus" style="margin-top:8px;color:#555;font-size:13px;"></div>
+      <div style="margin-top:14px;">
+        <button onclick="fecharModalNuvem('modalCarregarNuvem')" style="background:#6c757d;">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MODAL: CONFIGURAR ESCALA ========== -->
+  <div id="modalConfigEscala" class="modal" style="display:none;">
+    <div class="modal-content modal-config-escala">
+      <h3>⚙ Configurar Tipo de Escala</h3>
+      <p class="cfg-descricao">Selecione o tipo de escala e a hora de início do turno.</p>
+      <div class="cfg-opcoes">
+        <label class="cfg-opcao-label" id="cfgOpt_24_72">
+          <input type="radio" name="cfgTipo" value="24_72" onchange="_onChangeTipoEscala()">
+          <span class="cfg-opcao-box">
+            <span class="cfg-opcao-titulo">24 × 72</span>
+            <span class="cfg-opcao-desc">24h plantão · 72h folga · ciclo 4 dias</span>
+          </span>
+        </label>
+        <label class="cfg-opcao-label" id="cfgOpt_24_48">
+          <input type="radio" name="cfgTipo" value="24_48" onchange="_onChangeTipoEscala()">
+          <span class="cfg-opcao-box">
+            <span class="cfg-opcao-titulo">24 × 48</span>
+            <span class="cfg-opcao-desc">24h plantão · 48h folga · ciclo 3 dias · 3 alas (Alpha, Bravo, Charlie)</span>
+          </span>
+        </label>
+        <label class="cfg-opcao-label" id="cfgOpt_12_36">
+          <input type="radio" name="cfgTipo" value="12_36" onchange="_onChangeTipoEscala()">
+          <span class="cfg-opcao-box">
+            <span class="cfg-opcao-titulo">12 × 36</span>
+            <span class="cfg-opcao-desc">12h plantão · 36h folga · ciclo 2 dias</span>
+          </span>
+        </label>
+        <label class="cfg-opcao-label" id="cfgOpt_48_144">
+          <input type="radio" name="cfgTipo" value="48_144" onchange="_onChangeTipoEscala()">
+          <span class="cfg-opcao-box">
+            <span class="cfg-opcao-titulo">48 × 144</span>
+            <span class="cfg-opcao-desc">48h plantão · 144h folga · ciclo 8 dias</span>
+          </span>
+        </label>
+      </div>
+      <div class="cfg-hora-inicio-row">
+        <label for="cfgHoraInicio">Hora de início do turno:</label>
+        <div class="cfg-input-wrap">
+          <input type="number" id="cfgHoraInicio" min="0" max="23" value="8" oninput="_atualizarPreviewConfig()">
+          <span class="cfg-unidade">h</span>
+        </div>
+      </div>
+      <div class="cfg-preview" id="cfgPreview"></div>
+      <div style="margin-top:18px; display:flex; gap:10px;">
+        <button onclick="salvarConfigEscala()">✔ Salvar configuração</button>
+        <button onclick="fecharModalConfigEscala()" style="background:#6c757d;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function _onChangeTipoEscala() { _atualizarPreviewConfig(); }
+
+    // Mostra/oculta senha
+    function toggleSenha(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const anoAtual = new Date().getFullYear();
+      document.getElementById('ano').value = anoAtual;
+      const rodape = document.getElementById('rodapeTexto');
+      rodape.innerHTML = rodape.innerHTML.replace('2025', anoAtual.toString());
+    });
+  </script>
+</body>
+</html>
