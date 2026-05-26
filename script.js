@@ -183,7 +183,16 @@ function importarBackup() {
 function processarImportacao(event) {
   const file = event.target.files[0];
   if (!file) return;
-  // Guarda o nome do arquivo (sem extensão) para sugerir como nome do slot
+
+  // Desativa auto-save antes de aplicar os dados para não salvar em cima do slot ativo
+  if (_slotAutoSave) {
+    _slotAutoSave = null;
+    localStorage.removeItem('escala_autosave_slot_' + (usuarioAtual || 'guest'));
+    clearTimeout(_autoSaveTimer);
+    _atualizarIndicadorAutoSave();
+    _atualizarSelectAutoSave();
+  }
+
   const nomeArquivo = file.name.replace(/\.json$/i, '');
   const reader = new FileReader();
   reader.onload = function (e) {
@@ -432,6 +441,16 @@ async function carregarSlotNuvem(nomeSlot) {
     const dadosCarregados = (typeof dadosRaw === 'string')
       ? await descomprimirDaNuvem(dadosRaw)
       : dadosRaw;
+
+    // Desativa auto-save antes de aplicar para não salvar em cima do slot anterior
+    if (_slotAutoSave && _slotAutoSave !== nomeSlot) {
+      _slotAutoSave = null;
+      localStorage.removeItem('escala_autosave_slot_' + (usuarioAtual || 'guest'));
+      clearTimeout(_autoSaveTimer);
+      _atualizarIndicadorAutoSave();
+      _atualizarSelectAutoSave();
+    }
+
     aplicarDados(dadosCarregados);
     // Marca hash como salvo para não disparar auto-save logo após carregar
     _ultimoHashSalvo = JSON.stringify(coletarDadosParaNuvem());
