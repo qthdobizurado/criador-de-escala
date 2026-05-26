@@ -220,42 +220,48 @@
   <div id="modalConfigEscala" class="modal" style="display:none;">
     <div class="modal-content modal-config-escala">
       <h3>⚙ Configurar Tipo de Escala</h3>
-      <p class="cfg-descricao">Define quantas horas cada ala fica de plantão, quantas fica de folga e a que horas começa o turno.</p>
+      <p class="cfg-descricao">Selecione o tipo de escala e a hora de início do turno.</p>
 
-      <div class="cfg-campos">
-        <div class="cfg-campo">
-          <label for="cfgHorasOn">Horas de plantão:</label>
-          <div class="cfg-input-wrap">
-            <input type="number" id="cfgHorasOn" min="1" max="168" value="24" oninput="_atualizarPreviewConfig()">
-            <span class="cfg-unidade">h</span>
-          </div>
-        </div>
-        <div class="cfg-campo cfg-campo-sep">×</div>
-        <div class="cfg-campo">
-          <label for="cfgHorasOff">Horas de folga:</label>
-          <div class="cfg-input-wrap">
-            <input type="number" id="cfgHorasOff" min="1" max="336" value="72" oninput="_atualizarPreviewConfig()">
-            <span class="cfg-unidade">h</span>
-          </div>
-        </div>
-        <div class="cfg-campo">
-          <label for="cfgHoraInicio">Hora de início do turno:</label>
-          <div class="cfg-input-wrap">
-            <input type="number" id="cfgHoraInicio" min="0" max="23" value="8" oninput="_atualizarPreviewConfig()">
-            <span class="cfg-unidade">h</span>
-          </div>
+      <div class="cfg-opcoes">
+        <label class="cfg-opcao-label" id="cfgOpt_24_72">
+          <input type="radio" name="cfgTipo" value="24_72" onchange="_onChangeTipoEscala()">
+          <span class="cfg-opcao-box">
+            <span class="cfg-opcao-titulo">24 × 72</span>
+            <span class="cfg-opcao-desc">24h plantão · 72h folga · ciclo 4 dias</span>
+          </span>
+        </label>
+        <label class="cfg-opcao-label" id="cfgOpt_24_48">
+          <input type="radio" name="cfgTipo" value="24_48" onchange="_onChangeTipoEscala()">
+          <span class="cfg-opcao-box">
+            <span class="cfg-opcao-titulo">24 × 48</span>
+            <span class="cfg-opcao-desc">24h plantão · 48h folga · ciclo 3 dias</span>
+          </span>
+        </label>
+        <label class="cfg-opcao-label" id="cfgOpt_12_36">
+          <input type="radio" name="cfgTipo" value="12_36" onchange="_onChangeTipoEscala()">
+          <span class="cfg-opcao-box">
+            <span class="cfg-opcao-titulo">12 × 36</span>
+            <span class="cfg-opcao-desc">12h plantão · 36h folga · ciclo 2 dias</span>
+          </span>
+        </label>
+        <label class="cfg-opcao-label" id="cfgOpt_48_144">
+          <input type="radio" name="cfgTipo" value="48_144" onchange="_onChangeTipoEscala()">
+          <span class="cfg-opcao-box">
+            <span class="cfg-opcao-titulo">48 × 144</span>
+            <span class="cfg-opcao-desc">48h plantão · 144h folga · ciclo 8 dias</span>
+          </span>
+        </label>
+      </div>
+
+      <div class="cfg-hora-inicio-row">
+        <label for="cfgHoraInicio">Hora de início do turno:</label>
+        <div class="cfg-input-wrap">
+          <input type="number" id="cfgHoraInicio" min="0" max="23" value="8" oninput="_atualizarPreviewConfig()">
+          <span class="cfg-unidade">h</span>
         </div>
       </div>
 
-      <div class="cfg-preview" id="cfgPreview">Ciclo: 24h de plantão + 72h de folga = 96h (4 dias) por ala | Início: 8h</div>
-
-      <div class="cfg-exemplos">
-        <span class="cfg-exemplos-label">Exemplos rápidos:</span>
-        <button class="btn-cfg-exemplo" onclick="_aplicarExemplo(24,72,8)">24×72 (padrão)</button>
-        <button class="btn-cfg-exemplo" onclick="_aplicarExemplo(12,36,7)">12×36</button>
-        <button class="btn-cfg-exemplo" onclick="_aplicarExemplo(24,48,8)">24×48</button>
-        <button class="btn-cfg-exemplo" onclick="_aplicarExemplo(12,24,8)">12×24</button>
-      </div>
+      <div class="cfg-preview" id="cfgPreview"></div>
 
       <div style="margin-top:18px; display:flex; gap:10px;">
         <button onclick="salvarConfigEscala()">✔ Salvar configuração</button>
@@ -265,12 +271,7 @@
   </div>
 
   <script>
-    function _aplicarExemplo(on, off, hi) {
-      document.getElementById('cfgHorasOn').value = on;
-      document.getElementById('cfgHorasOff').value = off;
-      document.getElementById('cfgHoraInicio').value = hi;
-      _atualizarPreviewConfig();
-    }
+    function _onChangeTipoEscala() { _atualizarPreviewConfig(); }
 
     document.addEventListener('DOMContentLoaded', function() {
       const anoAtual = new Date().getFullYear();

@@ -926,23 +926,73 @@ table .cs-wrapper {
 }
 .btn-config-escala:hover { background: #5534b5; }
 
-.modal-config-escala { max-width: 520px; width: 95%; }
+.modal-config-escala { max-width: 480px; width: 95%; }
 
-.cfg-descricao { font-size: 13px; color: #555; margin: 0 0 16px 0; }
+.cfg-descricao { font-size: 13px; color: #555; margin: 0 0 14px 0; }
 
-.cfg-campos {
+.cfg-opcoes {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 10px 18px;
+  flex-direction: column;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
-.cfg-campo { display: flex; flex-direction: column; gap: 4px; }
+.cfg-opcao-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
 
-.cfg-campo label { font-size: 12px; font-weight: 600; color: #444; white-space: nowrap; }
+.cfg-opcao-label input[type="radio"] {
+  accent-color: #6c47d4;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
 
-.cfg-campo-sep { font-size: 22px; font-weight: 700; color: #888; padding-bottom: 4px; align-self: flex-end; }
+.cfg-opcao-box {
+  display: flex;
+  flex-direction: column;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 7px;
+  padding: 8px 14px;
+  flex: 1;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.cfg-opcao-label:has(input:checked) .cfg-opcao-box {
+  border-color: #6c47d4;
+  background: #f3eeff;
+}
+
+.cfg-opcao-titulo {
+  font-size: 15px;
+  font-weight: 700;
+  color: #222;
+}
+
+.cfg-opcao-desc {
+  font-size: 12px;
+  color: #666;
+  margin-top: 1px;
+}
+
+.cfg-hora-inicio-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cfg-hora-inicio-row label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+  white-space: nowrap;
+}
 
 .cfg-input-wrap { display: flex; align-items: center; gap: 5px; }
 
@@ -963,28 +1013,9 @@ table .cs-wrapper {
   padding: 10px 14px;
   font-size: 13px;
   color: #1a3c7a;
-  margin-bottom: 14px;
+  margin-bottom: 4px;
   min-height: 38px;
 }
-
-.cfg-exemplos { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-
-.cfg-exemplos-label { font-size: 12px; color: #666; font-weight: 600; white-space: nowrap; }
-
-.btn-cfg-exemplo {
-  background: #f0f4ff;
-  border: 1px solid #93c5fd;
-  color: #1a3c7a;
-  border-radius: 14px;
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-  margin: 0;
-  width: auto;
-}
-.btn-cfg-exemplo:hover { background: #dbeafe; }
 
 /* ========== PAINEL: ADICIONAR FUNÇÃO EXCLUSIVA POR ALA ========== */
 .painel-adicionar-funcao-ala {

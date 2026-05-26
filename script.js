@@ -1177,33 +1177,51 @@ function gerarCalendario(mantemEd = false) {
   }
 }
 function calcularAlaParaDia(dt) {
-  // Referência: 21/03/2024 = Alpha inicia plantão
-  // Cada ala ocupa (horasOn ÷ 24) dias consecutivos no calendário.
-  // Ex 24×72: horasOn=24 → 1 dia/ala → Alpha d1, Bravo d2, Charlie d3, Delta d4, Alpha d5...
-  // Ex 48×96: horasOn=48 → 2 dias/ala → Alpha d1-d2, Bravo d3-d4, Charlie d5-d6...
-  // Ex 12×36: horasOn=12 → 0,5 dia/ala → usa horas para sub-dividir o dia
+  // Referência fixa: 21/03/2024 = Alpha inicia plantão às configEscala.horaInicio
+  // Para escalas onde horasOn < 24 (ex: 12×36), um dia pode ter mais de uma ala.
+  // Nesse caso o calendário mostra a ala que está DE PLANTÃO às 00h do dia (início do dia).
+  // A lógica: contamos horas desde a referência, calculamos em qual slot do ciclo estamos.
   const refDate = new Date(2024, 2, 21);
-  const diasPorAla = configEscala.horasOn / 24;
+  // Referência em ms considerando a hora de início do turno
+  const refMs = refDate.getTime() + configEscala.horaInicio * 3600000;
+  const cicloHoras = configEscala.horasOn + configEscala.horasOff;
+  const cicloTotal = cicloHoras * alas.length; // horas para um ciclo completo das 4 alas
 
-  if (diasPorAla >= 1 && Number.isInteger(diasPorAla)) {
-    // Caso comum: horasOn múltiplo de 24 (24h, 48h, etc.)
+  if (configEscala.horasOn >= 24) {
+    // Ex: 24×72, 24×48, 48×144 — usa dias inteiros
+    const diasPorAla = configEscala.horasOn / 24;
     const diasDesdeRef = Math.floor((dt - refDate) / 86400000);
-    const totalDiasCiclo = diasPorAla * alas.length;
-    const posNoCiclo = ((diasDesdeRef % totalDiasCiclo) + totalDiasCiclo) % totalDiasCiclo;
-    return alas[Math.floor(posNoCiclo / diasPorAla)];
+    const totalDias = diasPorAla * alas.length;
+    const pos = ((diasDesdeRef % totalDias) + totalDias) % totalDias;
+    return alas[Math.floor(pos / diasPorAla)];
   } else {
-    // Caso com horas fracionadas (ex: 12h on): usa offset em horas
-    const cicloHoras = configEscala.horasOn + configEscala.horasOff;
-    const cicloTotal = cicloHoras * alas.length;
-    const horasDesdeRef = (dt - refDate) / 3600000 + configEscala.horaInicio;
+    // Ex: 12×36 — usa a hora de início do dia (00h) para determinar a ala
+    const dtMs = dt.getTime(); // 00h do dia
+    const horasDesdeRef = (dtMs - refMs) / 3600000;
     const posNoCicloTotal = ((horasDesdeRef % cicloTotal) + cicloTotal) % cicloTotal;
     return alas[Math.floor(posNoCicloTotal / cicloHoras)];
   }
 }
 
+const _OPCOES_ESCALA = {
+  '24_72':  { horasOn: 24,  horasOff: 72  },
+  '24_48':  { horasOn: 24,  horasOff: 48  },
+  '12_36':  { horasOn: 12,  horasOff: 36  },
+  '48_144': { horasOn: 48,  horasOff: 144 },
+};
+
+function _tipoEscalaAtual() {
+  const on = configEscala.horasOn, off = configEscala.horasOff;
+  for (const [k, v] of Object.entries(_OPCOES_ESCALA)) {
+    if (v.horasOn === on && v.horasOff === off) return k;
+  }
+  return '24_72'; // fallback
+}
+
 function abrirModalConfigEscala() {
-  $('cfgHorasOn').value = configEscala.horasOn;
-  $('cfgHorasOff').value = configEscala.horasOff;
+  const tipo = _tipoEscalaAtual();
+  const radio = document.querySelector(`input[name="cfgTipo"][value="${tipo}"]`);
+  if (radio) radio.checked = true;
   $('cfgHoraInicio').value = configEscala.horaInicio;
   _atualizarPreviewConfig();
   $('modalConfigEscala').style.display = 'flex';
@@ -1214,26 +1232,24 @@ function fecharModalConfigEscala() {
 }
 
 function _atualizarPreviewConfig() {
-  const on = parseInt($('cfgHorasOn').value) || 0;
-  const off = parseInt($('cfgHorasOff').value) || 0;
+  const radio = document.querySelector('input[name="cfgTipo"]:checked');
   const hi = parseInt($('cfgHoraInicio').value);
-  const hiStr = isNaN(hi) ? '?' : hi + 'h';
-  const ciclo = on + off;
-  const dias = ciclo / 24;
   const preview = $('cfgPreview');
-  if (!on || !off) { preview.textContent = 'Preencha os campos acima.'; return; }
-  preview.innerHTML = `Ciclo: <strong>${on}h de plantão</strong> + <strong>${off}h de folga</strong> = <strong>${ciclo}h (${dias % 1 === 0 ? dias + ' dias' : dias.toFixed(1) + ' dias'})</strong> por ala &nbsp;|&nbsp; Início: <strong>${hiStr}</strong>`;
+  if (!radio) { preview.textContent = 'Selecione um tipo de escala.'; return; }
+  const opt = _OPCOES_ESCALA[radio.value];
+  const hiStr = isNaN(hi) ? '?' : hi + 'h';
+  const horaFim = opt.horasOn < 24 ? ((hi + opt.horasOn) % 24) + 'h' : hi + 'h (24h)';
+  preview.innerHTML = `<strong>${opt.horasOn}h de plantão × ${opt.horasOff}h de folga</strong> &nbsp;|&nbsp; Início: <strong>${hiStr}</strong> · Fim: <strong>${horaFim}</strong>`;
 }
 
 function salvarConfigEscala() {
-  const on = parseInt($('cfgHorasOn').value);
-  const off = parseInt($('cfgHorasOff').value);
+  const radio = document.querySelector('input[name="cfgTipo"]:checked');
   const hi = parseInt($('cfgHoraInicio').value);
-  if (!on || on < 1) { openWarningModal('Horas de plantão inválidas.'); return; }
-  if (!off || off < 1) { openWarningModal('Horas de folga inválidas.'); return; }
+  if (!radio) { openWarningModal('Selecione um tipo de escala.'); return; }
   if (isNaN(hi) || hi < 0 || hi > 23) { openWarningModal('Hora de início inválida (0–23).'); return; }
-  const mudou = on !== configEscala.horasOn || off !== configEscala.horasOff || hi !== configEscala.horaInicio;
-  configEscala = { horasOn: on, horasOff: off, horaInicio: hi };
+  const opt = _OPCOES_ESCALA[radio.value];
+  const mudou = opt.horasOn !== configEscala.horasOn || opt.horasOff !== configEscala.horasOff || hi !== configEscala.horaInicio;
+  configEscala = { horasOn: opt.horasOn, horasOff: opt.horasOff, horaInicio: hi };
   fecharModalConfigEscala();
   salvarDadosPersistentes();
   if (mudou && calendarioGerado) {
@@ -1255,6 +1271,11 @@ function gerarCalendarioInterno(mantemEd) {
     const ala = calcularAlaParaDia(dt);
     let td = 0;
     // ── Funções globais ──
+    // horaFim calculada pela config: para turnos < 24h usa horaInicio + horasOn
+    const _horaFimConfig = configEscala.horasOn < 24
+      ? (configEscala.horaInicio + configEscala.horasOn) % 24
+      : configEscala.horaInicio;
+
     funcoes.forEach(funcao => {
       const geral = vinculos[ala].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
       if (!geral) return;
@@ -1276,8 +1297,8 @@ function gerarCalendarioInterno(mantemEd) {
           responsavel: responsavel,
           dia: dia,
           horaInicio: configEscala.horaInicio,
-          horaFim: configEscala.horaInicio,
-          horaFimEscala: configEscala.horaInicio,
+          horaFim: _horaFimConfig,
+          horaFimEscala: _horaFimConfig,
           remuneracao: remuneracao,
           geradoAutomaticamente: true,
           originalResponsavel: geral.responsavel,
@@ -1308,8 +1329,8 @@ function gerarCalendarioInterno(mantemEd) {
           responsavel: responsavel,
           dia: dia,
           horaInicio: configEscala.horaInicio,
-          horaFim: configEscala.horaInicio,
-          horaFimEscala: configEscala.horaInicio,
+          horaFim: _horaFimConfig,
+          horaFimEscala: _horaFimConfig,
           remuneracao: remuneracao,
           geradoAutomaticamente: true,
           originalResponsavel: geral.responsavel,
