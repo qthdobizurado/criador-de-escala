@@ -20,7 +20,7 @@ let funcoes = [],
   afastamentos = [],
   calendarioGerado = false;
 let exclusoesDiarias = {};
-let configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'] };
+let configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'], dataReferencia: '2024-03-21' };
 let resumoHTML = '',
   vagasHTML = '',
   escalaHTML = '',
@@ -650,9 +650,9 @@ function aplicarDados(dados) {
   calendarioGerado = dados.calendarioGerado || false;
   exclusoesDiarias = dados.exclusoesDiarias || {};
   if (dados.configEscala) {
-    configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'], ...dados.configEscala };
+    configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'], dataReferencia: '2024-03-21', ...dados.configEscala };
   } else {
-    configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'] };
+    configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'], dataReferencia: '2024-03-21' };
   }
   alas.forEach(a => {
     vinculos[a].forEach(func => {
@@ -1186,7 +1186,8 @@ function calcularAlaParaDia(dt) {
 // Para 24×72: um turno por dia — [{ ala:'Alpha', horaInicio:8, horaFim:8 }]
 // Para 12×36: dois turnos por dia — [{ ala:'Alpha', horaInicio:8, horaFim:20 }, { ala:'Bravo', horaInicio:20, horaFim:8 }]
 function calcularAlasTurnosDia(dt) {
-  const refDate = new Date(2024, 2, 21);
+  const [ry, rm, rd] = configEscala.dataReferencia.split('-').map(Number);
+  const refDate = new Date(ry, rm - 1, rd);
   const hi = configEscala.horaInicio;
   const horasOn = configEscala.horasOn;
   const horasOff = configEscala.horasOff;
@@ -1237,6 +1238,7 @@ function abrirModalConfigEscala() {
   const radio = document.querySelector(`input[name="cfgTipo"][value="${tipo}"]`);
   if (radio) radio.checked = true;
   $('cfgHoraInicio').value = configEscala.horaInicio;
+  $('cfgDataReferencia').value = configEscala.dataReferencia || '2024-03-21';
   _atualizarPreviewConfig();
   $('modalConfigEscala').style.display = 'flex';
 }
@@ -1260,11 +1262,13 @@ function _atualizarPreviewConfig() {
 function salvarConfigEscala() {
   const radio = document.querySelector('input[name="cfgTipo"]:checked');
   const hi = parseInt($('cfgHoraInicio').value);
+  const dataRef = $('cfgDataReferencia').value;
   if (!radio) { openWarningModal('Selecione um tipo de escala.'); return; }
   if (isNaN(hi) || hi < 0 || hi > 23) { openWarningModal('Hora de início inválida (0–23).'); return; }
+  if (!dataRef) { openWarningModal('Informe a data de referência (dia em que Alpha trabalhou).'); return; }
   const opt = _OPCOES_ESCALA[radio.value];
-  const mudou = opt.horasOn !== configEscala.horasOn || opt.horasOff !== configEscala.horasOff || hi !== configEscala.horaInicio;
-  configEscala = { horasOn: opt.horasOn, horasOff: opt.horasOff, horaInicio: hi, alasAtivas: opt.alasAtivas };
+  const mudou = opt.horasOn !== configEscala.horasOn || opt.horasOff !== configEscala.horasOff || hi !== configEscala.horaInicio || dataRef !== configEscala.dataReferencia;
+  configEscala = { horasOn: opt.horasOn, horasOff: opt.horasOff, horaInicio: hi, alasAtivas: opt.alasAtivas, dataReferencia: dataRef };
   fecharModalConfigEscala();
   salvarDadosPersistentes();
   if (mudou && calendarioGerado) {

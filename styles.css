@@ -994,7 +994,13 @@ table .cs-wrapper {
   white-space: nowrap;
 }
 
-.cfg-input-wrap { display: flex; align-items: center; gap: 5px; }
+.cfg-hora-inicio-row input[type="date"] {
+  margin-top: 0;
+  font-size: 13px;
+  padding: 6px 8px;
+}
+
+
 
 .cfg-input-wrap input[type="number"] {
   width: 72px;
