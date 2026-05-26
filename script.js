@@ -436,7 +436,16 @@ async function carregarSlotNuvem(nomeSlot) {
     // Marca hash como salvo para não disparar auto-save logo após carregar
     _ultimoHashSalvo = JSON.stringify(coletarDadosParaNuvem());
     fecharModalNuvem('modalCarregarNuvem');
-    openWarningModal('✅ "' + nomeSlot + '" carregado com sucesso!');
+    // Pergunta sobre auto-save
+    openModal(
+      `"${nomeSlot}" carregado com sucesso! Deseja ativar o auto-save para este arquivo?`,
+      () => {
+        _slotAutoSave = nomeSlot;
+        _atualizarSelectAutoSave();
+        openWarningModal(`✅ Auto-save ativado para "${nomeSlot}"!`);
+      },
+      null
+    );
   } catch (err) {
     $('nuvemCarregarStatus').textContent = '❌ ' + (err.message || 'Erro ao carregar.');
     console.error(err);
