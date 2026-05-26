@@ -20,7 +20,7 @@ let funcoes = [],
   afastamentos = [],
   calendarioGerado = false;
 let exclusoesDiarias = {};
-let configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8 };
+let configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'] };
 let resumoHTML = '',
   vagasHTML = '',
   escalaHTML = '',
@@ -650,9 +650,9 @@ function aplicarDados(dados) {
   calendarioGerado = dados.calendarioGerado || false;
   exclusoesDiarias = dados.exclusoesDiarias || {};
   if (dados.configEscala) {
-    configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, ...dados.configEscala };
+    configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'], ...dados.configEscala };
   } else {
-    configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8 };
+    configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'] };
   }
   alas.forEach(a => {
     vinculos[a].forEach(func => {
@@ -1190,30 +1190,27 @@ function calcularAlasTurnosDia(dt) {
   const hi = configEscala.horaInicio;
   const horasOn = configEscala.horasOn;
   const horasOff = configEscala.horasOff;
-  const cicloHoras = horasOn + horasOff; // horas de um ciclo completo de 1 ala
-  const cicloTotal = cicloHoras * alas.length; // horas p/ todas as alas rodarem
+  const alasAtivas = configEscala.alasAtivas || alas;
+  const cicloHoras = horasOn + horasOff;
+  const cicloTotal = cicloHoras * alasAtivas.length;
 
   if (horasOn >= 24) {
-    // Caso padrão: cada ala ocupa diasPorAla dias inteiros
     const diasPorAla = horasOn / 24;
     const diasDesdeRef = Math.floor((dt - refDate) / 86400000);
-    const totalDias = diasPorAla * alas.length;
+    const totalDias = diasPorAla * alasAtivas.length;
     const pos = ((diasDesdeRef % totalDias) + totalDias) % totalDias;
-    const ala = alas[Math.floor(pos / diasPorAla)];
+    const ala = alasAtivas[Math.floor(pos / diasPorAla)];
     return [{ ala, horaInicio: hi, horaFim: hi }];
   } else {
-    // Turnos sub-diários: calcula cada turno que ocorre neste dia
-    const turnosPorDia = 24 / horasOn; // ex: 12h → 2 turnos/dia
+    const turnosPorDia = 24 / horasOn;
     const turnos = [];
     for (let t = 0; t < turnosPorDia; t++) {
-      // Hora de início deste turno no dia
       const horaInicioTurno = (hi + t * horasOn) % 24;
       const horaFimTurno = (hi + (t + 1) * horasOn) % 24;
-      // Quantas horas desde a referência até este turno
       const diasDesdeRef = Math.floor((dt - refDate) / 86400000);
       const horasDesdeRef = diasDesdeRef * 24 + (horaInicioTurno - hi + 24) % 24;
       const posNoCicloTotal = ((horasDesdeRef % cicloTotal) + cicloTotal) % cicloTotal;
-      const ala = alas[Math.floor(posNoCicloTotal / cicloHoras)];
+      const ala = alasAtivas[Math.floor(posNoCicloTotal / cicloHoras)];
       turnos.push({ ala, horaInicio: horaInicioTurno, horaFim: horaFimTurno });
     }
     return turnos;
@@ -1221,10 +1218,10 @@ function calcularAlasTurnosDia(dt) {
 }
 
 const _OPCOES_ESCALA = {
-  '24_72':  { horasOn: 24,  horasOff: 72  },
-  '24_48':  { horasOn: 24,  horasOff: 48  },
-  '12_36':  { horasOn: 12,  horasOff: 36  },
-  '48_144': { horasOn: 48,  horasOff: 144 },
+  '24_72':  { horasOn: 24,  horasOff: 72,  alasAtivas: ['Alpha','Bravo','Charlie','Delta'] },
+  '24_48':  { horasOn: 24,  horasOff: 48,  alasAtivas: ['Alpha','Bravo','Charlie'] },
+  '12_36':  { horasOn: 12,  horasOff: 36,  alasAtivas: ['Alpha','Bravo','Charlie','Delta'] },
+  '48_144': { horasOn: 48,  horasOff: 144, alasAtivas: ['Alpha','Bravo','Charlie','Delta'] },
 };
 
 function _tipoEscalaAtual() {
@@ -1256,7 +1253,8 @@ function _atualizarPreviewConfig() {
   const opt = _OPCOES_ESCALA[radio.value];
   const hiStr = isNaN(hi) ? '?' : hi + 'h';
   const horaFim = opt.horasOn < 24 ? ((hi + opt.horasOn) % 24) + 'h' : hi + 'h (24h)';
-  preview.innerHTML = `<strong>${opt.horasOn}h de plantão × ${opt.horasOff}h de folga</strong> &nbsp;|&nbsp; Início: <strong>${hiStr}</strong> · Fim: <strong>${horaFim}</strong>`;
+  const alasStr = opt.alasAtivas.join(', ');
+  preview.innerHTML = `<strong>${opt.horasOn}h de plantão × ${opt.horasOff}h de folga</strong> &nbsp;|&nbsp; Início: <strong>${hiStr}</strong> · Fim: <strong>${horaFim}</strong><br><span style="font-size:12px;">Alas: <strong>${alasStr}</strong></span>`;
 }
 
 function salvarConfigEscala() {
@@ -1266,7 +1264,7 @@ function salvarConfigEscala() {
   if (isNaN(hi) || hi < 0 || hi > 23) { openWarningModal('Hora de início inválida (0–23).'); return; }
   const opt = _OPCOES_ESCALA[radio.value];
   const mudou = opt.horasOn !== configEscala.horasOn || opt.horasOff !== configEscala.horasOff || hi !== configEscala.horaInicio;
-  configEscala = { horasOn: opt.horasOn, horasOff: opt.horasOff, horaInicio: hi };
+  configEscala = { horasOn: opt.horasOn, horasOff: opt.horasOff, horaInicio: hi, alasAtivas: opt.alasAtivas };
   fecharModalConfigEscala();
   salvarDadosPersistentes();
   if (mudou && calendarioGerado) {
