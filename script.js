@@ -512,66 +512,6 @@ function onChangeAutoSave() {
   _atualizarIndicadorAutoSave();
 }
 
-// Flag que impede _atualizarIndicadorAutoSave de sobrescrever o status "Salvando..."
-let _autoSaveEmAndamento = false;
-
-async function _autoSaveNuvem() {
-  if (!_slotAutoSave || !usuarioAtual) return;
-  // Verifica se o slot ainda existe
-  const existe = _slotsCache.some(s => s.nome === _slotAutoSave);
-  if (!existe) return;
-
-  _autoSaveEmAndamento = true;
-
-  // Mostra toast flutuante de "Salvando..." — mais visível que o indicador pequeno
-  _mostrarToastAutoSave('salvando');
-
-  // Atualiza também o indicador inline
-  const ind = $('indicadorAutoSave');
-  if (ind) {
-    ind.textContent = '💾 Salvando na nuvem...';
-    ind.style.color = '#e65100';
-    ind.style.fontSize = '13px';
-    ind.style.fontWeight = '600';
-    ind.classList.add('salvando');
-  }
-
-  try {
-    const dados = await comprimirParaNuvem(coletarDadosParaNuvem()).catch(e => { throw e; });
-    await salvarSlot(usuarioAtual, _slotAutoSave, dados, _slotAutoSave);
-    _mostrarToastAutoSave('ok');
-  } catch (err) {
-    console.warn('Auto-save falhou:', err);
-    _mostrarToastAutoSave('erro');
-  } finally {
-    _autoSaveEmAndamento = false;
-    if (ind) ind.classList.remove('salvando');
-    _atualizarIndicadorAutoSave();
-  }
-}
-
-function _mostrarToastAutoSave(estado) {
-  let toast = $('toastAutoSave');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'toastAutoSave';
-    document.body.appendChild(toast);
-  }
-  if (estado === 'salvando') {
-    toast.textContent = '💾 Salvando na nuvem...';
-    toast.className = 'toast-autosave toast-salvando';
-    toast.style.display = 'block';
-    toast._clearTimer && clearTimeout(toast._clearTimer);
-  } else if (estado === 'ok') {
-    toast.textContent = '✅ Salvo na nuvem!';
-    toast.className = 'toast-autosave toast-ok';
-    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
-  } else {
-    toast.textContent = '❌ Auto-save falhou. Verifique a conexão.';
-    toast.className = 'toast-autosave toast-erro';
-    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 4000);
-  }
-}
 
 function fecharModalNuvem(id) {
   $(id).style.display = 'none';
