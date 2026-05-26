@@ -433,6 +433,8 @@ async function carregarSlotNuvem(nomeSlot) {
       ? await descomprimirDaNuvem(dadosRaw)
       : dadosRaw;
     aplicarDados(dadosCarregados);
+    // Marca hash como salvo para não disparar auto-save logo após carregar
+    _ultimoHashSalvo = JSON.stringify(coletarDadosParaNuvem());
     fecharModalNuvem('modalCarregarNuvem');
     openWarningModal('✅ "' + nomeSlot + '" carregado com sucesso!');
   } catch (err) {
@@ -664,22 +666,23 @@ function aplicarDados(dados) {
 }
 
 // ============================================================
-// AUTO-SAVE — 60s debounce + indicador de alteração pendente
+// AUTO-SAVE — 30s debounce + hash para evitar saves desnecessários
 // ============================================================
 
 // Estados possíveis: 'salvo' | 'pendente' | 'salvando' | 'erro'
 let _autoSaveEstado = 'salvo';
 let _autoSaveEmAndamento = false;
 let _autoSaveTimer = null;
+let _ultimoHashSalvo = null; // hash dos dados no último save bem-sucedido
 
 // Chamado toda vez que dados mudam
 function _marcarPendente() {
   if (!_slotAutoSave || !usuarioAtual) return;
   _autoSaveEstado = 'pendente';
   _mostrarToastAutoSave('pendente');
-  // Reinicia o timer de 60s
+  // Reinicia o timer de 30s
   clearTimeout(_autoSaveTimer);
-  _autoSaveTimer = setTimeout(_autoSaveNuvem, 60000);
+  _autoSaveTimer = setTimeout(_autoSaveNuvem, 30000);
 }
 
 // Debounce público (chamado por salvarDadosPersistentes)
@@ -692,6 +695,15 @@ async function _autoSaveNuvem() {
   if (_autoSaveEmAndamento) return;
   const existe = _slotsCache.some(s => s.nome === _slotAutoSave);
   if (!existe) return;
+
+  // Compara hash — se nada mudou desde o último save, não envia
+  const hashAtual = JSON.stringify(coletarDadosParaNuvem());
+  if (hashAtual === _ultimoHashSalvo) {
+    _autoSaveEstado = 'salvo';
+    _mostrarToastAutoSave('none');
+    _atualizarIndicadorAutoSave();
+    return;
+  }
 
   _autoSaveEmAndamento = true;
   _autoSaveEstado = 'salvando';
@@ -707,7 +719,7 @@ async function _autoSaveNuvem() {
   }
 
   try {
-    const dados = await comprimirParaNuvem(coletarDadosParaNuvem()).catch(e => { throw e; });
+    const dados = await comprimirParaNuvem(hashAtual === null ? coletarDadosParaNuvem() : JSON.parse(hashAtual)).catch(e => { throw e; });
     // Tenta salvar — em caso de falha aguarda 10s e tenta mais uma vez
     try {
       await salvarSlot(usuarioAtual, _slotAutoSave, dados, _slotAutoSave);
@@ -716,6 +728,7 @@ async function _autoSaveNuvem() {
       await new Promise(r => setTimeout(r, 10000));
       await salvarSlot(usuarioAtual, _slotAutoSave, dados, _slotAutoSave);
     }
+    _ultimoHashSalvo = hashAtual; // atualiza hash só após save bem-sucedido
     _autoSaveEstado = 'salvo';
     _mostrarToastAutoSave('ok');
   } catch (err) {
