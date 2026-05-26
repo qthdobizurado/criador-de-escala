@@ -770,7 +770,8 @@ function copiarColuna(colIdx) {
   const valores = [];
   rows.forEach(tr => {
     const cells = tr.querySelectorAll('td');
-    if (cells.length <= colIdx) return; // pula linha do total (colspan)
+    // Pula linha do total (tem célula com colspan)
+    if (Array.from(cells).some(td => td.hasAttribute('colspan'))) return;
     if (cells[colIdx]) valores.push(cells[colIdx].textContent.trim());
   });
   const texto = valores.join('\\n');
