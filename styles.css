@@ -1395,6 +1395,12 @@ table .cs-wrapper {
   animation: salvando-pulse 1s ease-in-out infinite;
 }
 
+.toast-pendente {
+  background: #fff8e1;
+  color: #f57f17;
+  border: 1px solid #ffe082;
+}
+
 .toast-ok {
   background: #e8f5e9;
   color: #2e7d32;

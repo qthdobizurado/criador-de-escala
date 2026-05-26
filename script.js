@@ -723,11 +723,106 @@ function aplicarDados(dados) {
   salvarDadosPersistentes();
 }
 
-// Debounce para auto-save na nuvem (evita chamadas excessivas)
+// ============================================================
+// AUTO-SAVE — 60s debounce + indicador de alteração pendente
+// ============================================================
+
+// Estados possíveis: 'salvo' | 'pendente' | 'salvando' | 'erro'
+let _autoSaveEstado = 'salvo';
+let _autoSaveEmAndamento = false;
+let _autoSaveTimer = null;
+
+// Chamado toda vez que dados mudam
+function _marcarPendente() {
+  if (!_slotAutoSave || !usuarioAtual) return;
+  _autoSaveEstado = 'pendente';
+  _mostrarToastAutoSave('pendente');
+  // Reinicia o timer de 60s
+  clearTimeout(_autoSaveTimer);
+  _autoSaveTimer = setTimeout(_autoSaveNuvem, 60000);
+}
+
+// Debounce público (chamado por salvarDadosPersistentes)
 const _autoSaveDebounced = (function() {
-  let t;
-  return function() { clearTimeout(t); t = setTimeout(_autoSaveNuvem, 4000); };
+  return function() { _marcarPendente(); };
 })();
+
+async function _autoSaveNuvem() {
+  if (!_slotAutoSave || !usuarioAtual) return;
+  if (_autoSaveEmAndamento) return;
+  const existe = _slotsCache.some(s => s.nome === _slotAutoSave);
+  if (!existe) return;
+
+  _autoSaveEmAndamento = true;
+  _autoSaveEstado = 'salvando';
+  _mostrarToastAutoSave('salvando');
+
+  const ind = $('indicadorAutoSave');
+  if (ind) {
+    ind.textContent = '💾 Salvando na nuvem...';
+    ind.style.color = '#e65100';
+    ind.style.fontSize = '13px';
+    ind.style.fontWeight = '600';
+    ind.classList.add('salvando');
+  }
+
+  try {
+    const dados = await comprimirParaNuvem(coletarDadosParaNuvem()).catch(e => { throw e; });
+    // Tenta salvar — em caso de falha aguarda 10s e tenta mais uma vez
+    try {
+      await salvarSlot(usuarioAtual, _slotAutoSave, dados, _slotAutoSave);
+    } catch (errPrimeiro) {
+      console.warn('Auto-save: primeira tentativa falhou, tentando novamente em 10s...', errPrimeiro);
+      await new Promise(r => setTimeout(r, 10000));
+      await salvarSlot(usuarioAtual, _slotAutoSave, dados, _slotAutoSave);
+    }
+    _autoSaveEstado = 'salvo';
+    _mostrarToastAutoSave('ok');
+  } catch (err) {
+    console.warn('Auto-save falhou:', err);
+    _autoSaveEstado = 'erro';
+    _mostrarToastAutoSave('erro');
+  } finally {
+    _autoSaveEmAndamento = false;
+    if (ind) ind.classList.remove('salvando');
+    _atualizarIndicadorAutoSave();
+  }
+}
+
+function _mostrarToastAutoSave(estado) {
+  let toast = $('toastAutoSave');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toastAutoSave';
+    document.body.appendChild(toast);
+  }
+  // Cancela timer anterior
+  if (toast._clearTimer) { clearTimeout(toast._clearTimer); toast._clearTimer = null; }
+
+  if (estado === 'pendente') {
+    toast.textContent = '⏳ Alterações pendentes — salvando em instantes...';
+    toast.className = 'toast-autosave toast-pendente';
+    toast.style.display = 'block';
+    // Fica visível até salvar
+  } else if (estado === 'salvando') {
+    toast.textContent = '💾 Salvando na nuvem...';
+    toast.className = 'toast-autosave toast-salvando';
+    toast.style.display = 'block';
+  } else if (estado === 'ok') {
+    toast.textContent = '✅ Arquivo salvo na nuvem!';
+    toast.className = 'toast-autosave toast-ok';
+    toast.style.display = 'block';
+    // Some após 3s se não houver novas alterações
+    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  } else if (estado === 'erro') {
+    toast.textContent = '❌ Auto-save falhou. Verifique a conexão.';
+    toast.className = 'toast-autosave toast-erro';
+    toast.style.display = 'block';
+    toast._clearTimer = setTimeout(() => { toast.style.display = 'none'; }, 5000);
+  } else {
+    toast.style.display = 'none';
+  }
+}
 
 function salvarDadosPersistentes() {
   try {
