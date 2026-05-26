@@ -296,6 +296,11 @@ input[type="date"] {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
+#myModal,
+#warningModal {
+  z-index: 2000;
+}
+
 .modal-content {
   background-color: #fefefe;
   margin: auto;
