@@ -747,7 +747,64 @@ function abrirEscalaNoNavegador() {
 }
 function abrirEscalaAC4NoNavegador() {
   if (!escalaAC4HTML) return;
-  abrirHtmlNova('Escala de AC4', escalaAC4HTML);
+
+  const colunas = ['RG','Responsável','Dia Início','Dia Fim','Horário Início','Horário Fim','Função','Valor'];
+
+  // Injeta botões de copiar no thead
+  const htmlComBotoes = escalaAC4HTML.replace(
+    /<thead>([\s\S]*?)<\/thead>/,
+    (_, theadInner) => {
+      // Linha de botões
+      const btnRow = `<tr class="linha-copiar">${colunas.map((col, i) =>
+        `<th><button class="btn-copiar-col" onclick="copiarColuna(${i})" title="Copiar coluna ${col}">📋 Copiar ${col}</button></th>`
+      ).join('')}</tr>`;
+      // Linha de cabeçalhos original
+      const headerRow = `<tr>${colunas.map(col => `<th>${col}</th>`).join('')}</tr>`;
+      return `<thead>${btnRow}${headerRow}</thead>`;
+    }
+  );
+
+  const script = `<script>
+function copiarColuna(colIdx) {
+  const rows = document.querySelectorAll('tbody tr');
+  const valores = [];
+  rows.forEach(tr => {
+    const cells = tr.querySelectorAll('td');
+    if (cells[colIdx]) valores.push(cells[colIdx].textContent.trim());
+  });
+  const texto = valores.join('\\n');
+  navigator.clipboard.writeText(texto).then(() => {
+    const btn = document.querySelectorAll('.btn-copiar-col')[colIdx];
+    const original = btn.textContent;
+    btn.textContent = '✔ Copiado!';
+    btn.style.background = '#28a745';
+    btn.style.color = '#fff';
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1800);
+  });
+}
+<\/script>`;
+
+  const style = `<style>
+    table{width:100%;border-collapse:collapse}
+    th,td{border:1px solid #000;padding:4px;text-align:left}
+    .linha-copiar th{border:none;padding:2px 2px 6px 2px;background:#fff;}
+    .btn-copiar-col{
+      background:#e8f0fe;border:1px solid #93c5fd;color:#1a3c7a;
+      border-radius:5px;padding:3px 8px;font-size:11px;font-weight:600;
+      cursor:pointer;white-space:nowrap;transition:background 0.15s;
+    }
+    .btn-copiar-col:hover{background:#dbeafe;}
+  </style>`;
+
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Escala de AC4</title>${style}</head><body>${htmlComBotoes}${script}</body></html>`;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 15000);
 }
 
 // salvarArquivosTemporarios não faz nada no contexto web (sem Electron)
