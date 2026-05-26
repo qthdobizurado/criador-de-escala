@@ -992,7 +992,7 @@ ${responsaveis.map(r => `<option value="${r}" ${r === it.responsavel ? 'selected
   </div>
 </div>`;
 
-    return `<h3>Vínculos da Ala ${a}</h3>${tabelaGlobal}${tabelaExclusiva}${painel}`;
+    return `<h3>Vínculos da Ala ${a}${a === 'Delta' ? ' <span class="aviso-ala-delta">(Escalas 24×48 não contém essa ala)</span>' : ''}</h3>${tabelaGlobal}${tabelaExclusiva}${painel}`;
   }).join('');
   setTimeout(ativarTodosCustomSelects, 0);
 }

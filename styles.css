@@ -1289,3 +1289,10 @@ table .cs-wrapper {
 }
 .turno-cabecalho:first-child { margin-top: 0; }
 .ala-cell { line-height: 1.8; }
+
+.aviso-ala-delta {
+  font-size: 13px;
+  font-weight: 400;
+  color: #888;
+  font-style: italic;
+}
