@@ -1177,13 +1177,28 @@ function gerarCalendario(mantemEd = false) {
   }
 }
 function calcularAlaParaDia(dt) {
+  // Referência: 21/03/2024 = Alpha inicia plantão
+  // Cada ala ocupa (horasOn ÷ 24) dias consecutivos no calendário.
+  // Ex 24×72: horasOn=24 → 1 dia/ala → Alpha d1, Bravo d2, Charlie d3, Delta d4, Alpha d5...
+  // Ex 48×96: horasOn=48 → 2 dias/ala → Alpha d1-d2, Bravo d3-d4, Charlie d5-d6...
+  // Ex 12×36: horasOn=12 → 0,5 dia/ala → usa horas para sub-dividir o dia
   const refDate = new Date(2024, 2, 21);
-  const cicloHoras = configEscala.horasOn + configEscala.horasOff;
-  const cicloTotal = cicloHoras * alas.length;
-  const horasDesdeRef = (dt - refDate) / 3600000;
-  const posNoCicloTotal = ((horasDesdeRef % cicloTotal) + cicloTotal) % cicloTotal;
-  const idxAla = Math.floor(posNoCicloTotal / cicloHoras);
-  return alas[idxAla];
+  const diasPorAla = configEscala.horasOn / 24;
+
+  if (diasPorAla >= 1 && Number.isInteger(diasPorAla)) {
+    // Caso comum: horasOn múltiplo de 24 (24h, 48h, etc.)
+    const diasDesdeRef = Math.floor((dt - refDate) / 86400000);
+    const totalDiasCiclo = diasPorAla * alas.length;
+    const posNoCiclo = ((diasDesdeRef % totalDiasCiclo) + totalDiasCiclo) % totalDiasCiclo;
+    return alas[Math.floor(posNoCiclo / diasPorAla)];
+  } else {
+    // Caso com horas fracionadas (ex: 12h on): usa offset em horas
+    const cicloHoras = configEscala.horasOn + configEscala.horasOff;
+    const cicloTotal = cicloHoras * alas.length;
+    const horasDesdeRef = (dt - refDate) / 3600000 + configEscala.horaInicio;
+    const posNoCicloTotal = ((horasDesdeRef % cicloTotal) + cicloTotal) % cicloTotal;
+    return alas[Math.floor(posNoCicloTotal / cicloHoras)];
+  }
 }
 
 function abrirModalConfigEscala() {
