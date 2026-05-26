@@ -778,33 +778,14 @@ function _mostrarToastAutoSave(estado) {
 }
 
 function salvarDadosPersistentes() {
-  try {
-    const dados = coletarDadosParaSalvar();
-    localStorage.setItem('escala_dados_' + (usuarioAtual || 'guest'), JSON.stringify(dados));
-  } catch (err) {
-    console.warn('Não foi possível salvar no localStorage:', err);
-  }
   // Dispara auto-save na nuvem se um slot estiver selecionado
   if (_slotAutoSave && usuarioAtual) _autoSaveDebounced();
 }
 
 function carregarDadosPersistentes() {
-  // Restaura preferência de auto-save
-  try {
-    const savedSlot = localStorage.getItem('escala_autosave_slot_' + (usuarioAtual || 'guest'));
-    if (savedSlot) {
-      _slotAutoSave = savedSlot;
-      _atualizarIndicadorAutoSave();
-    }
-  } catch(_) {}
-  try {
-    const raw = localStorage.getItem('escala_dados_' + (usuarioAtual || 'guest'));
-    if (!raw) return;
-    const dados = JSON.parse(raw);
-    aplicarDados(dados);
-  } catch (err) {
-    console.warn('Erro ao carregar do localStorage:', err);
-  }
+  // Não restaura dados nem auto-save do localStorage.
+  // O usuário escolhe o arquivo a carregar após o login.
+  _atualizarIndicadorAutoSave();
 }
 
 // ============================================================
