@@ -910,6 +910,82 @@ table .cs-wrapper {
 
 
 
+/* ========== MODAL: CONFIGURAR ESCALA ========== */
+.btn-config-escala {
+  background: #6c47d4;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.btn-config-escala:hover { background: #5534b5; }
+
+.modal-config-escala { max-width: 520px; width: 95%; }
+
+.cfg-descricao { font-size: 13px; color: #555; margin: 0 0 16px 0; }
+
+.cfg-campos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 18px;
+  margin-bottom: 16px;
+}
+
+.cfg-campo { display: flex; flex-direction: column; gap: 4px; }
+
+.cfg-campo label { font-size: 12px; font-weight: 600; color: #444; white-space: nowrap; }
+
+.cfg-campo-sep { font-size: 22px; font-weight: 700; color: #888; padding-bottom: 4px; align-self: flex-end; }
+
+.cfg-input-wrap { display: flex; align-items: center; gap: 5px; }
+
+.cfg-input-wrap input[type="number"] {
+  width: 72px;
+  margin-top: 0;
+  font-size: 15px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.cfg-unidade { font-size: 13px; color: #555; font-weight: 600; }
+
+.cfg-preview {
+  background: #e8f0fe;
+  border: 1px solid #93c5fd;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #1a3c7a;
+  margin-bottom: 14px;
+  min-height: 38px;
+}
+
+.cfg-exemplos { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+.cfg-exemplos-label { font-size: 12px; color: #666; font-weight: 600; white-space: nowrap; }
+
+.btn-cfg-exemplo {
+  background: #f0f4ff;
+  border: 1px solid #93c5fd;
+  color: #1a3c7a;
+  border-radius: 14px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin: 0;
+  width: auto;
+}
+.btn-cfg-exemplo:hover { background: #dbeafe; }
+
 /* ========== PAINEL: ADICIONAR FUNÇÃO EXCLUSIVA POR ALA ========== */
 .painel-adicionar-funcao-ala {
   margin-top: 12px;
