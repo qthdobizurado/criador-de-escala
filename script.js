@@ -1275,9 +1275,6 @@ function salvarConfigEscala() {
   configEscala = { horasOn: opt.horasOn, horasOff: opt.horasOff, horaInicio: hi, alasAtivas: opt.alasAtivas, dataReferencia: dataRef };
   fecharModalConfigEscala();
   salvarDadosPersistentes();
-  if (mudou && calendarioGerado) {
-    openModal('A configuração da escala foi alterada. Deseja regenerar o calendário agora?', () => gerarCalendario(false));
-  }
 }
 
 
@@ -2242,32 +2239,31 @@ function gerarEscala() {
   const dayData = {};
   for (let dia = s; dia <= f; dia++) {
     const dt = new Date(a, m - 1, dia);
-    const ala = calcularAlaParaDia(dt);
+    const turnos = calcularAlasTurnosDia(dt);
     const lines = [];
-    const funcoesDoDia = vinculos[ala].filter(v => v.dia === dia);
-    funcoesDoDia.sort((a, b) => {
-      const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal :
-        (a.hasOwnProperty('ordem') ? a.ordem : funcoes.indexOf(a.funcao));
-      const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal :
-        (b.hasOwnProperty('ordem') ? b.ordem : funcoes.indexOf(b.funcao));
-      return ordemA - ordemB;
-    });
-    funcoesDoDia.forEach(v => {
-      if (v.responsavel && v.responsavel !== 'Indeterminado') {
-        if (v.ocultar) return;
-        if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
-          exclusoesDiarias[ala][dia].includes(v.funcao) && v.geradoAutomaticamente) return;
 
-        const hI = v.horaInicio ?? 8;
-        // Usa horaFimEscala SOMENTE no último dia do período da escala (dia === f)
-        const hF = (dia === f && v.hasOwnProperty('horaFimEscala'))
-          ? v.horaFimEscala
-          : (v.horaFim ?? 8);
-
-        lines.push({ funcao: v.funcao, responsavel: v.responsavel, tipo: v.remuneracao, horaInicio: hI, horaFim: hF });
-      }
-    });
-    if (lines.length) dayData[dia] = { dia, ala, lines };
+    for (const turno of turnos) {
+      const ala = turno.ala;
+      const funcoesDoDia = vinculos[ala].filter(v =>
+        v.dia === dia && (turnos.length === 1 || v.turnoInicio === turno.horaInicio)
+      );
+      funcoesDoDia.sort((a, b) => {
+        const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal : (a.hasOwnProperty('ordem') ? a.ordem : funcoes.indexOf(a.funcao));
+        const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal : (b.hasOwnProperty('ordem') ? b.ordem : funcoes.indexOf(b.funcao));
+        return ordemA - ordemB;
+      });
+      funcoesDoDia.forEach(v => {
+        if (v.responsavel && v.responsavel !== 'Indeterminado') {
+          if (v.ocultar) return;
+          if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
+            exclusoesDiarias[ala][dia].includes(v.funcao) && v.geradoAutomaticamente) return;
+          const hI = v.horaInicio ?? configEscala.horaInicio;
+          const hF = (dia === f && v.hasOwnProperty('horaFimEscala')) ? v.horaFimEscala : (v.horaFim ?? hI);
+          lines.push({ funcao: v.funcao, responsavel: v.responsavel, tipo: v.remuneracao, horaInicio: hI, horaFim: hF, ala });
+        }
+      });
+    }
+    if (lines.length) dayData[dia] = { dia, lines };
   }
 
   let html = `<table border="1" style="border-collapse:collapse;"><thead><tr>` +
@@ -2278,14 +2274,18 @@ function gerarEscala() {
     if (!info) { dayIndex++; continue; }
     const bgColor = dayIndex % 2 === 0 ? '#f9f9f9' : '#ffffff';
     const rSpan = info.lines.length;
+    // Agrupa linhas por ala para o rowspan
+    let lastAla = null, alaStart = 0;
     info.lines.forEach((ln, i) => {
       html += `<tr style="background-color:${bgColor};">`;
-      if (i === 0) html += `<td rowspan="${rSpan}">${dia}/${m}/${a}</td><td rowspan="${rSpan}">${info.ala}</td>`;
-      
-      // ✅ Garante que 0 vire "00"
+      if (i === 0) html += `<td rowspan="${rSpan}">${dia}/${m}/${a}</td>`;
+      if (ln.ala !== lastAla) {
+        const count = info.lines.filter((l, j) => j >= i && l.ala === ln.ala).length;
+        html += `<td rowspan="${count}">${ln.ala}</td>`;
+        lastAla = ln.ala;
+      }
       const hI = String(Math.max(0, Math.min(23, parseInt(ln.horaInicio) || 0))).padStart(2, '0');
       const hF = String(Math.max(0, Math.min(23, parseInt(ln.horaFim) || 0))).padStart(2, '0');
-      
       html += `<td>${ln.funcao}</td><td>${ln.responsavel}</td><td>${ln.tipo}</td><td>${hI}h às ${hF}h</td></tr>`;
     });
     dayIndex++;
@@ -2316,47 +2316,43 @@ function buildEscalaAC4HTML() {
 <th>Horário Início</th><th>Horário Fim</th><th>Função</th><th>Valor</th></tr></thead><tbody>`;
   for (let dia = s; dia <= f; dia++) {
     const dt = new Date(a, m - 1, dia);
-    const ala = calcularAlaParaDia(dt);
-    let linhasAC4 = [];
-    const funcoesDoDia = vinculos[ala].filter(v => v.dia === dia);
-    funcoesDoDia.sort((a, b) => {
-      const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal :
-        (a.hasOwnProperty('ordem') ? a.ordem : funcoes.indexOf(a.funcao));
-      const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal :
-        (b.hasOwnProperty('ordem') ? b.ordem : funcoes.indexOf(b.funcao));
-      return ordemA - ordemB;
-    });
-    funcoesDoDia.forEach(v => {
-      if (v.responsavel && v.responsavel !== 'Indeterminado') {
-        if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
-          exclusoesDiarias[ala][dia].includes(v.funcao) && v.geradoAutomaticamente) return;
-        // ✅ Inclui "AC4 - Regência" como AC4
-        if (v.remuneracao === 'AC4' || v.remuneracao === 'AC4-2' || v.remuneracao === 'AC4 - Regência') {
-          const hI = v.horaInicio ?? 8;
-          const hF = v.horaFim ?? 8; // ✅ Intencional: escala AC4 usa sempre horaFim (não horaFimEscala)
-          const valor = calcularCusto(dt, hI, hF);
-          linhasAC4.push({ dt, func: v.funcao, resp: v.responsavel, hI, hF, valor });
-          valorTotal += valor;
-        }
-      }
-    });
-    if (linhasAC4.length) {
-      const bgColor = dayIndex % 2 === 0 ? '#f9f9f9' : '#ffffff';
-      linhasAC4.forEach((ln, i) => {
-        const dtIni = ln.dt;
-        const dtFim = new Date(dtIni);
-        if (ln.hF <= ln.hI) dtFim.setDate(dtFim.getDate() + 1);
-        const diaIniStr = `${String(dtIni.getDate()).padStart(2,'0')}/${String(dtIni.getMonth()+1).padStart(2,'0')}/${dtIni.getFullYear()}`;
-        const diaFimStr = `${String(dtFim.getDate()).padStart(2,'0')}/${String(dtFim.getMonth()+1).padStart(2,'0')}/${dtFim.getFullYear()}`;
-        const hIstr = String(ln.hI).padStart(2,'0') + ':00:00';
-        const hFstr = String(ln.hF).padStart(2,'0') + ':00:00';
-        const match = ln.resp.match(/(\d{1,2}\.\d{3}|\d{4,5})/);
-        const rg = match ? match[1] : '';
-        html += `<tr style="background-color:${bgColor}">
-<td>${rg}</td><td>${ln.resp}</td><td>${diaIniStr}</td><td>${diaFimStr}</td>
-<td>${hIstr}</td><td>${hFstr}</td><td>${ln.func}</td><td>R$ ${formatarMoeda(ln.valor)}</td></tr>`;
+    const turnos = calcularAlasTurnosDia(dt);
+
+    for (const turno of turnos) {
+      const ala = turno.ala;
+      let linhasAC4 = [];
+      const funcoesDoDia = vinculos[ala].filter(v =>
+        v.dia === dia && (turnos.length === 1 || v.turnoInicio === turno.horaInicio)
+      );
+      funcoesDoDia.sort((a, b) => {
+        const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal : (a.hasOwnProperty('ordem') ? a.ordem : funcoes.indexOf(a.funcao));
+        const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal : (b.hasOwnProperty('ordem') ? b.ordem : funcoes.indexOf(b.funcao));
+        return ordemA - ordemB;
       });
-      dayIndex++;
+      funcoesDoDia.forEach(v => {
+        if (v.responsavel && v.responsavel !== 'Indeterminado') {
+          if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
+            exclusoesDiarias[ala][dia].includes(v.funcao) && v.geradoAutomaticamente) return;
+          if (v.remuneracao !== 'AC4' && v.remuneracao !== 'AC4 - Regência' && v.remuneracao !== 'AC4-2') return;
+          const hI = v.horaInicio ?? configEscala.horaInicio;
+          const hF = v.horaFim ?? hI;
+          const custo = calcularCusto(dt, hI, hF);
+          valorTotal += custo;
+          linhasAC4.push({ v, hI, hF, custo, ala, dia, dt });
+        }
+      });
+      linhasAC4.forEach(({ v, hI, hF, custo, ala, dia, dt }) => {
+        const bgColor = dayIndex % 2 === 0 ? '#f9f9f9' : '#ffffff';
+        const hIStr = String(Math.max(0, Math.min(23, hI))).padStart(2, '0');
+        const hFStr = String(Math.max(0, Math.min(23, hF))).padStart(2, '0');
+        const diaFim = hF <= hI ? dia + 1 : dia;
+        html += `<tr style="background-color:${bgColor};">
+<td>${v.responsavel}</td><td>${v.responsavel}</td>
+<td>${dia}/${m}/${a}</td><td>${diaFim}/${m}/${a}</td>
+<td>${hIStr}h</td><td>${hFStr}h</td>
+<td>${v.funcao}</td><td>R$ ${formatarMoeda(custo)}</td></tr>`;
+        dayIndex++;
+      });
     }
   }
   html += `<tr><td colspan="7" style="text-align:right;"><strong>Total:</strong></td>
