@@ -1177,29 +1177,46 @@ function gerarCalendario(mantemEd = false) {
   }
 }
 function calcularAlaParaDia(dt) {
-  // Referência fixa: 21/03/2024 = Alpha inicia plantão às configEscala.horaInicio
-  // Para escalas onde horasOn < 24 (ex: 12×36), um dia pode ter mais de uma ala.
-  // Nesse caso o calendário mostra a ala que está DE PLANTÃO às 00h do dia (início do dia).
-  // A lógica: contamos horas desde a referência, calculamos em qual slot do ciclo estamos.
-  const refDate = new Date(2024, 2, 21);
-  // Referência em ms considerando a hora de início do turno
-  const refMs = refDate.getTime() + configEscala.horaInicio * 3600000;
-  const cicloHoras = configEscala.horasOn + configEscala.horasOff;
-  const cicloTotal = cicloHoras * alas.length; // horas para um ciclo completo das 4 alas
+  // Para escalas >=24h: retorna a ala do dia (1 ala por dia)
+  // Para escalas <24h: retorna a ala do PRIMEIRO turno do dia
+  return calcularAlasTurnosDia(dt)[0].ala;
+}
 
-  if (configEscala.horasOn >= 24) {
-    // Ex: 24×72, 24×48, 48×144 — usa dias inteiros
-    const diasPorAla = configEscala.horasOn / 24;
+// Retorna array de turnos do dia: [{ ala, horaInicio, horaFim }, ...]
+// Para 24×72: um turno por dia — [{ ala:'Alpha', horaInicio:8, horaFim:8 }]
+// Para 12×36: dois turnos por dia — [{ ala:'Alpha', horaInicio:8, horaFim:20 }, { ala:'Bravo', horaInicio:20, horaFim:8 }]
+function calcularAlasTurnosDia(dt) {
+  const refDate = new Date(2024, 2, 21);
+  const hi = configEscala.horaInicio;
+  const horasOn = configEscala.horasOn;
+  const horasOff = configEscala.horasOff;
+  const cicloHoras = horasOn + horasOff; // horas de um ciclo completo de 1 ala
+  const cicloTotal = cicloHoras * alas.length; // horas p/ todas as alas rodarem
+
+  if (horasOn >= 24) {
+    // Caso padrão: cada ala ocupa diasPorAla dias inteiros
+    const diasPorAla = horasOn / 24;
     const diasDesdeRef = Math.floor((dt - refDate) / 86400000);
     const totalDias = diasPorAla * alas.length;
     const pos = ((diasDesdeRef % totalDias) + totalDias) % totalDias;
-    return alas[Math.floor(pos / diasPorAla)];
+    const ala = alas[Math.floor(pos / diasPorAla)];
+    return [{ ala, horaInicio: hi, horaFim: hi }];
   } else {
-    // Ex: 12×36 — usa a hora de início do dia (00h) para determinar a ala
-    const dtMs = dt.getTime(); // 00h do dia
-    const horasDesdeRef = (dtMs - refMs) / 3600000;
-    const posNoCicloTotal = ((horasDesdeRef % cicloTotal) + cicloTotal) % cicloTotal;
-    return alas[Math.floor(posNoCicloTotal / cicloHoras)];
+    // Turnos sub-diários: calcula cada turno que ocorre neste dia
+    const turnosPorDia = 24 / horasOn; // ex: 12h → 2 turnos/dia
+    const turnos = [];
+    for (let t = 0; t < turnosPorDia; t++) {
+      // Hora de início deste turno no dia
+      const horaInicioTurno = (hi + t * horasOn) % 24;
+      const horaFimTurno = (hi + (t + 1) * horasOn) % 24;
+      // Quantas horas desde a referência até este turno
+      const diasDesdeRef = Math.floor((dt - refDate) / 86400000);
+      const horasDesdeRef = diasDesdeRef * 24 + (horaInicioTurno - hi + 24) % 24;
+      const posNoCicloTotal = ((horasDesdeRef % cicloTotal) + cicloTotal) % cicloTotal;
+      const ala = alas[Math.floor(posNoCicloTotal / cicloHoras)];
+      turnos.push({ ala, horaInicio: horaInicioTurno, horaFim: horaFimTurno });
+    }
+    return turnos;
   }
 }
 
@@ -1268,135 +1285,136 @@ function gerarCalendarioInterno(mantemEd) {
   for (let dia = 1; dia <= dMax; dia++) {
     const dt = new Date(a, m - 1, dia);
     const dw = dt.toLocaleDateString('pt-BR', { weekday: 'long' });
-    const ala = calcularAlaParaDia(dt);
-    let td = 0;
-    // ── Funções globais ──
-    // horaFim calculada pela config: para turnos < 24h usa horaInicio + horasOn
+    const turnos = calcularAlasTurnosDia(dt);
     const _horaFimConfig = configEscala.horasOn < 24
       ? (configEscala.horaInicio + configEscala.horasOn) % 24
       : configEscala.horaInicio;
 
-    funcoes.forEach(funcao => {
-      const geral = vinculos[ala].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
-      if (!geral) return;
-      let responsavel = geral.responsavel;
-      let remuneracao = geral.remuneracao || 'Normal';
-      if (responsavel === 'Indeterminado' || isResponsavelAfastado(responsavel, dt)) {
-        responsavel = 'Indeterminado';
-        remuneracao = 'AC4';
-      }
-      const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].includes(funcao);
-      const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && !v.geradoAutomaticamente);
-      const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.geradoAutomaticamente);
-      if (excluida || jaExisteManual) return;
-      if (!jaExisteAutomatica) {
-        let ocultarValue = false;
-        if (dia === 1) ocultarValue = geral.hasOwnProperty('ocultar') ? geral.ocultar : false;
-        vinculos[ala].push({
-          funcao: funcao,
-          responsavel: responsavel,
-          dia: dia,
-          horaInicio: configEscala.horaInicio,
-          horaFim: _horaFimConfig,
-          horaFimEscala: _horaFimConfig,
-          remuneracao: remuneracao,
-          geradoAutomaticamente: true,
-          originalResponsavel: geral.responsavel,
-          ocultar: ocultarValue,
-          ordemOriginal: funcoes.indexOf(funcao)
-        });
-      }
-    });
+    let tdDia = 0;
+    let htmlTurnos = '';
 
-    // ── Funções exclusivas desta ala (apenasAla) ──
-    vinculos[ala].filter(v => v.apenasAla && !v.hasOwnProperty('dia')).forEach(geral => {
-      const funcao = geral.funcao;
-      let responsavel = geral.responsavel;
-      let remuneracao = geral.remuneracao || 'Normal';
-      if (responsavel === 'Indeterminado' || isResponsavelAfastado(responsavel, dt)) {
-        responsavel = 'Indeterminado';
-        remuneracao = 'AC4';
-      }
-      const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].includes(funcao);
-      const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && !v.geradoAutomaticamente);
-      const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.geradoAutomaticamente);
-      if (excluida || jaExisteManual) return;
-      if (!jaExisteAutomatica) {
-        let ocultarValue = false;
-        if (dia === 1) ocultarValue = geral.hasOwnProperty('ocultar') ? geral.ocultar : false;
-        vinculos[ala].push({
-          funcao: funcao,
-          responsavel: responsavel,
-          dia: dia,
-          horaInicio: configEscala.horaInicio,
-          horaFim: _horaFimConfig,
-          horaFimEscala: _horaFimConfig,
-          remuneracao: remuneracao,
-          geradoAutomaticamente: true,
-          originalResponsavel: geral.responsavel,
-          ocultar: ocultarValue,
-          apenasAla: true,
-          ordemOriginal: funcoes.length + vinculos[ala].filter(v => v.apenasAla && !v.hasOwnProperty('dia')).indexOf(geral)
+    for (const turno of turnos) {
+      const ala = turno.ala;
+      const hInicioTurno = turno.horaInicio;
+      const hFimTurno = turno.horaFim;
+      // sufixo único para IDs quando há mais de um turno no dia
+      const turnoSufixo = turnos.length > 1 ? `_t${hInicioTurno}` : '';
+
+      // ── Funções globais ──
+      funcoes.forEach(funcao => {
+        const geral = vinculos[ala].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
+        if (!geral) return;
+        let responsavel = geral.responsavel;
+        let remuneracao = geral.remuneracao || 'Normal';
+        if (responsavel === 'Indeterminado' || isResponsavelAfastado(responsavel, dt)) {
+          responsavel = 'Indeterminado';
+          remuneracao = 'AC4';
+        }
+        const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].includes(funcao);
+        const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.turnoInicio === hInicioTurno && !v.geradoAutomaticamente);
+        const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.turnoInicio === hInicioTurno && v.geradoAutomaticamente);
+        if (excluida || jaExisteManual) return;
+        if (!jaExisteAutomatica) {
+          let ocultarValue = false;
+          if (dia === 1) ocultarValue = geral.hasOwnProperty('ocultar') ? geral.ocultar : false;
+          vinculos[ala].push({
+            funcao, responsavel, dia,
+            horaInicio: hInicioTurno,
+            horaFim: hFimTurno,
+            horaFimEscala: hFimTurno,
+            turnoInicio: hInicioTurno,
+            remuneracao, geradoAutomaticamente: true,
+            originalResponsavel: geral.responsavel,
+            ocultar: ocultarValue,
+            ordemOriginal: funcoes.indexOf(funcao)
+          });
+        }
+      });
+
+      // ── Funções exclusivas desta ala (apenasAla) ──
+      vinculos[ala].filter(v => v.apenasAla && !v.hasOwnProperty('dia')).forEach(geral => {
+        const funcao = geral.funcao;
+        let responsavel = geral.responsavel;
+        let remuneracao = geral.remuneracao || 'Normal';
+        if (responsavel === 'Indeterminado' || isResponsavelAfastado(responsavel, dt)) {
+          responsavel = 'Indeterminado';
+          remuneracao = 'AC4';
+        }
+        const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].includes(funcao);
+        const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.turnoInicio === hInicioTurno && !v.geradoAutomaticamente);
+        const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.turnoInicio === hInicioTurno && v.geradoAutomaticamente);
+        if (excluida || jaExisteManual) return;
+        if (!jaExisteAutomatica) {
+          let ocultarValue = false;
+          if (dia === 1) ocultarValue = geral.hasOwnProperty('ocultar') ? geral.ocultar : false;
+          vinculos[ala].push({
+            funcao, responsavel, dia,
+            horaInicio: hInicioTurno,
+            horaFim: hFimTurno,
+            horaFimEscala: hFimTurno,
+            turnoInicio: hInicioTurno,
+            remuneracao, geradoAutomaticamente: true,
+            originalResponsavel: geral.responsavel,
+            ocultar: ocultarValue,
+            apenasAla: true,
+            ordemOriginal: funcoes.length + vinculos[ala].filter(v => v.apenasAla && !v.hasOwnProperty('dia')).indexOf(geral)
+          });
+        }
+      });
+
+      if (dia === dMax) {
+        vinculos[ala].forEach(v => {
+          if (v.dia === dia && v.turnoInicio === hInicioTurno && !v.hasOwnProperty('horaFimEscala')) v.horaFimEscala = v.horaFim;
         });
       }
-    });
-    if (dia === dMax) {
-      vinculos[ala].forEach(v => {
-        if (v.dia === dia && !v.hasOwnProperty('horaFimEscala')) v.horaFimEscala = v.horaFim;
+
+      const vincDia = vinculos[ala].filter(v => v.dia === dia && (v.turnoInicio === hInicioTurno || (!v.hasOwnProperty('turnoInicio') && turnos.length === 1)));
+      const vincDiaFiltrado = vincDia.filter(v => {
+        if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia]) {
+          if (v.geradoAutomaticamente && exclusoesDiarias[ala][dia].includes(v.funcao)) return false;
+        }
+        return true;
       });
-    }
-    const vincDia = vinculos[ala].filter(v => v.dia === dia);
-    const vincDiaFiltrado = vincDia.filter(v => {
-      if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia]) {
-        if (v.geradoAutomaticamente && exclusoesDiarias[ala][dia].includes(v.funcao)) return false;
-      }
-      return true;
-    });
-    vincDiaFiltrado.sort((a, b) => {
-      const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal : (a.hasOwnProperty('ordem') ? a.ordem : 9999);
-      const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal : (b.hasOwnProperty('ordem') ? b.ordem : 9999);
-      return ordemA - ordemB;
-    });
-    let funHtml = "";
-    vincDiaFiltrado.forEach((func, index) => {
-      const hi = `hora-inicio-${dia}-${ala}-${func.funcao}`,
-        hf = `hora-fim-${dia}-${ala}-${func.funcao}`,
-        rm = `remuneracao-${dia}-${ala}-${func.funcao}`,
-        c = `custo-${dia}-${ala}-${func.funcao}`,
-        hI = func.horaInicio ?? 8,
-        hF = func.horaFim ?? 8,
-        hFE = func.horaFimEscala ?? hF,
-        rS = func.remuneracao || 'Normal',
-        // ✅ Inclui "..." como isento de cálculo
-        cIni = rS !== 'Extra não remunerado' && rS !== 'Normal' && rS !== '...' && rS !== 'Troca com a SOP' ? calcularCusto(dt, hI, hF) : 0;
-      td += cIni;
-      const originalResponsavel = func.originalResponsavel;
-      const isResponsavelDiferente = func.responsavel !== originalResponsavel;
-      const isOriginalUndefined = !originalResponsavel;
-      let alertaHtml = "";
-      if (isOriginalUndefined) {
-        alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}" style="color: dodgerblue; font-size: 12px; margin-top: 5px; text-align: center;">
-Função adicionada manualmente</div>`;
-      }
-      else if (originalResponsavel && originalResponsavel !== 'Indeterminado' && isResponsavelAfastado(originalResponsavel, dt)) {
-        alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}" style="color: #FF8C00; font-size: 12px; margin-top: 5px; text-align: center;">
-Função com responsável afastado definido no vínculo geral</div>`;
-      }
-      else if (mantemEd && isResponsavelDiferente && originalResponsavel && originalResponsavel !== 'Indeterminado') {
-        alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}" style="color: red; font-size: 12px; margin-top: 5px; text-align: center;">
-${originalResponsavel} é o responsável por essa função no vínculo geral da Ala ${ala}.</div>`;
-      }
-      else if (originalResponsavel && originalResponsavel !== 'Indeterminado') {
-        alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}" style="color: darkgoldenrod; font-size: 12px; margin-top: 5px; text-align: center;">
-Função com responsável definido no vínculo geral</div>`;
-      }
-      const disabledClass = func.bloqueada ? ' input-disabled' : '';
-      const selectDisabledClass = func.bloqueada ? ' select-disabled' : '';
-      const disabledAttr = func.bloqueada ? ' disabled' : '';
-      funHtml += `<div id="funcao-${dia}-${ala}-${func.funcao}" class="draggable-funcao" data-dia="${dia}" data-ala="${ala}" data-funcao="${func.funcao}" data-ordem="${index}">
+      vincDiaFiltrado.sort((a, b) => {
+        const ordemA = a.hasOwnProperty('ordemOriginal') ? a.ordemOriginal : (a.hasOwnProperty('ordem') ? a.ordem : 9999);
+        const ordemB = b.hasOwnProperty('ordemOriginal') ? b.ordemOriginal : (b.hasOwnProperty('ordem') ? b.ordem : 9999);
+        return ordemA - ordemB;
+      });
+
+      let funHtml = "";
+      let td = 0;
+      vincDiaFiltrado.forEach((func, index) => {
+        const hi = `hora-inicio-${dia}-${ala}-${func.funcao}${turnoSufixo}`,
+          hf = `hora-fim-${dia}-${ala}-${func.funcao}${turnoSufixo}`,
+          rm = `remuneracao-${dia}-${ala}-${func.funcao}${turnoSufixo}`,
+          c = `custo-${dia}-${ala}-${func.funcao}${turnoSufixo}`,
+          hI = func.horaInicio ?? configEscala.horaInicio,
+          hF = func.horaFim ?? _horaFimConfig,
+          hFE = func.horaFimEscala ?? hF,
+          rS = func.remuneracao || 'Normal',
+          cIni = rS !== 'Extra não remunerado' && rS !== 'Normal' && rS !== '...' && rS !== 'Troca com a SOP' ? calcularCusto(dt, hI, hF) : 0;
+        td += cIni;
+        tdDia += cIni;
+        const originalResponsavel = func.originalResponsavel;
+        const isResponsavelDiferente = func.responsavel !== originalResponsavel;
+        const isOriginalUndefined = !originalResponsavel;
+        let alertaHtml = "";
+        if (isOriginalUndefined) {
+          alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}${turnoSufixo}" style="color: dodgerblue; font-size: 12px; margin-top: 5px; text-align: center;">Função adicionada manualmente</div>`;
+        } else if (originalResponsavel && originalResponsavel !== 'Indeterminado' && isResponsavelAfastado(originalResponsavel, dt)) {
+          alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}${turnoSufixo}" style="color: #FF8C00; font-size: 12px; margin-top: 5px; text-align: center;">Função com responsável afastado definido no vínculo geral</div>`;
+        } else if (mantemEd && isResponsavelDiferente && originalResponsavel && originalResponsavel !== 'Indeterminado') {
+          alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}${turnoSufixo}" style="color: red; font-size: 12px; margin-top: 5px; text-align: center;">${originalResponsavel} é o responsável por essa função no vínculo geral da Ala ${ala}.</div>`;
+        } else if (originalResponsavel && originalResponsavel !== 'Indeterminado') {
+          alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}${turnoSufixo}" style="color: darkgoldenrod; font-size: 12px; margin-top: 5px; text-align: center;">Função com responsável definido no vínculo geral</div>`;
+        }
+        const disabledClass = func.bloqueada ? ' input-disabled' : '';
+        const selectDisabledClass = func.bloqueada ? ' select-disabled' : '';
+        const disabledAttr = func.bloqueada ? ' disabled' : '';
+        funHtml += `<div id="funcao-${dia}-${ala}-${func.funcao}${turnoSufixo}" class="draggable-funcao" data-dia="${dia}" data-ala="${ala}" data-funcao="${func.funcao}" data-ordem="${index}">
 <div class="linha-funcao" style="text-align: center;">
 <span class="drag-handle">↓≡↑</span>
-<strong id="nome-funcao-${dia}-${ala}-${func.funcao}">${func.funcao}:</strong>
+<strong id="nome-funcao-${dia}-${ala}-${func.funcao}${turnoSufixo}">${func.funcao}:</strong>
 <button class="btn-editar-funcao${disabledClass}"${disabledAttr} onclick="editarNomeFuncaoDia(${dia},'${ala}','${func.funcao.replace(/'/g, "\\'")}')">Editar Nome</button>
 <button class="btn-small" onclick="toggleBloqueioFuncao('${ala}','${func.funcao}',${dia}${!func.bloqueada ? ', true' : ''})">
 ${func.bloqueada ? '🔓 Desbloquear Modificaçoes' : '🔒 Bloquear Modificaçoes'}
@@ -1404,7 +1422,7 @@ ${func.bloqueada ? '🔓 Desbloquear Modificaçoes' : '🔒 Bloquear Modificaço
 </div>
 <div class="linha linha-funcao-campos" style="justify-content: center; align-items: center;">
 <label class="label-inline">Nome:</label>
-<select data-role="responsavel-calendario" id="responsavel-${dia}-${ala}-${func.funcao}" class="${selectDisabledClass} select-nome-funcao"${disabledAttr} onchange="atualizarRespCal('${ala}','${func.funcao}',this.value,${dia})">
+<select data-role="responsavel-calendario" id="responsavel-${dia}-${ala}-${func.funcao}${turnoSufixo}" class="${selectDisabledClass} select-nome-funcao"${disabledAttr} onchange="atualizarRespCal('${ala}','${func.funcao}',this.value,${dia})">
 <option value="">Selecione um responsável</option>
 ${responsaveis.map(r => `<option value="${r}" ${r === func.responsavel ? 'selected' : ''}>${r}${isResponsavelAfastado(r, dt) ? ' (Afastado)' : ''}</option>`).join('')}
 </select>
@@ -1413,7 +1431,7 @@ ${responsaveis.map(r => `<option value="${r}" ${r === func.responsavel ? 'select
 <label class="label-inline">H.Fim:</label>
 <input type="number" id="${hf}" class="input-hora${disabledClass}" value="${hF}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
 ${dia === dMax ? `<label class="label-inline">H.Fim Escala:</label>
-<input type="number" id="hora-fim-escala-${dia}-${ala}-${func.funcao}" class="input-hora${disabledClass}" value="${hFE}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},'${ala}','${func.funcao}')">` : ``}
+<input type="number" id="hora-fim-escala-${dia}-${ala}-${func.funcao}${turnoSufixo}" class="input-hora${disabledClass}" value="${hFE}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},'${ala}','${func.funcao}')">` : ``}
 <label class="label-inline">Remuneração:</label>
 <select id="${rm}" class="${selectDisabledClass}"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
 <option value="AC4" ${rS==='AC4' ? 'selected' : ''}>AC4</option>
@@ -1427,25 +1445,35 @@ ${dia === dMax ? `<label class="label-inline">H.Fim Escala:</label>
 <label class="label-inline">Custo:</label>
 <span id="${c}" class="custo-valor">R$ ${formatarMoeda(cIni)}</span>
 <button${disabledAttr} onclick="removerFuncaoCalendario('${ala}','${func.funcao}',${dia})">Remover</button>
-${dia === 1 ? `<label><input type="checkbox" id="ocultar-${dia}-${ala}-${func.funcao}"${disabledAttr} onchange="toggleOcultar(${dia},'${ala}','${func.funcao}',this.checked)" ${func.ocultar ? 'checked' : ''}> Ocultar da escala</label>` : ``}
+${dia === 1 ? `<label><input type="checkbox" id="ocultar-${dia}-${ala}-${func.funcao}${turnoSufixo}"${disabledAttr} onchange="toggleOcultar(${dia},'${ala}','${func.funcao}',this.checked)" ${func.ocultar ? 'checked' : ''}> Ocultar da escala</label>` : ``}
 </div>${alertaHtml}</div>`;
-    });
-    html += `<tr class="${dia % 2 === 0 ? 'linha-par' : 'linha-impar'}">
-<td class="td-data"><span class="data-dia">${dia}/${m}/${a}</span><span class="data-dw">(${dw})</span></td>
-<td>${ala}</td>
-<td id="container-funcoes-${dia}-${ala}" class="sortable-container">
+      });
+
+      // Cabeçalho do turno (só aparece quando há mais de um turno por dia)
+      const cabecalhoTurno = turnos.length > 1
+        ? `<div class="turno-cabecalho">🕐 Ala ${ala} — ${String(hInicioTurno).padStart(2,'0')}h às ${String(hFimTurno).padStart(2,'0')}h</div>`
+        : '';
+
+      htmlTurnos += `${cabecalhoTurno}
+<div id="container-funcoes-${dia}-${ala}${turnoSufixo}" class="sortable-container">
 <div class="funcoes-container">
 ${funHtml}
 </div>
 <div class="input-container">
-<label for="nova-funcao-${dia}-${ala}">Nova Função:</label>
-<input type="text" id="nova-funcao-${dia}-${ala}" placeholder="Adicionar função">
+<label for="nova-funcao-${dia}-${ala}${turnoSufixo}">Nova Função:</label>
+<input type="text" id="nova-funcao-${dia}-${ala}${turnoSufixo}" placeholder="Adicionar função">
 <button onclick="adicionarFuncaoNoCalendario(${dia},'${ala}')">Adicionar Função</button>
 </div>
-</td>
-<td id="total-diario-${dia}">R$ ${formatarMoeda(td)}</td>
+</div>`;
+    } // fim loop turnos
+
+    html += `<tr class="${dia % 2 === 0 ? 'linha-par' : 'linha-impar'}">
+<td class="td-data"><span class="data-dia">${dia}/${m}/${a}</span><span class="data-dw">(${dw})</span></td>
+<td>${turnos.map(t => `<div class="ala-cell">${t.ala}</div>`).join('')}</td>
+<td>${htmlTurnos}</td>
+<td id="total-diario-${dia}">R$ ${formatarMoeda(tdDia)}</td>
 </tr>`;
-    totMes += td;
+    totMes += tdDia;
   }
   html += `<tr><td colspan="3" style="text-align:right;"><strong>Total do Mês:</strong></td>
 <td id="total-mensal"><strong>R$ ${formatarMoeda(totMes)}</strong></td></tr></tbody></table>`;

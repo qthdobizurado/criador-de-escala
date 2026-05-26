@@ -1270,3 +1270,16 @@ table .cs-wrapper {
   color: #c62828;
   border: 1px solid #ef9a9a;
 }
+
+.turno-cabecalho {
+  background: #e8f0fe;
+  border-left: 3px solid #6c47d4;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a3c7a;
+  margin: 8px 0 4px 0;
+}
+.turno-cabecalho:first-child { margin-top: 0; }
+.ala-cell { line-height: 1.8; }
