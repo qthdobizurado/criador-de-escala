@@ -2773,3 +2773,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el) el.textContent = 'Erro ao conectar com o Firebase. Verifique a configuração.';
   });
 });
+
+// Avisa ao tentar fechar/atualizar a página com alterações não salvas
+window.addEventListener('beforeunload', e => {
+  // Só avisa se o usuário estiver logado e houver dados carregados
+  if (!usuarioAtual) return;
+  const hashAtual = JSON.stringify(coletarDadosParaNuvem());
+  if (_ultimoHashSalvo !== null && hashAtual !== _ultimoHashSalvo) {
+    e.preventDefault();
+    e.returnValue = 'Verifique se salvou os arquivos — as informações serão perdidas ao atualizar.';
+  }
+});
