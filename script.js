@@ -1605,13 +1605,13 @@ ${func.bloqueada ? '🔓 Desbloquear Modificaçoes' : '🔒 Bloquear Modificaço
 ${responsaveis.map(r => `<option value="${r}" ${r === func.responsavel ? 'selected' : ''}>${r}${isResponsavelAfastado(r, dt) ? ' (Afastado)' : ''}</option>`).join('')}
 </select>
 <label class="label-inline">H.Início:</label>
-<input type="number" id="${hi}" class="input-hora${disabledClass}" value="${hI}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
+<input type="number" id="${hi}" class="input-hora${disabledClass}" value="${hI}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}','${turnoSufixo}')">
 <label class="label-inline">H.Fim:</label>
-<input type="number" id="${hf}" class="input-hora${disabledClass}" value="${hF}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
+<input type="number" id="${hf}" class="input-hora${disabledClass}" value="${hF}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}','${turnoSufixo}')">
 ${dia === dMax ? `<label class="label-inline">H.Fim Escala:</label>
 <input type="number" id="hora-fim-escala-${dia}-${ala}-${func.funcao}${turnoSufixo}" class="input-hora${disabledClass}" value="${hFE}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},'${ala}','${func.funcao}')">` : ``}
 <label class="label-inline">Remuneração:</label>
-<select id="${rm}" class="${selectDisabledClass}"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
+<select id="${rm}" class="${selectDisabledClass}"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}','${turnoSufixo}')">
 <option value="AC4" ${rS==='AC4' ? 'selected' : ''}>AC4</option>
 <option value="AC4 - Regência" ${rS==='AC4 - Regência' ? 'selected' : ''}>AC4 - Regência</option>
 <option value="Extra não remunerado" ${rS==='Extra não remunerado' ? 'selected' : ''}>Extra não remunerado</option>
@@ -2039,20 +2039,26 @@ function atualizarRespCal(a, funcao, r, d) {
   gerarCalendario(true); // atualiza alertas de cor do responsável no calendário
   salvarDadosPersistentes();
 }
-function atualizarCusto(d, a, funcao) {
-  let vinculoDia = vinculos[a].find(v => v.funcao === funcao && v.dia === d);
+function atualizarCusto(d, a, funcao, ts) {
+  // ts = turnoSufixo (ex: '_t8', '_t20'); pode ser undefined em chamadas internas
+  const _ts = ts !== undefined ? ts : '';
+  let vinculoDia = vinculos[a].find(v => v.funcao === funcao && v.dia === d &&
+    (v.turnoInicio === undefined || _ts === '' || v.turnoInicio === parseInt(_ts.replace('_t',''))));
+  if (!vinculoDia) vinculoDia = vinculos[a].find(v => v.funcao === funcao && v.dia === d);
   if (vinculoDia && vinculoDia.bloqueada) {
     openWarningModal("Edição bloqueada para esta função.");
     return;
   }
-  const hi = `hora-inicio-${d}-${a}-${funcao}`,
-    hf = `hora-fim-${d}-${a}-${funcao}`,
-    c = `custo-${d}-${a}-${funcao}`,
-    rm = `remuneracao-${d}-${a}-${funcao}`,
+  const hi = `hora-inicio-${d}-${a}-${funcao}${_ts}`,
+    hf = `hora-fim-${d}-${a}-${funcao}${_ts}`,
+    c = `custo-${d}-${a}-${funcao}${_ts}`,
+    rm = `remuneracao-${d}-${a}-${funcao}${_ts}`,
     hI = parseInt($(hi)?.value) || 0,
-    hF = parseInt($(hf)?.value) || 0,
+    hF_raw = parseInt($(hf)?.value),
+    hF_val = isNaN(hF_raw) ? 0 : hF_raw,
     r = $(rm)?.value,
     dt = new Date(parseInt($('ano').value), parseInt($('mes').value) - 1, d);
+  let hF = hF_val;
   if (!vinculoDia) {
     const geral = vinculos[a].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
     if (geral) { vinculoDia = { ...geral, dia: d }; vinculos[a].push(vinculoDia); }
@@ -2061,8 +2067,7 @@ function atualizarCusto(d, a, funcao) {
   const _dMaxAtual = new Date(parseInt($('ano').value), parseInt($('mes').value), 0).getDate();
   if (d === _dMaxAtual && hF <= hI) {
     hF = 0;
-    // ID pode ter sufixo de turno (_tN) para escalas 12×36; usa querySelector parcial
-    const inputHf = document.querySelector(`[id^="hora-fim-${d}-${a}-${funcao}"]`);
+    const inputHf = $(hf);
     if (inputHf) inputHf.value = 0;
   }
   if (vinculoDia) {
