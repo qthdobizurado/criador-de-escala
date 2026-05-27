@@ -1610,7 +1610,6 @@ ${dia === dMax ? `<label class="label-inline">H.Fim Escala:</label>
 <select id="${rm}" class="${selectDisabledClass}"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
 <option value="AC4" ${rS==='AC4' ? 'selected' : ''}>AC4</option>
 <option value="AC4 - Regência" ${rS==='AC4 - Regência' ? 'selected' : ''}>AC4 - Regência</option>
-<option value="AC4-2" ${rS==='AC4-2' ? 'selected' : ''}>AC4-2</option>
 <option value="Extra não remunerado" ${rS==='Extra não remunerado' ? 'selected' : ''}>Extra não remunerado</option>
 <option value="Normal" ${rS==='Normal' ? 'selected' : ''}>Normal</option>
 <option value="..." ${rS==='...' ? 'selected' : ''}>...</option>
@@ -1971,7 +1970,7 @@ function gerarVagasDisponiveis() {
       const remuneracao = dv.querySelector('select[id^="remuneracao-"]').value;
       const horaInicio = parseInt(dv.querySelector('input[id^="hora-inicio-"]').value, 10) || 0;
       const horaFim = parseInt(dv.querySelector('input[id^="hora-fim-"]').value, 10) || 0;
-      if (!responsavel && (remuneracao === 'AC4' || remuneracao === 'AC4-2' || remuneracao === 'AC4 - Regência')) {
+      if (!responsavel && (remuneracao === 'AC4' || remuneracao === 'AC4 - Regência')) {
         diasVagas[diaRow] = diasVagas[diaRow] || [];
         diasVagas[diaRow].push({ funcao, horaInicio, horaFim, remuneracao });
       }
@@ -2354,8 +2353,8 @@ function gerarResumoResponsaveis() {
       const custo = parseFloat(custoSpan.textContent.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0;
       if (!rs[resp]) {
         rs[resp] = {
-          gastoAC4: 0, gastoAC42: 0, gastoExtra: 0,
-          gastoTotal: 0, horasAC4: 0, horasAC42: 0,
+          gastoAC4: 0, gastoExtra: 0,
+          gastoTotal: 0, horasAC4: 0,
           horasExtra: 0, horasTotal: 0,
           trabalhos: { segunda: 0, terca: 0, quarta: 0, quinta: 0, sexta: 0, sabado: 0, domingo: 0 }
         };
@@ -2363,9 +2362,6 @@ function gerarResumoResponsaveis() {
       if (remu === 'AC4' || remu === 'AC4 - Regência') {
         rs[resp].gastoAC4 += custo;
         rs[resp].horasAC4 += horasTrabalhadas;
-      } else if (remu === 'AC4-2') {
-        rs[resp].gastoAC42 += custo;
-        rs[resp].horasAC42 += horasTrabalhadas;
       } else if (remu === 'Extra não remunerado') {
         rs[resp].horasExtra += horasTrabalhadas;
       }
@@ -2384,7 +2380,7 @@ function gerarResumoResponsaveis() {
   const ordenados = Object.keys(rs).sort((a, b) => responsaveis.indexOf(a) - responsaveis.indexOf(b));
   let rowIndex = 0;
   let html = `<table><thead><tr>
-<th>Responsável</th><th>Gasto AC4 (R$)</th><th>Gasto AC4-2 (R$)</th><th>Gasto Total (R$)</th>
+<th>Responsável</th><th>Gasto AC4 (R$)</th><th>Gasto Total (R$)</th>
 <th>Total Horas Extras</th><th>Horas por Dia da Semana</th></tr></thead><tbody>`;
   ordenados.forEach(r => {
     const d = rs[r];
@@ -2392,7 +2388,7 @@ function gerarResumoResponsaveis() {
     const txtDias = `Seg: ${d.trabalhos.segunda}h, Ter: ${d.trabalhos.terca}h, Qua: ${d.trabalhos.quarta}h, ` +
       `Qui: ${d.trabalhos.quinta}h, Sex: ${d.trabalhos.sexta}h, Sáb: ${d.trabalhos.sabado}h, Dom: ${d.trabalhos.domingo}h`;
     html += `<tr style="background-color:${bgColor}">
-<td>${r}</td><td>${formatarMoeda(d.gastoAC4)}</td><td>${formatarMoeda(d.gastoAC42)}</td>
+<td>${r}</td><td>${formatarMoeda(d.gastoAC4)}</td>
 <td>${formatarMoeda(d.gastoTotal)}</td><td>${d.horasTotal}h</td><td>${txtDias}</td></tr>`;
     rowIndex++;
   });
@@ -2519,7 +2515,7 @@ function buildEscalaAC4HTML() {
         if (v.responsavel && v.responsavel !== 'Indeterminado') {
           if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
             exclusoesDiarias[ala][dia].includes(v.funcao) && v.geradoAutomaticamente) return;
-          if (v.remuneracao !== 'AC4' && v.remuneracao !== 'AC4 - Regência' && v.remuneracao !== 'AC4-2') return;
+          if (v.remuneracao !== 'AC4' && v.remuneracao !== 'AC4 - Regência') return;
           const hI = v.horaInicio ?? configEscala.horaInicio;
           const hF = v.horaFim ?? hI;
           const custo = calcularCusto(dt, hI, hF);
