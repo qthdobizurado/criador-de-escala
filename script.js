@@ -1440,7 +1440,11 @@ function salvarConfigEscala() {
   const opt = _OPCOES_ESCALA[radio.value];
   configEscala = { horasOn: opt.horasOn, horasOff: opt.horasOff, horaInicio: hi, alasAtivas: opt.alasAtivas };
   fecharModalConfigEscala();
-  salvarDadosPersistentes();
+  if (calendarioGerado) {
+    gerarCalendario(true);
+  } else {
+    salvarDadosPersistentes();
+  }
 }
 
 
