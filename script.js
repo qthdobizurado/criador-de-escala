@@ -1677,7 +1677,7 @@ function inicializarHoraFimUltimoDia(dMax) {
       const hI = hiInput ? (parseInt(hiInput.value) || 0) : 0;
       const hF = parseInt(hfInput.value);
       if (isNaN(hF)) return;
-      // Valor anterior era 0 e o novo é 1 (incremento via seta) → pula para hI+1
+      // Incremento via seta: estava em 0, foi para 1 → pula para hI+1
       if (hfInput._prevValue === 0 && hF === 1) {
         const proximo = hI + 1 > 23 ? 23 : hI + 1;
         hfInput.value = proximo;
@@ -1685,7 +1685,14 @@ function inicializarHoraFimUltimoDia(dMax) {
         hfInput.dispatchEvent(new Event('change'));
         return;
       }
-      // Bloqueia qualquer valor <= hI (viraria o dia seguinte)
+      // Decremento via seta: estava em hI+1, foi para hI → pula para 0
+      if (hfInput._prevValue === hI + 1 && hF === hI) {
+        hfInput.value = 0;
+        hfInput._prevValue = 0;
+        hfInput.dispatchEvent(new Event('change'));
+        return;
+      }
+      // Bloqueia qualquer valor > 0 e <= hI (faixa proibida)
       if (hF > 0 && hF <= hI) {
         hfInput.value = hfInput._prevValue ?? 0;
         return;
