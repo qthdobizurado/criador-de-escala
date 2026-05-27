@@ -814,6 +814,41 @@
         </ol>
       </div>
 
+
+      <div class="subsection">
+        <h3>Opção "Ocultar da Escala" — Primeiro dia do mês</h3>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">Disponível exclusivamente no primeiro dia do mês, essa opção resolve uma situação específica: quando o militar inicia o serviço de AC4 ainda no último dia do mês anterior e permanece em serviço após a meia-noite, já no mês seguinte.</p>
+        <div class="callout info">
+          <div class="callout-icon">ℹ️</div>
+          <div class="callout-body">
+            <strong>Por que essa situação exige cuidado?</strong>
+            Nesses casos, é necessário cadastrar o AC4 no novo mês a partir de 00h00 para que o sistema calcule corretamente o gasto — mas esse mesmo serviço não deve aparecer novamente na escala principal divulgada ao efetivo, pois já constava na escala do mês anterior.
+          </div>
+        </div>
+        <ol class="steps">
+          <li><span class="step-num">1</span><span class="step-text">Ao marcar <code>Ocultar da Escala</code>, o serviço continuará sendo contabilizado normalmente nos cálculos de gasto e permanecerá visível na escala de AC4 do mês.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">O serviço <strong>não será exibido</strong> na escala oficial divulgada ao efetivo, evitando duplicidade com a escala do mês anterior.</span></li>
+          <li><span class="step-num">3</span><span class="step-text">Essa opção está disponível <strong>apenas no primeiro dia do mês</strong>, pois é o único cenário em que essa situação pode ocorrer.</span></li>
+        </ol>
+      </div>
+
+      <div class="subsection">
+        <h3>Campo "Hora Fim na Escala" — Último dia do mês</h3>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">Disponível no último dia de cada mês, esse campo complementa o campo <strong>Hora Fim</strong> para lidar com serviços que ultrapassam a virada do mês.</p>
+        <div class="callout warn">
+          <div class="callout-icon">📌</div>
+          <div class="callout-body">
+            <strong>Atenção</strong>
+            O campo <strong>Hora Fim</strong> deve ser preenchido com o horário de encerramento do serviço <em>dentro do mês atual</em>, limitado no máximo até 00h00 (meia-noite). Esse valor é usado nos cálculos internos de gasto de AC4.
+          </div>
+        </div>
+        <ol class="steps">
+          <li><span class="step-num">1</span><span class="step-text">Preencha o campo <code>Hora Fim</code> com o horário real de encerramento dentro do mês (máximo 00h00), para que o sistema calcule corretamente os gastos de AC4 do mês.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">Preencha o campo <code>Hora Fim na Escala</code> com o horário que será <strong>exibido</strong> na escala geral divulgada ao efetivo — por exemplo, o horário real em que o serviço termina no dia seguinte.</span></li>
+          <li><span class="step-num">3</span><span class="step-text">Esse campo <strong>não interfere nos cálculos</strong> — serve apenas para que o militar não interprete que o serviço termina à meia-noite quando, na prática, ele continua após a virada do mês.</span></li>
+        </ol>
+      </div>
+
       <div class="callout tip">
         <div class="callout-icon">💡</div>
         <div class="callout-body">
@@ -883,11 +918,12 @@
         </div>
       </div>
       <div class="prose">
-        <p>O sistema conta com mecanismos inteligentes que ajudam a evitar inconsistências e erros comuns durante o preenchimento da escala. Esses recursos atuam em segundo plano, alertando o usuário antes de confirmar ações que possam comprometer a integridade dos dados. Exemplo:</p>
+        <p>O sistema conta com mecanismos inteligentes que ajudam a evitar inconsistências e erros comuns durante o preenchimento da escala. Esses recursos atuam em segundo plano, alertando o usuário antes de confirmar ações que possam comprometer a integridade dos dados.</p>
       </div>
       <ol class="steps">
         <li><span class="step-num">⚠️</span><span class="step-text"><strong>Militar em duas alas:</strong> se um militar for selecionado para uma função já existente em outra ala, o sistema exibe um aviso e solicita confirmação antes de prosseguir.</span></li>
         <li><span class="step-num">🏥</span><span class="step-text"><strong>Militar afastado:</strong> ao selecionar um militar para uma função, o sistema verifica automaticamente se ele possui afastamento registrado para aquele dia e exibe um alerta caso isso ocorra.</span></li>
+        <li><span class="step-num">🔁</span><span class="step-text"><strong>Consistência ao regerar:</strong> ao gerar o calendário novamente após alterações (como novos afastamentos), as funções bloqueadas são preservadas, evitando sobrescrever dados inseridos manualmente.</span></li>
         <li><span class="step-num">💡</span><span class="step-text"><strong>Outras verificações:</strong> o sistema realiza diversas outras checagens em tempo real para garantir que a escala gerada seja consistente e livre de conflitos operacionais.</span></li>
       </ol>
       <div class="callout tip">
@@ -984,8 +1020,9 @@
 
   <!-- FOOTER -->
   <footer class="page-footer">
-    <p>© Gerador de Escala</p>
+    <p>© Sistema de Gestão Operacional — Gerador de Escala</p>
     <div class="footer-badge">
+      <span class="version-tag">v1.0</span>
       Manual do Usuário
     </div>
   </footer>
