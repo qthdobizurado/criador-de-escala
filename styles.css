@@ -702,6 +702,48 @@ select:focus {
 .btn-google:active { transform: scale(0.98); }
 .btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
 
+.login-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  width: 100%;
+}
+
+.login-link-manual {
+  display: block;
+  text-align: center;
+  padding: 10px 16px;
+  background: #1a3c7a;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.2px;
+  transition: background 0.2s;
+}
+.login-link-manual:hover { background: #0f265a; }
+
+.login-link-suporte {
+  display: block;
+  text-align: center;
+  padding: 8px 16px;
+  background: #f8f9fa;
+  color: #555;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.login-link-suporte:hover { background: #e9ecef; color: #333; }
+
+
+
 #loginErro {
   color: #c62828;
   font-size: 13px;
