@@ -2380,7 +2380,7 @@ function gerarResumoResponsaveis() {
   const ordenados = Object.keys(rs).sort((a, b) => responsaveis.indexOf(a) - responsaveis.indexOf(b));
   let rowIndex = 0;
   let html = `<table><thead><tr>
-<th>Responsável</th><th>Gasto AC4 (R$)</th><th>Gasto Total (R$)</th>
+<th>Responsável</th><th>Gasto AC4 (R$)</th>
 <th>Total Horas Extras</th><th>Horas por Dia da Semana</th></tr></thead><tbody>`;
   ordenados.forEach(r => {
     const d = rs[r];
@@ -2389,7 +2389,7 @@ function gerarResumoResponsaveis() {
       `Qui: ${d.trabalhos.quinta}h, Sex: ${d.trabalhos.sexta}h, Sáb: ${d.trabalhos.sabado}h, Dom: ${d.trabalhos.domingo}h`;
     html += `<tr style="background-color:${bgColor}">
 <td>${r}</td><td>${formatarMoeda(d.gastoAC4)}</td>
-<td>${formatarMoeda(d.gastoTotal)}</td><td>${d.horasTotal}h</td><td>${txtDias}</td></tr>`;
+<td>${d.horasTotal}h</td><td>${txtDias}</td></tr>`;
     rowIndex++;
   });
   html += `</tbody></table>`;
