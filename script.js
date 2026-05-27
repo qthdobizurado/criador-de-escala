@@ -2129,17 +2129,21 @@ function atualizarCusto(d, a, funcao, ts) {
 function recalcularTotalDiario(d, a) {
   let total = 0, m = parseInt($('mes').value), an = parseInt($('ano').value);
   vinculos[a].forEach(it => {
-    if (it.dia === d) {
-      const hi = `hora-inicio-${d}-${a}-${it.funcao}`,
-        hf = `hora-fim-${d}-${a}-${it.funcao}`,
-        rm = `remuneracao-${d}-${a}-${it.funcao}`;
-      const iH = $(hi), fH = $(hf), sR = $(rm);
-      if (!iH || !fH || !sR) return;
-      const hI = parseInt(iH.value) || 0, hF = parseInt(fH.value) || 0, rr = sR.value;
-      // ✅ Inclui "..." como isento
-      if (rr !== 'Extra não remunerado' && rr !== 'Normal' && rr !== '...' && rr !== 'Troca com a SOP') {
-        total += calcularCusto(new Date(an, m - 1, d), hI, hF);
-      }
+    if (it.dia !== d) return;
+    // turnoSufixo: se houver turnoInicio definido, tenta com sufixo primeiro
+    const ts = it.hasOwnProperty('turnoInicio') ? `_t${it.turnoInicio}` : '';
+    const hi = `hora-inicio-${d}-${a}-${it.funcao}${ts}`,
+      hf = `hora-fim-${d}-${a}-${it.funcao}${ts}`,
+      rm = `remuneracao-${d}-${a}-${it.funcao}${ts}`;
+    // fallback sem sufixo se não encontrar com sufixo
+    const iH = $(hi) || $(`hora-inicio-${d}-${a}-${it.funcao}`),
+      fH = $(hf) || $(`hora-fim-${d}-${a}-${it.funcao}`),
+      sR = $(rm) || $(`remuneracao-${d}-${a}-${it.funcao}`);
+    if (!iH || !fH || !sR) return;
+    const hI = parseInt(iH.value) || 0, hF = parseInt(fH.value) || 0, rr = sR.value;
+    // ✅ Inclui "..." como isento
+    if (rr !== 'Extra não remunerado' && rr !== 'Normal' && rr !== '...' && rr !== 'Troca com a SOP') {
+      total += calcularCusto(new Date(an, m - 1, d), hI, hF);
     }
   });
   const cell = $(`total-diario-${d}`);
