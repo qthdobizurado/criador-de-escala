@@ -1493,7 +1493,7 @@ function gerarCalendarioInterno(mantemEd) {
           vinculos[ala].push({
             funcao, responsavel, dia,
             horaInicio: hInicioTurno,
-            horaFim: dia === dMax ? 0 : hFimTurno,
+            horaFim: dia === dMax && hFimTurno <= hInicioTurno ? 0 : hFimTurno,
             horaFimEscala: hFimTurno,
             turnoInicio: hInicioTurno,
             remuneracao, geradoAutomaticamente: true,
@@ -1523,7 +1523,7 @@ function gerarCalendarioInterno(mantemEd) {
           vinculos[ala].push({
             funcao, responsavel, dia,
             horaInicio: hInicioTurno,
-            horaFim: dia === dMax ? 0 : hFimTurno,
+            horaFim: dia === dMax && hFimTurno <= hInicioTurno ? 0 : hFimTurno,
             horaFimEscala: hFimTurno,
             turnoInicio: hInicioTurno,
             remuneracao, geradoAutomaticamente: true,
@@ -1607,7 +1607,7 @@ ${responsaveis.map(r => `<option value="${r}" ${r === func.responsavel ? 'select
 <label class="label-inline">H.Início:</label>
 <input type="number" id="${hi}" class="input-hora${disabledClass}" value="${hI}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
 <label class="label-inline">H.Fim:</label>
-<input type="number" id="${hf}" class="input-hora${disabledClass}" value="${hF}" min="0" max="${dia === dMax ? 0 : 23}"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
+<input type="number" id="${hf}" class="input-hora${disabledClass}" value="${hF}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}')">
 ${dia === dMax ? `<label class="label-inline">H.Fim Escala:</label>
 <input type="number" id="hora-fim-escala-${dia}-${ala}-${func.funcao}${turnoSufixo}" class="input-hora${disabledClass}" value="${hFE}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},'${ala}','${func.funcao}')">` : ``}
 <label class="label-inline">Remuneração:</label>
@@ -2056,6 +2056,14 @@ function atualizarCusto(d, a, funcao) {
   if (!vinculoDia) {
     const geral = vinculos[a].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
     if (geral) { vinculoDia = { ...geral, dia: d }; vinculos[a].push(vinculoDia); }
+  }
+  // No último dia do mês: se horaFim <= horaInicio o turno viraria o mês seguinte — limita a 0
+  const _dMaxAtual = new Date(parseInt($('ano').value), parseInt($('mes').value), 0).getDate();
+  if (d === _dMaxAtual && hF <= hI) {
+    hF = 0;
+    // ID pode ter sufixo de turno (_tN) para escalas 12×36; usa querySelector parcial
+    const inputHf = document.querySelector(`[id^="hora-fim-${d}-${a}-${funcao}"]`);
+    if (inputHf) inputHf.value = 0;
   }
   if (vinculoDia) {
     vinculoDia.horaInicio = hI;
