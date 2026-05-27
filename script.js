@@ -1657,12 +1657,46 @@ ${funHtml}
   $('calendario').innerHTML = html;
   calendarioGerado = true;
   inicializarDragAndDrop();
+  inicializarHoraFimUltimoDia(dMax);
   setTimeout(ativarTodosCustomSelects, 0);
   gerarResumoResponsaveis();
   gerarVagasDisponiveis();
   gerarEscala();
   salvarDadosPersistentes();
 }
+function inicializarHoraFimUltimoDia(dMax) {
+  // Seleciona todos os inputs H.Fim do último dia (podem ter sufixo _tN para 12x36)
+  document.querySelectorAll(`[id^="hora-fim-${dMax}-"]`).forEach(input => {
+    // Exclui inputs de H.Fim Escala (id começa com "hora-fim-escala-")
+    if (input.id.startsWith('hora-fim-escala-')) return;
+    input.addEventListener('input', function() {
+      const hfInput = this;
+      // Lê hora inicio correspondente: mesmo id mas com "hora-inicio" no lugar de "hora-fim"
+      const hiId = hfInput.id.replace('hora-fim-', 'hora-inicio-');
+      const hiInput = document.getElementById(hiId);
+      const hI = hiInput ? (parseInt(hiInput.value) || 0) : 0;
+      const hF = parseInt(hfInput.value);
+      if (isNaN(hF)) return;
+      // Valor anterior era 0 e o novo é 1 (incremento via seta) → pula para hI+1
+      if (hfInput._prevValue === 0 && hF === 1) {
+        const proximo = hI + 1 > 23 ? 23 : hI + 1;
+        hfInput.value = proximo;
+        hfInput._prevValue = proximo;
+        hfInput.dispatchEvent(new Event('change'));
+        return;
+      }
+      // Bloqueia qualquer valor <= hI (viraria o dia seguinte)
+      if (hF > 0 && hF <= hI) {
+        hfInput.value = hfInput._prevValue ?? 0;
+        return;
+      }
+      hfInput._prevValue = hF;
+    });
+    // Inicializa _prevValue com o valor atual
+    input._prevValue = parseInt(input.value) || 0;
+  });
+}
+
 function inicializarDragAndDrop() {
   // Rastreia qual funcoesContainer originou o drag atual
   let dragSourceContainer = null;
