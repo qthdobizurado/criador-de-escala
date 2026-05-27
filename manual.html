@@ -813,6 +813,13 @@
           <li><span class="step-num">⏱️</span><span class="step-text"><strong>Edição de hora:</strong> edite a hora de início e fim do serviço de uma função em um determinado dia. Se o tipo de remuneração for AC4, o custo é recalculado automaticamente com base no horário definido.</span></li>
         </ol>
       </div>
+     
+
+ <div class="subsection">
+        <h3>Total de gasto do mês:</h3>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">No calendário, é exibido o valor total estimado de gastos do mês. Atenção: esse valor é apenas uma estimativa, pois o cálculo considera todas as funções existentes, mesmo sem militares adicionados às escalas.
+Para consultar o valor real de gastos do mês, o usuário deve abrir a "Escala somente de AC4". Nessa escala, o total é calculado apenas com as funções que já foram preenchidas por militares.</p>
+      <div class="subsection">
 
 
       <div class="subsection">
@@ -923,7 +930,6 @@
       <ol class="steps">
         <li><span class="step-num">⚠️</span><span class="step-text"><strong>Militar em duas alas:</strong> se um militar for selecionado para uma função já existente em outra ala, o sistema exibe um aviso e solicita confirmação antes de prosseguir.</span></li>
         <li><span class="step-num">🏥</span><span class="step-text"><strong>Militar afastado:</strong> ao selecionar um militar para uma função, o sistema verifica automaticamente se ele possui afastamento registrado para aquele dia e exibe um alerta caso isso ocorra.</span></li>
-        <li><span class="step-num">🔁</span><span class="step-text"><strong>Consistência ao regerar:</strong> ao gerar o calendário novamente após alterações (como novos afastamentos), as funções bloqueadas são preservadas, evitando sobrescrever dados inseridos manualmente.</span></li>
         <li><span class="step-num">💡</span><span class="step-text"><strong>Outras verificações:</strong> o sistema realiza diversas outras checagens em tempo real para garantir que a escala gerada seja consistente e livre de conflitos operacionais.</span></li>
       </ol>
       <div class="callout tip">
@@ -1020,9 +1026,8 @@
 
   <!-- FOOTER -->
   <footer class="page-footer">
-    <p>© Sistema de Gestão Operacional — Gerador de Escala</p>
+    <p>© Gerador de Escala</p>
     <div class="footer-badge">
-      <span class="version-tag">v1.0</span>
       Manual do Usuário
     </div>
   </footer>
