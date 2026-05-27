@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador e Gerenciador de Escala — Manual do Usuário</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0e14;
+    --surface: #13161f;
+    --card: #1a1e2a;
+    --border: #252a38;
+    --accent: #4f8ef7;
+    --accent2: #38d9a9;
+    --accent3: #f7a94f;
+    --accent4: #e05c7a;
+    --text: #e8ecf5;
+    --muted: #7a82a0;
+    --white: #ffffff;
+    --sidebar-w: 280px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 2rem;
+  }
+
+  .sidebar-logo {
+    padding: 2rem 1.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-logo .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: .75rem;
+  }
+
+  .sidebar-logo h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.3;
+  }
+
+  .sidebar-logo p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .sidebar-nav { padding: 1.25rem 1rem; }
+
+  .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: .5rem .75rem .25rem;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .55rem .75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 13.5px;
+    font-weight: 400;
+    transition: all .2s;
+    margin-bottom: 2px;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    background: rgba(79,142,247,.12);
+    color: var(--accent);
+  }
+
+  .nav-link .icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,.05);
+    border-radius: 6px;
+  }
+
+  .nav-link.active .icon { background: rgba(79,142,247,.2); }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 0;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0d1121 0%, #111827 50%, #0c1a2e 100%);
+    padding: 6rem 4rem 5rem;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -80px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(79,142,247,.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 200px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(56,217,169,.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 28px; height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 580px;
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 2rem;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+
+  .hero-meta strong { color: var(--text); }
+
+  /* ── CONTENT ── */
+  .content { max-width: 860px; padding: 4rem 4rem 6rem; }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 5rem; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--accent), #2563eb);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--white);
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(79,142,247,.3);
+  }
+
+  .section-num.green { background: linear-gradient(135deg, var(--accent2), #0d9488); box-shadow: 0 4px 16px rgba(56,217,169,.3); }
+  .section-num.orange { background: linear-gradient(135deg, var(--accent3), #d97706); box-shadow: 0 4px 16px rgba(247,169,79,.3); }
+  .section-num.red { background: linear-gradient(135deg, var(--accent4), #be123c); box-shadow: 0 4px 16px rgba(224,92,122,.3); }
+  .section-num.purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); box-shadow: 0 4px 16px rgba(167,139,250,.3); }
+  .section-num.cyan { background: linear-gradient(135deg, #22d3ee, #0891b2); box-shadow: 0 4px 16px rgba(34,211,238,.3); }
+  .section-num.icon-only {
+    font-size: 1.4rem;
+    background: linear-gradient(135deg, #64748b, #334155);
+    box-shadow: 0 4px 16px rgba(0,0,0,.3);
+  }
+
+  .section-title-wrap h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: .3rem;
+  }
+
+  .section-title-wrap p {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .prose p { color: var(--text); margin-bottom: 1rem; }
+  .prose p:last-child { margin-bottom: 0; }
+
+  /* ── STEPS ── */
+  .steps { list-style: none; margin-top: 1.25rem; }
+
+  .steps li {
+    display: flex;
+    gap: 1rem;
+    padding: .9rem 1.1rem;
+    border-radius: 10px;
+    margin-bottom: .4rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    transition: border-color .2s;
+  }
+
+  .steps li:hover { border-color: rgba(79,142,247,.3); }
+
+  .step-num {
+    width: 24px; height: 24px;
+    background: rgba(79,142,247,.15);
+    border: 1px solid rgba(79,142,247,.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: .1rem;
+  }
+
+  .step-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+  .step-text code {
+    background: rgba(79,142,247,.12);
+    color: var(--accent);
+    padding: 1px 7px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    display: flex;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: 10px;
+    margin: 1.5rem 0;
+    border: 1px solid;
+  }
+
+  .callout.info { background: rgba(79,142,247,.08); border-color: rgba(79,142,247,.25); }
+  .callout.tip { background: rgba(56,217,169,.08); border-color: rgba(56,217,169,.25); }
+  .callout.warn { background: rgba(247,169,79,.08); border-color: rgba(247,169,79,.25); }
+
+  .callout-icon { font-size: 1.2rem; flex-shrink: 0; line-height: 1.4; }
+  .callout-body { font-size: 14px; line-height: 1.6; }
+  .callout.info .callout-body { color: #93c5fd; }
+  .callout.tip .callout-body { color: #6ee7b7; }
+  .callout.warn .callout-body { color: #fcd34d; }
+  .callout strong { display: block; margin-bottom: .25rem; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; opacity: .7; }
+
+  /* ── EXAMPLE BLOCK ── */
+  .example {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    margin: 1.25rem 0;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+
+  .example-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .6rem;
+    opacity: .6;
+  }
+
+  .example code {
+    display: block;
+    color: var(--accent2);
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  /* ── TABLE ── */
+  .doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 14px;
+  }
+
+  .doc-table th {
+    background: var(--card);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: .8rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .doc-table td {
+    padding: .85rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .doc-table tr:last-child td { border-bottom: none; }
+  .doc-table tr:hover td { background: rgba(255,255,255,.02); }
+
+  .doc-table .btn-label {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-weight: 600;
+    color: var(--white);
+    white-space: nowrap;
+  }
+
+  .doc-table td:first-child { width: 220px; }
+
+  /* ── CLOUD SLOTS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: .4rem;
+  }
+
+  .stat-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* ── SUBSECTION ── */
+  .subsection { margin-top: 2.25rem; }
+
+  .subsection h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .subsection h3::before {
+    content: '';
+    display: inline-block;
+    width: 3px; height: 16px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* ── INTRO SECTION ── */
+  .intro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .intro-card p { color: var(--text); line-height: 1.75; }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .page-footer p { font-size: 12px; color: var(--muted); }
+  .footer-badge {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .version-tag {
+    background: rgba(79,142,247,.12);
+    color: var(--accent);
+    border: 1px solid rgba(79,142,247,.25);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .hero { padding: 3rem 1.5rem; }
+    .content { padding: 2.5rem 1.5rem 4rem; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .page-footer { flex-direction: column; gap: 1rem; padding: 2rem 1.5rem; }
+  }
+
+  /* ── SCREENSHOTS ── */
+  .screenshot {
+    margin: 1.5rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+
+  .screenshot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 11px 11px 0 0;
+  }
+
+  figcaption {
+    padding: .6rem 1rem;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    background: rgba(255,255,255,.02);
+    text-align: center;
+    font-style: italic;
+  }
+
+  .screenshots-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .screenshots-row .screenshot { margin: 0; }
+
+
+  .screenshot-full {
+    margin: 1.5rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  .screenshot-full img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 11px 11px 0 0;
+  }
+
+
+  .screenshot-small img {
+    max-width: 70%;
+    margin: 0 auto;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h2>Gerador e Gerenciador de Escala</h2>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-label">Primeiros Passos</div>
+    <a href="#intro" class="nav-link active"><span class="icon">📖</span> Introdução</a>
+    <a href="#login" class="nav-link"><span class="icon">🔐</span> Login com Google</a>
+
+    <div class="nav-label" style="margin-top:1rem">Configuração</div>
+    <a href="#funcoes" class="nav-link"><span class="icon">⚙️</span> Cadastrar Funções</a>
+    <a href="#militares" class="nav-link"><span class="icon">👤</span> Cadastrar Militares</a>
+    <a href="#vinculos" class="nav-link"><span class="icon">🔗</span> Gerar Vínculos</a>
+    <a href="#afastamentos" class="nav-link"><span class="icon">📋</span> Afastamentos</a>
+
+    <div class="nav-label" style="margin-top:1rem">Calendário</div>
+    <a href="#escala" class="nav-link"><span class="icon">📅</span> Tipo de Escala</a>
+    <a href="#calendario" class="nav-link"><span class="icon">🗓️</span> Gerar Calendário</a>
+    <a href="#documentos" class="nav-link"><span class="icon">📄</span> Documentos</a>
+
+    <div class="nav-label" style="margin-top:1rem">Dados</div>
+    <a href="#smart" class="nav-link"><span class="icon">🛡️</span> Recursos Inteligentes</a>
+    <a href="#backup" class="nav-link"><span class="icon">💾</span> Backup e Nuvem</a>
+    <a href="#capacidade" class="nav-link"><span class="icon">📊</span> Capacidade</a>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Gerador e Gerenciador de <span>Escala</span><br>Manual do Usuário</h1>
+    <p class="hero-desc">Guia completo para criar e gerenciar escalas de plantão de forma rápida. Do cadastro inicial à geração de escalas.</p>
+    <div class="hero-meta">
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ── INTRODUÇÃO ── -->
+    <section id="intro" class="section">
+      <div class="section-header">
+        <div class="section-num icon-only">📖</div>
+        <div class="section-title-wrap">
+          <h2>Introdução</h2>
+          <p>O que é o Gerador de Escala e como ele funciona</p>
+        </div>
+      </div>
+      <div class="intro-card">
+        <p>O <strong>Gerador e Gerenciador de Escala</strong> é um sistema web completo para criação e gerenciamento de escalas de plantão operacional. Com ele, é possível cadastrar funções, militares, vínculos entre alas e responsáveis, registrar afastamentos e gerar automaticamente o calendário mensal de serviço — criando com facilidade a escala do mês e facilitando o controle e a distribuição de AC4 ao longo do mês.</p>
+      </div>
+    </section>
+
+    <!-- ── 1. LOGIN ── -->
+    <section id="login" class="section">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div class="section-title-wrap">
+          <h2>Login com Google</h2>
+          <p>Autenticação segura vinculada à sua conta Google</p>
+        </div>
+      </div>
+      <div class="prose">
+        <p>Apenas usuários autenticados podem acessar o sistema, garantindo que os dados fiquem seguros e vinculados à sua conta Google.</p>
+      </div>
+      <figure class="screenshot screenshot-small"><img src="fotos/foto1.png" alt="Tela de Login com Google" loading="lazy"><figcaption>Tela de login — clique em "Entrar com Google" para autenticar</figcaption></figure>
+      <ol class="steps">
+        <li><span class="step-num">1</span><span class="step-text">Abra o sistema no navegador — a tela de login aparecerá automaticamente.</span></li>
+        <li><span class="step-num">2</span><span class="step-text">Clique no botão <code>Entrar com Google</code> (azul, com o logo do Google).</span></li>
+        <li><span class="step-num">3</span><span class="step-text">Uma janela pop-up do Google será aberta. Selecione ou insira sua conta Google.</span></li>
+        <li><span class="step-num">4</span><span class="step-text">Após autenticar, o pop-up fecha e o sistema carrega automaticamente seus dados salvos.</span></li>
+      </ol>
+    </section>
+
+    <!-- ── 2. FUNÇÕES ── -->
+    <section id="funcoes" class="section">
+      <div class="section-header">
+        <div class="section-num green">2</div>
+        <div class="section-title-wrap">
+          <h2>Cadastrar Funções</h2>
+          <p>Cargos e atividades executadas durante o serviço operacional</p>
+        </div>
+      </div>
+      <div class="prose">
+        <p>Funções são os cargos ou atividades que os militares exercem durante o plantão. <strong>Atenção:</strong> as funções cadastradas nesta etapa são adicionadas automaticamente em <em>todas</em> as alas.</p>
+      </div>
+
+      <div class="example">
+        <div class="example-label">Exemplo de funções</div>
+        <code>Motorista UR<br>Socorrista<br>Auxiliar ABT</code>
+      </div>
+
+      <figure class="screenshot"><img src="fotos/foto2.png" alt="Cadastrar Funções" loading="lazy"><figcaption>Campo de cadastro de funções — uma por linha</figcaption></figure>
+      <ol class="steps">
+        <li><span class="step-num">1</span><span class="step-text">Localize a caixa de texto na seção <code>1. Cadastrar Funções</code>.</span></li>
+        <li><span class="step-num">2</span><span class="step-text">Digite o nome de cada função em uma linha separada.</span></li>
+        <li><span class="step-num">3</span><span class="step-text">As funções são salvas automaticamente ao avançar para a próxima etapa.</span></li>
+      </ol>
+    </section>
+
+    <!-- ── 3. MILITARES ── -->
+    <section id="militares" class="section">
+      <div class="section-header">
+        <div class="section-num orange">3</div>
+        <div class="section-title-wrap">
+          <h2>Cadastrar Militares</h2>
+          <p>Pessoas que serão alocadas nas funções do plantão</p>
+        </div>
+      </div>
+      <div class="prose">
+        <p>São os profissionais que serão distribuídos nas funções ao longo da escala. Cada militar deve ser cadastrado com o nome completo, um por linha.</p>
+      </div>
+
+      <div class="example">
+        <div class="example-label">Exemplo de cadastro</div>
+        <code>CB QPC 00000 FULANO DE TAL<br>CB QPC 00001 SICLANO</code>
+      </div>
+
+      <figure class="screenshot"><img src="fotos/foto3.png" alt="Cadastrar Militares" loading="lazy"><figcaption>Campo de cadastro de militares — um por linha</figcaption></figure>
+      <ol class="steps">
+        <li><span class="step-num">1</span><span class="step-text">Acesse a seção <code>2. Cadastrar Militares</code>.</span></li>
+        <li><span class="step-num">2</span><span class="step-text">Insira o nome de cada militar em uma linha separada.</span></li>
+        <li><span class="step-num">3</span><span class="step-text">Ao clicar fora da caixa ou avançar, o sistema atualiza automaticamente os seletores das etapas seguintes.</span></li>
+      </ol>
+    </section>
+
+    <!-- ── 4. VÍNCULOS ── -->
+    <section id="vinculos" class="section">
+      <div class="section-header">
+        <div class="section-num red">4</div>
+        <div class="section-title-wrap">
+          <h2>Gerar Vínculos</h2>
+          <p>Conecte funções a militares em cada ala</p>
+        </div>
+      </div>
+      <div class="prose">
+        <p>Vínculos conectam cada função a um militar responsável dentro de cada ala — <strong>Alpha, Bravo, Charlie</strong> e <strong>Delta</strong>. Essa configuração determina quem assume cada papel em cada turno.</p>
+      </div>
+
+      <figure class="screenshot"><img src="fotos/foto4.png" alt="Gerar Vínculos" loading="lazy"><figcaption>Painel de vínculos — associe militares às funções de cada ala</figcaption></figure>
+      <ol class="steps">
+        <li><span class="step-num">1</span><span class="step-text">Na seção <code>3. Gerar Vínculos</code>, o sistema exibe automaticamente um painel para cada ala com as funções cadastradas.</span></li>
+        <li><span class="step-num">2</span><span class="step-text">Para cada função, use o campo de busca para localizar e selecionar o militar responsável. Digite parte do nome para filtrar rapidamente.</span></li>
+        <li><span class="step-num">3</span><span class="step-text">Funções sem responsável vinculado gerarão vagas de AC4 no calendário para aquela ala.</span></li>
+      </ol>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>Função exclusiva por ala</strong>
+          É possível adicionar uma função específica apenas a uma determinada ala — por exemplo, incluir a função "Socorrista 2" somente na Ala Alpha. Use esta opção nos vínculos, em vez de cadastrar a função global (que a adicionaria em todas as alas).
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 5. AFASTAMENTOS ── -->
+    <section id="afastamentos" class="section">
+      <div class="section-header">
+        <div class="section-num purple">5</div>
+        <div class="section-title-wrap">
+          <h2>Cadastrar Afastamentos</h2>
+          <p>Registre períodos de indisponibilidade de militares</p>
+        </div>
+      </div>
+      <div class="prose">
+        <p>Afastamentos registram períodos em que um militar não estará disponível — férias, licença médica, curso, entre outros. Nesses dias, o sistema gera automaticamente uma vaga de AC4 para a função do militar ausente.</p>
+      </div>
+
+      <figure class="screenshot"><img src="fotos/foto5.png" alt="Cadastrar Afastamentos" loading="lazy"><figcaption>Formulário de registro de afastamentos</figcaption></figure>
+      <ol class="steps">
+        <li><span class="step-num">1</span><span class="step-text">Selecione o militar no campo de busca (digite o nome para filtrar).</span></li>
+        <li><span class="step-num">2</span><span class="step-text">Informe a data de início do afastamento.</span></li>
+        <li><span class="step-num">3</span><span class="step-text">Opcionalmente, informe a quantidade de dias — o sistema calculará a data de término automaticamente.</span></li>
+        <li><span class="step-num">4</span><span class="step-text">Confirme ou ajuste a data de fim manualmente, se necessário.</span></li>
+        <li><span class="step-num">5</span><span class="step-text">Clique em <code>Adicionar Afastamento</code>. O período aparecerá na lista abaixo.</span></li>
+        <li><span class="step-num">6</span><span class="step-text">Para remover um afastamento, clique em <code>Remover</code> ao lado do registro.</span></li>
+      </ol>
+    </section>
+
+    <!-- ── 6. TIPO DE ESCALA ── -->
+    <section id="escala" class="section">
+      <div class="section-header">
+        <div class="section-num cyan">6</div>
+        <div class="section-title-wrap">
+          <h2>Configurar Tipo de Escala</h2>
+          <p>Defina o modelo de turno antes de gerar o calendário</p>
+        </div>
+      </div>
+      <div class="screenshots-row">
+  <figure class="screenshot"><img src="fotos/foto6.png" alt="Botão Configurar Escala" loading="lazy"><figcaption>Botão ⚙ Configurar Escala</figcaption></figure>
+  <figure class="screenshot"><img src="fotos/foto7.png" alt="Configurações de tipo de escala" loading="lazy"><figcaption>Opções de tipo e horário de turno</figcaption></figure>
+</div>
+      <div class="prose">
+        <p>Antes de gerar o calendário, defina o tipo de escala e o horário de início do turno. Clique no botão <code>⚙ Configurar Escala</code>, ao lado do botão "Gerar Calendário", e selecione o modelo desejado.</p>
+      </div>
+    </section>
+
+    <!-- ── 7. GERAR CALENDÁRIO ── -->
+    <section id="calendario" class="section">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <div class="section-title-wrap">
+          <h2>Gerar Calendário</h2>
+          <p>O coração do sistema — visualize e edite a escala mensal</p>
+        </div>
+      </div>
+      <div class="prose">
+        <p>Com funções, militares, vínculos e configurações definidos, é hora de gerar o calendário mensal.</p>
+      </div>
+
+      <figure class="screenshot"><img src="fotos/foto8.png" alt="Seleção de mês e ano" loading="lazy"><figcaption>Selecione o mês e ano antes de gerar o calendário</figcaption></figure>
+      <ol class="steps">
+        <li><span class="step-num">1</span><span class="step-text">Selecione o mês e informe o ano desejado.</span></li>
+        <li><span class="step-num">2</span><span class="step-text">Clique em <code>Gerar Calendário</code>.</span></li>
+        <li><span class="step-num">3</span><span class="step-text">O calendário exibirá cada dia com a ala de plantão e os militares alocados em cada função.</span></li>
+        <li><span class="step-num">4</span><span class="step-text">Funções sem responsável serão marcadas como <code>AC4</code> — clique na vaga para selecionar o militar de AC4.</span></li>
+        <li><span class="step-num">5</span><span class="step-text">É possível trocar o responsável de qualquer função diretamente no calendário gerado.</span></li>
+      </ol>
+
+      <div class="screenshots-row">
+  <figure class="screenshot screenshot-small"><img src="fotos/foto9.png" alt="Gastos e tipos de serviço" loading="lazy"><figcaption>Custos por função e tipo de serviço</figcaption></figure>
+</div>
+<figure class="screenshot screenshot-full"><img src="fotos/foto10.png" alt="Adicionar ou remover função" loading="lazy"><figcaption>Adicionar ou remover função em um dia específico</figcaption></figure>
+      <div class="subsection">
+        <h3>Recursos disponíveis no calendário</h3>
+        <ol class="steps">
+          <li><span class="step-num">💰</span><span class="step-text"><strong>Custos:</strong> veja o gasto por função no dia, o total de AC4 por dia e o total de AC4 do mês.</span></li>
+          <li><span class="step-num">🏷️</span><span class="step-text"><strong>Tipo de serviço:</strong> defina para cada função se é AC4, AC4-2, Serviço Normal, Serviço Extra Não Remunerado ou Troca com a SOP.</span></li>
+          <li><span class="step-num">➕</span><span class="step-text"><strong>Funções por dia:</strong> adicione ou remova uma função específica em um dia e ala determinados.</span></li>
+          <li><span class="step-num">✏️</span><span class="step-text"><strong>Editar nome:</strong> edite o nome de uma função em um dia e ala específicos.</span></li>
+          <li><span class="step-num"><img src="fotos/foto11.png" alt="Ícone de reordenar" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;border-radius:4px;"></span><span class="step-text"><strong>Reordenar:</strong> arraste pelo ícone para mudar a posição de uma função dentro do mesmo dia.</span></li>
+          <li><span class="step-num">🔒</span><span class="step-text"><strong>Bloquear função:</strong> bloqueie uma função para que nenhuma modificação automática (como novo afastamento ou regeneração do calendário) altere o que está preenchido nela.</span></li>
+          <li><span class="step-num">⏱️</span><span class="step-text"><strong>Edição de hora:</strong> edite a hora de início e fim do serviço de uma função em um determinado dia. Se o tipo de remuneração for AC4, o custo é recalculado automaticamente com base no horário definido.</span></li>
+        </ol>
+      </div>
+     
+
+ <div class="subsection">
+        <h3>Total de gasto do mês:</h3>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">No calendário, é exibido o valor total estimado de gastos do mês. Atenção: esse valor é apenas uma estimativa, pois o cálculo considera todas as funções existentes, mesmo sem militares adicionados às escalas.
+Para consultar o valor real de gastos do mês, o usuário deve abrir a "Escala somente de AC4". Nessa escala, o total é calculado apenas com as funções que já foram preenchidas por militares.</p>
+      <div class="subsection">
+
+
+      <div class="subsection">
+        <h3>Serviços de AC4 que Viram o Mês</h3>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">A cota mensal de AC4 é de uso exclusivo do mês vigente, não podendo ser transferida ou acumulada para o período seguinte. Contudo, há uma situação que requer tratamento específico: os serviços iniciados no último dia do mês e que se estendem além da meia-noite. Nesses casos, a execução ocorre em dois meses distintos, demandando a utilização de cotas diferentes.</p>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">Para garantir o cálculo correto do gasto e, ao mesmo tempo, evitar duplicidade na escala divulgada ao efetivo, o sistema disponibiliza dois recursos complementares:</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Opção "Ocultar da Escala"</h3>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">Disponível apenas no primeiro dia do mês, esta opção deve ser utilizada quando o militar iniciou o serviço de AC4 no último dia do mês anterior e permaneceu em serviço após a meia-noite.</p>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">Nessa situação, o AC4 precisa ser lançado no novo mês a partir de 00h00 para que o sistema calcule corretamente o consumo da cota vigente. Contudo, como o serviço já consta na escala do mês anterior — com os respectivos horários de início e término —, ele não deve ser exibido novamente na escala do mês atual. Para evitar essa duplicidade, basta marcar a opção "Ocultar da Escala".</p>
+      </div>
+
+      <div class="subsection">
+        <h3>Opção "Hora Fim na Escala"</h3>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">Como a cota de AC4 deve ser utilizada obrigatoriamente dentro do mês de referência, o campo "Hora Fim" deve registrar apenas o horário correspondente ao encerramento do serviço dentro do mês atual, limitado a 00h00 (meia-noite). Dessa forma, o sistema consegue calcular corretamente o consumo da cota mensal.</p>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">No entanto, para evitar que o militar interprete equivocadamente que o serviço encerra à meia-noite — quando, na prática, ele continua após a virada do mês —, foi criado o campo "Hora Fim na Escala". Assim, no último dia do mês, "Hora Fim" destina-se exclusivamente ao cálculo do consumo da cota de AC4 dentro do mês vigente, enquanto "Hora Fim na Escala" destina-se exclusivamente à apresentação correta do horário real de término do serviço na escala.</p>
+      </div>
+    </section>
+
+    <!-- ── 8. DOCUMENTOS ── -->
+    <section id="documentos" class="section">
+      <div class="section-header">
+        <div class="section-num green">8</div>
+        <div class="section-title-wrap">
+          <h2>Documentos Gerados</h2>
+          <p>Relatórios e escalas prontos para impressão ou publicação</p>
+        </div>
+      </div>
+      <div class="prose">
+        <p>Antes de abrir qualquer documento, defina o intervalo de <strong>Início da Escala</strong> e <strong>Fim da Escala</strong> (dias do mês) para filtrar exatamente o período desejado.</p>
+      </div>
+
+<div class="screenshots-row" style="grid-template-columns:1fr; margin-top:1.5rem">
+  <figure class="screenshot"><img src="fotos/foto12.png" alt="Resumo financeiro" loading="lazy"><figcaption>📄 Resumo — horas e valores por militar</figcaption></figure>
+  <figure class="screenshot"><img src="fotos/foto13.png" alt="Vagas disponíveis" loading="lazy"><figcaption>📋 Vagas Disponíveis — funções sem militar alocado</figcaption></figure>
+</div>
+<div class="screenshots-row" style="grid-template-columns:1fr; margin-top:1rem">
+  <figure class="screenshot"><img src="fotos/foto14.png" alt="Escala completa" loading="lazy"><figcaption>📅 Escala Completa — formatada para impressão</figcaption></figure>
+  <figure class="screenshot"><img src="fotos/foto15.png" alt="Escala de AC4" loading="lazy"><figcaption>💰 Escala de AC4 — pronta para prestação de contas</figcaption></figure>
+</div>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Botão</th>
+            <th>O que exibe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="btn-label">📄 Resumo</span></td>
+            <td>Valor total por militar, horas trabalhadas no mês e horas por dia da semana durante o período. Abre em nova guia do navegador.</td>
+          </tr>
+          <tr>
+            <td><span class="btn-label">📋 Vagas Disponíveis</span></td>
+            <td>Dias e funções ainda sem militar alocado (vagas de AC4 em aberto). Abre em nova guia do navegador.</td>
+          </tr>
+          <tr>
+            <td><span class="btn-label">📅 Escala Completa</span></td>
+            <td>Escala completa do período, formatada para impressão ou publicação — com todos os dias, alas, funções, militares e tipo de serviço (normal, AC4, extra). Abre em nova guia do navegador.</td>
+          </tr>
+          <tr>
+            <td><span class="btn-label">💰 Escala de AC4</span></td>
+            <td>Escala exclusiva dos militares que realizaram AC4, com função e custo correspondentes. Dados já formatados para cópia direta na planilha de prestação de contas. Abre em nova guia do navegador.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <!-- ── RECURSOS INTELIGENTES ── -->
+    <section id="smart" class="section">
+      <div class="section-header">
+        <div class="section-num icon-only">🛡️</div>
+        <div class="section-title-wrap">
+          <h2>Recursos Inteligentes</h2>
+          <p>Proteções automáticas para evitar erros na escala</p>
+        </div>
+      </div>
+      <div class="prose">
+        <p>O sistema conta com mecanismos inteligentes que ajudam a evitar inconsistências e erros comuns durante o preenchimento da escala. Esses recursos atuam em segundo plano, alertando o usuário antes de confirmar ações que possam comprometer a integridade dos dados.</p>
+      </div>
+      <ol class="steps">
+        <li><span class="step-num">⚠️</span><span class="step-text"><strong>Militar em duas alas:</strong> se um militar for selecionado para uma função já existente em outra ala, o sistema exibe um aviso e solicita confirmação antes de prosseguir.</span></li>
+        <li><span class="step-num">🏥</span><span class="step-text"><strong>Militar afastado:</strong> ao selecionar um militar para uma função, o sistema verifica automaticamente se ele possui afastamento registrado para aquele dia e exibe um alerta caso isso ocorra.</span></li>
+        <li><span class="step-num">💡</span><span class="step-text"><strong>Outras verificações:</strong> o sistema realiza diversas outras checagens em tempo real para garantir que a escala gerada seja consistente e livre de conflitos operacionais.</span></li>
+      </ol>
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>Dica</strong>
+          Esses alertas são avisos, não bloqueios absolutos. O usuário sempre tem a palavra final — mas eles existem para chamar atenção a situações que merecem revisão antes de confirmar.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 9. BACKUP ── -->
+    <section id="backup" class="section">
+      <div class="section-header">
+        <div class="section-num orange">9</div>
+        <div class="section-title-wrap">
+          <h2>Backup e Armazenamento</h2>
+          <p>Proteja seus dados localmente e na nuvem</p>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Backup Local (PC)</h3>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">Salve todos os dados em um arquivo <code style="background:rgba(79,142,247,.12);color:var(--accent);padding:1px 7px;border-radius:5px;font-size:13px;">.json</code> no seu computador — uma proteção extra independente da nuvem.</p>
+        <ol class="steps">
+          <li><span class="step-num">⬇</span><span class="step-text"><strong>Exportar:</strong> clique em <code>⬇ Exportar para PC</code>. Um arquivo <code>backup_escala_AAAA-MM-DD.json</code> será baixado automaticamente.</span></li>
+          <li><span class="step-num">⬆</span><span class="step-text"><strong>Importar:</strong> clique em <code>⬆ Importar do PC</code>, selecione o arquivo <code>.json</code> salvo. O sistema carregará todos os dados e perguntará se deseja salvar na nuvem também.</span></li>
+        </ol>
+      </div>
+
+      <div class="subsection">
+        <h3>Backup na Nuvem</h3>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">O sistema oferece até <strong>12 slots</strong> na nuvem, vinculados à sua conta Google — acessíveis de qualquer dispositivo.</p>
+        <ol class="steps">
+          <li><span class="step-num">☁</span><span class="step-text"><strong>Salvar:</strong> clique em <code>☁ Salvar na Nuvem</code>, escolha "Criar novo save", dê um nome descritivo (ex.: "Escala Junho 2025") e clique em <code>💾 Salvar</code>.</span></li>
+          <li><span class="step-num">🔄</span><span class="step-text"><strong>Substituir:</strong> se os 12 slots estiverem ocupados, selecione "Substituir existente", escolha o slot a sobrescrever e salve.</span></li>
+          <li><span class="step-num">📂</span><span class="step-text"><strong>Carregar:</strong> clique em <code>☁ Carregar / Gerenciar</code> e depois em <code>Carregar</code> ao lado do save desejado.</span></li>
+          <li><span class="step-num">🗑</span><span class="step-text"><strong>Excluir:</strong> clique em <code>Excluir</code> para remover um save permanentemente.</span></li>
+        </ol>
+      </div>
+
+      <div class="subsection">
+        <h3>Auto-Save</h3>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">O auto-save grava automaticamente os dados em um slot da nuvem sempre que uma alteração é feita, eliminando a necessidade de salvar manualmente com frequência.</p>
+        <ol class="steps">
+          <li><span class="step-num">1</span><span class="step-text">No menu <code>Auto-save</code>, clique no seletor e escolha um slot da nuvem existente.</span></li>
+          <li><span class="step-num">2</span><span class="step-text">O indicador mudará para <code>● Auto-save ativo</code> com o nome do slot selecionado.</span></li>
+          <li><span class="step-num">3</span><span class="step-text">A partir daí, qualquer alteração nos dados será salva automaticamente naquele slot.</span></li>
+          <li><span class="step-num">4</span><span class="step-text">Para desativar, selecione <code>-- Desativado --</code> no seletor.</span></li>
+        </ol>
+        <figure class="screenshot"><img src="fotos/foto16.png" alt="Auto-save ativo" loading="lazy"><figcaption>Indicador de auto-save ativo com o slot selecionado</figcaption></figure>
+        <div class="callout info" style="margin-top:1.25rem">
+          <div class="callout-icon">ℹ️</div>
+          <div class="callout-body">
+            <strong>Intervalo de salvamento</strong>
+            O arquivo é salvo automaticamente <strong>30 segundos após a última alteração</strong>, reduzindo o tráfego de dados e evitando salvamentos consecutivos. Após cada edição, um aviso aparece solicitando que você aguarde o salvamento antes de fechar a página.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 10. CAPACIDADE ── -->
+    <section id="capacidade" class="section">
+      <div class="section-header">
+        <div class="section-num purple">10</div>
+        <div class="section-title-wrap">
+          <h2>Capacidade da Nuvem</h2>
+          <p>Estimativas baseadas no plano gratuito do Firebase (Firestore)</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-val">5 KB</div>
+          <div class="stat-label">Tamanho máximo por arquivo salvo (após compressão)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" style="color:var(--accent2)">~16.600</div>
+          <div class="stat-label">Usuários suportados com o limite gratuito de 1 GB</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" style="color:var(--accent3)">400/dia</div>
+          <div class="stat-label">Usuários atendidos dentro do limite de 20.000 gravações diárias</div>
+        </div>
+      </div>
+
+      <div class="prose" style="margin-top:1rem">
+        <p>Cada usuário pode manter até <strong>12 saves</strong> na nuvem, totalizando <strong>60 KB</strong> por conta. Considerando uma média de 50 salvamentos diários por usuário — valor já bastante elevado para uso normal — o sistema atende confortavelmente até 400 usuários por dia sem ultrapassar os limites do plano gratuito.</p>
+        <p>Considerando um usuário por unidade operacional, o plano gratuito utilizado é suficiente para atender a demanda esperada.</p>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+
+  <!-- FOOTER -->
+  <footer class="page-footer">
+    <p>© Gerador de Escala</p>
+    <div class="footer-badge">
+      Manual do Usuário
+    </div>
+  </footer>
+
+</div><!-- /main -->
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.nav-link');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
