@@ -29,9 +29,14 @@
         <a href="https://qthdobizurado-escala.netlify.app/manual" target="_blank" class="login-link-manual">
           📖 Acesse o Manual do Usuário
         </a>
-        <a href="#" class="login-link-suporte" onclick="this.textContent='📧 qthdobizurado@gmail.com'; return false;">
+        <a href="#" class="login-link-suporte" onclick="document.getElementById('contatoSuporte').style.display='block'; return false;">
           🐛 Reportar bug / Contato com suporte
         </a>
+        <div id="contatoSuporte" style="display:none;" class="contato-suporte-card">
+          <button class="contato-suporte-fechar" onclick="document.getElementById('contatoSuporte').style.display='none'">✕</button>
+          <span class="contato-suporte-label">Entre em contato:</span>
+          <span class="contato-suporte-email">qthdobizurado@gmail.com</span>
+        </div>
       </div>
     </div>
   </div><!-- fim #loginOverlay -->

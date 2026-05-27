@@ -742,6 +742,50 @@ select:focus {
 }
 .login-link-suporte:hover { background: #e9ecef; color: #333; }
 
+.contato-suporte-card {
+  position: relative;
+  background: #f0f4ff;
+  border: 1px solid #93c5fd;
+  border-radius: 8px;
+  padding: 12px 36px 12px 14px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contato-suporte-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+}
+
+.contato-suporte-email {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a3c7a;
+  word-break: break-all;
+}
+
+.contato-suporte-fechar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #888;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 4px;
+  line-height: 1;
+  margin: 0;
+  width: auto;
+}
+.contato-suporte-fechar:hover { background: #dee2e6; color: #333; }
+
+
+
 
 
 #loginErro {
