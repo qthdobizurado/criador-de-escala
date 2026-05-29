@@ -550,7 +550,7 @@ function onChangeAutoSave() {
   if (valor === 'ativar') {
     // Tentativa de ativar — verifica se há um slot da nuvem carregado
     if (!_slotNuvemCarregado) {
-      openWarningModal('⚠ A nuvem precisa conter o arquivo desta configuração para que o salvamento automático possa ser ativado.');
+      openWarningModal('⚠ Salve esta escala na nuvem ou carregue um arquivo já salvo para ativar o auto-save.');
       _atualizarSelectAutoSave();
       return;
     }
