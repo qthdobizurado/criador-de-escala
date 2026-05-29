@@ -192,6 +192,8 @@ function processarImportacao(event) {
     _atualizarIndicadorAutoSave();
     _atualizarSelectAutoSave();
   }
+  // Arquivo importado do PC ainda não está na nuvem — reseta o slot carregado
+  _slotNuvemCarregado = null;
 
   const nomeArquivo = file.name.replace(/\.json$/i, '');
   const reader = new FileReader();
@@ -264,6 +266,7 @@ let _salvarAposImport = false;
 // ============================================================
 let _slotsCache = [];         // cache dos slots após listar
 let _slotAutoSave = null;     // nome do slot de auto-save selecionado
+let _slotNuvemCarregado = null; // nome do slot da nuvem atualmente carregado (para controle do auto-save)
 
 async function _listarSlots(uid) {
   uid = uid || usuarioAtual;
@@ -366,6 +369,8 @@ async function confirmarSalvarNuvem() {
     await salvarSlot(usuarioAtual, nomeSlot, dados, substituir || null);
     // Atualiza auto-save se foi o slot monitorado
     if (_slotAutoSave && substituir && substituir === _slotAutoSave) _slotAutoSave = nomeSlot;
+    // Registra como slot da nuvem carregado (permite ativar auto-save)
+    _slotNuvemCarregado = nomeSlot;
     $('nuvemSalvarStatus').textContent = '✅ Salvo com sucesso!';
     $('nuvemSalvarStatus').style.color = '#2e7d32';
     await _listarSlots();
@@ -382,7 +387,7 @@ async function confirmarSalvarNuvem() {
           `Deseja ativar o auto-save para "${nomeSlot}"? As alterações serão salvas automaticamente na nuvem.`,
           () => {
             _slotAutoSave = nomeSlot;
-            localStorage.setItem('escala_autosave_slot_' + usuarioAtual, nomeSlot);
+            localStorage.setItem('escala_autosave_slot_' + usuarioAtual, _slotAutoSave);
             _atualizarSelectAutoSave();
             openWarningModal(`✅ Auto-save ativado para "${nomeSlot}"!`);
           },
@@ -452,6 +457,8 @@ async function carregarSlotNuvem(nomeSlot) {
     }
 
     aplicarDados(dadosCarregados);
+    // Registra o slot da nuvem atualmente carregado
+    _slotNuvemCarregado = nomeSlot;
     // Marca hash como salvo para não disparar auto-save logo após carregar
     _ultimoHashSalvo = JSON.stringify(coletarDadosParaNuvem());
     fecharModalNuvem('modalCarregarNuvem');
@@ -460,6 +467,7 @@ async function carregarSlotNuvem(nomeSlot) {
       `"${nomeSlot}" carregado com sucesso! Deseja ativar o auto-save para este arquivo?`,
       () => {
         _slotAutoSave = nomeSlot;
+        localStorage.setItem('escala_autosave_slot_' + (usuarioAtual || 'guest'), _slotAutoSave);
         _atualizarSelectAutoSave();
         openWarningModal(`✅ Auto-save ativado para "${nomeSlot}"!`);
       },
@@ -484,11 +492,14 @@ async function apagarSlotNuvem(nomeSlot) {
         if (_slotAutoSave === nomeSlot) {
           _slotAutoSave = null;
           localStorage.removeItem('escala_autosave_slot_' + usuarioAtual);
-          _atualizarSelectAutoSave();
+        }
+        if (_slotNuvemCarregado === nomeSlot) {
+          _slotNuvemCarregado = null;
         }
         await _listarSlots();
         _renderListaCarregar();
         _atualizarSelectAutoSave();
+        _atualizarIndicadorAutoSave();
         $('nuvemCarregarStatus').textContent = `✅ "${nomeSlot}" apagado. ${_slotsCache.length} save(s) restantes.`;
       } catch (err) {
         $('nuvemCarregarStatus').textContent = '❌ ' + (err.message || 'Erro ao apagar.');
@@ -504,12 +515,13 @@ async function apagarSlotNuvem(nomeSlot) {
 function _atualizarSelectAutoSave() {
   const sel = $('selectAutoSave');
   if (!sel) return;
-  const valorAtual = _slotAutoSave || '';
-  sel.innerHTML = '<option value="">-- Desativado --</option>' +
-    _slotsCache.map(s =>
-      `<option value="${s.nome}" ${s.nome === valorAtual ? 'selected' : ''}>${s.nome}</option>`
-    ).join('');
-  sel.value = valorAtual;
+  if (_slotAutoSave) {
+    sel.innerHTML = '<option value="ativo" selected>✔ Ativado</option><option value="">Desativar</option>';
+    sel.value = 'ativo';
+  } else {
+    sel.innerHTML = '<option value="">-- Desativado --</option><option value="ativar">Ativar</option>';
+    sel.value = '';
+  }
   _atualizarIndicadorAutoSave();
 }
 
@@ -519,7 +531,7 @@ function _atualizarIndicadorAutoSave() {
   const ind = $('indicadorAutoSave');
   if (!ind) return;
   if (_slotAutoSave) {
-    ind.textContent = `🔄 Auto-save ativo: "${_slotAutoSave}"`;
+    ind.textContent = `🔄 Auto-save ativado para "${_slotAutoSave}"`;
     ind.style.color = '#1565c0';
     ind.style.fontSize = '12px';
     ind.style.fontWeight = 'normal';
@@ -533,12 +545,32 @@ function _atualizarIndicadorAutoSave() {
 
 function onChangeAutoSave() {
   const sel = $('selectAutoSave');
-  _slotAutoSave = sel.value || null;
-  if (_slotAutoSave) {
+  const valor = sel.value;
+
+  if (valor === 'ativar') {
+    // Tentativa de ativar — verifica se há um slot da nuvem carregado
+    if (!_slotNuvemCarregado) {
+      openWarningModal('⚠ A nuvem precisa conter o arquivo desta configuração para que o salvamento automático possa ser ativado.');
+      _atualizarSelectAutoSave();
+      return;
+    }
+    // Ativa para o slot carregado da nuvem
+    _slotAutoSave = _slotNuvemCarregado;
     localStorage.setItem('escala_autosave_slot_' + (usuarioAtual || 'guest'), _slotAutoSave);
-  } else {
-    localStorage.removeItem('escala_autosave_slot_' + (usuarioAtual || 'guest'));
+    _atualizarSelectAutoSave();
+    _atualizarIndicadorAutoSave();
+    return;
   }
+
+  if (valor === '' && _slotAutoSave) {
+    // Desativar
+    _slotAutoSave = null;
+    localStorage.removeItem('escala_autosave_slot_' + (usuarioAtual || 'guest'));
+    _atualizarSelectAutoSave();
+    _atualizarIndicadorAutoSave();
+    return;
+  }
+
   _atualizarIndicadorAutoSave();
 }
 
