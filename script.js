@@ -885,7 +885,7 @@ function abrirHtmlNova(titulo, conteudo, printFontSize) {
 
 function abrirResumoNoNavegador() {
   if (!resumoHTML) return;
-  abrirHtmlNova('Resumo de Responsáveis', resumoHTML);
+  abrirHtmlNova('Resumo de Responsáveis', resumoHTML, '10pt');
 }
 function abrirVagasNoNavegador() {
   if (!vagasHTML) return;
@@ -956,7 +956,7 @@ function copiarColuna(colIdx) {
       @page{margin:5mm}
       .linha-copiar{display:none}
       table{width:auto;border-collapse:collapse}
-      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:12pt;white-space:nowrap}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:10pt;white-space:nowrap}
     }
   </style>`;
 
