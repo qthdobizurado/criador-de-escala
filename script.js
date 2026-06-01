@@ -873,7 +873,7 @@ function abrirHtmlNova(titulo, conteudo, printFontSize) {
     @media print{
       @page{margin:3mm}
       table{width:auto;border-collapse:collapse}
-      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:11pt;white-space:nowrap}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:${fs};white-space:nowrap}
     }
   </style>`;
   const html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>' + titulo + '</title>' + baseStyle + '</head><body>' + conteudo + '</body></html>';
@@ -885,15 +885,15 @@ function abrirHtmlNova(titulo, conteudo, printFontSize) {
 
 function abrirResumoNoNavegador() {
   if (!resumoHTML) return;
-  abrirHtmlNova('Resumo de Responsáveis', resumoHTML, '10pt');
+  abrirHtmlNova('Resumo de Responsáveis', resumoHTML, '11pt');
 }
 function abrirVagasNoNavegador() {
   if (!vagasHTML) return;
-  abrirHtmlNova('Vagas Disponíveis', vagasHTML);
+  abrirHtmlNova('Vagas Disponíveis', vagasHTML, '11pt');
 }
 function abrirEscalaNoNavegador() {
   if (!escalaHTML) return;
-  abrirHtmlNova('Escala', escalaHTML);
+  abrirHtmlNova('Escala', escalaHTML, '12pt');
 }
 function abrirEscalaAC4NoNavegador() {
   if (!escalaAC4HTML) return;
