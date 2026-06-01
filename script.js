@@ -873,7 +873,7 @@ function abrirHtmlNova(titulo, conteudo, printFontSize) {
     @media print{
       @page{margin:3mm}
       table{width:auto;border-collapse:collapse}
-      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:${fs};white-space:normal}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:${fs};white-space:nowrap;overflow-wrap:break-word}
     }
   </style>`;
   const html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>' + titulo + '</title>' + baseStyle + '</head><body>' + conteudo + '</body></html>';
@@ -956,7 +956,7 @@ function copiarColuna(colIdx) {
       @page{margin:3mm}
       .linha-copiar{display:none}
       table{width:auto;border-collapse:collapse}
-      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:11pt;white-space:normal}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:11pt;white-space:nowrap;overflow-wrap:break-word}
     }
   </style>`;
 
