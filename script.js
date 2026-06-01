@@ -1504,6 +1504,10 @@ function gerarCalendarioInterno(mantemEd) {
   if (!a || a < 2000) { openWarningModal("Selecione corretamente o ano"); return; }
   if (!m) { openWarningModal("Selecione corretamente o mês."); return; }
   const dMax = new Date(a, m, 0).getDate();
+  $('inicioEscala').value = 1;
+  $('fimDaEscala').value = dMax;
+  $('fimDaEscala').max = dMax;
+  $('inicioEscala').max = dMax;
   let totMes = 0, html = `<table><thead><tr><th>Data</th><th>Ala</th><th>Funções e Responsáveis</th><th>Valores</th></tr></thead><tbody>`;
   for (let dia = 1; dia <= dMax; dia++) {
     const dt = new Date(a, m - 1, dia);
