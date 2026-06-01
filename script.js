@@ -863,7 +863,8 @@ function carregarDadosPersistentes() {
 // ============================================================
 // ABRIR RELATÓRIOS EM NOVA ABA (substitui window.api)
 // ============================================================
-function abrirHtmlNova(titulo, conteudo) {
+function abrirHtmlNova(titulo, conteudo, printFontSize) {
+  const fs = printFontSize || '12pt';
   const baseStyle = `<style>
     @media screen{
       table{width:auto;border-collapse:collapse}
@@ -872,7 +873,7 @@ function abrirHtmlNova(titulo, conteudo) {
     @media print{
       @page{margin:5mm}
       table{width:100%;border-collapse:collapse}
-      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:12pt;white-space:nowrap}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:${fs};white-space:nowrap}
     }
   </style>`;
   const html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>' + titulo + '</title>' + baseStyle + '</head><body>' + conteudo + '</body></html>';
@@ -884,7 +885,7 @@ function abrirHtmlNova(titulo, conteudo) {
 
 function abrirResumoNoNavegador() {
   if (!resumoHTML) return;
-  abrirHtmlNova('Resumo de Responsáveis', resumoHTML);
+  abrirHtmlNova('Resumo de Responsáveis', resumoHTML, '10pt');
 }
 function abrirVagasNoNavegador() {
   if (!vagasHTML) return;
@@ -955,7 +956,7 @@ function copiarColuna(colIdx) {
       @page{margin:5mm}
       .linha-copiar{display:none}
       table{width:100%;border-collapse:collapse}
-      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:12pt;white-space:nowrap}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:10pt;white-space:nowrap}
     }
   </style>`;
 
