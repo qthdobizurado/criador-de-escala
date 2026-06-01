@@ -864,7 +864,7 @@ function carregarDadosPersistentes() {
 // ABRIR RELATÓRIOS EM NOVA ABA (substitui window.api)
 // ============================================================
 function abrirHtmlNova(titulo, conteudo) {
-  const baseStyle = '<style>table{width:100%;border-collapse:collapse}th,td{border:1px solid #000;padding:4px;text-align:left}</style>';
+  const baseStyle = '<style>table{width:auto;border-collapse:collapse}th,td{border:1px solid #000;padding:4px 8px;text-align:left;white-space:nowrap}</style>';
   const html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>' + titulo + '</title>' + baseStyle + '</head><body>' + conteudo + '</body></html>';
   const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -930,8 +930,8 @@ function copiarColuna(colIdx) {
 <\/script>`;
 
   const style = `<style>
-    table{width:100%;border-collapse:collapse}
-    th,td{border:1px solid #000;padding:4px;text-align:left}
+    table{width:auto;border-collapse:collapse}
+    th,td{border:1px solid #000;padding:4px 8px;text-align:left;white-space:nowrap}
     .linha-copiar th{border:none;padding:2px 2px 6px 2px;background:#fff;}
     .btn-copiar-col{
       background:#e8f0fe;border:1px solid #93c5fd;color:#1a3c7a;
@@ -2054,7 +2054,7 @@ function gerarVagasDisponiveis() {
     });
   });
   let dayIndex = 0;
-  let html = `<table border="1" style="border-collapse:collapse; width:100%;">
+  let html = `<table border="1" style="border-collapse:collapse; width:auto;">
 <thead><tr><th>Dia</th><th>Função</th><th>Hora</th><th>Tipo de Remuneração</th></tr></thead><tbody>`;
   Object.keys(diasVagas).map(Number).sort((a, b) => a - b).forEach(dia => {
     const vagas = diasVagas[dia];
