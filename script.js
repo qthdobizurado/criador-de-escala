@@ -870,7 +870,7 @@ function abrirHtmlNova(titulo, conteudo) {
     @media print{
       @page{margin:5mm}
       body{font-size:12pt}
-      table{width:100%}
+      table{width:100% !important}
       th,td{padding:3px 5px;font-size:12pt;white-space:nowrap}
     }
   </style>`;
@@ -952,7 +952,7 @@ function copiarColuna(colIdx) {
       @page{margin:5mm}
       .linha-copiar{display:none}
       body{font-size:12pt}
-      table{width:100%}
+      table{width:100% !important}
       th,td{padding:3px 5px;font-size:12pt;white-space:nowrap}
     }
   </style>`;
