@@ -2606,7 +2606,7 @@ function buildEscalaAC4HTML() {
   f = Math.max(1, Math.min(f, dMax));
   if (f < s) f = s;
   let dayIndex = 0, valorTotal = 0;
-  let html = `<table border="1" style="border-collapse:collapse;">
+  let html = `<table border="1" style="border-collapse:collapse;width:auto;">
 <thead><tr><th>RG</th><th>Responsável</th><th>Dia Início</th><th>Dia Fim</th>
 <th>Hr. Inicial</th><th>Hr. Final</th><th>Função</th><th>Valor</th></tr></thead><tbody>`;
   for (let dia = s; dia <= f; dia++) {
