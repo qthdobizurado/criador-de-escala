@@ -898,7 +898,7 @@ function abrirEscalaNoNavegador() {
 function abrirEscalaAC4NoNavegador() {
   if (!escalaAC4HTML) return;
 
-  const colunas = ['RG','Responsável','Dia Início','Dia Fim','Horário Início','Horário Fim','Função','Valor'];
+  const colunas = ['RG','Responsável','Dia Início','Dia Fim','Hr. Inicial','Hr. Final','Função','Valor'];
 
   // Injeta botões de copiar no thead
   const htmlComBotoes = escalaAC4HTML.replace(
@@ -2492,8 +2492,8 @@ function gerarResumoResponsaveis() {
   const ordenados = Object.keys(rs).sort((a, b) => responsaveis.indexOf(a) - responsaveis.indexOf(b));
   let rowIndex = 0;
   let html = `<table><thead><tr>
-<th>Responsável</th><th>Gasto AC4 (R$)</th>
-<th>Total Horas Extras</th><th>Horas por Dia da Semana</th></tr></thead><tbody>`;
+<th>Responsável</th><th>Gasto AC4</th>
+<th>Total<br>Hrs.Extras</th><th>Horas por Dia da Semana</th></tr></thead><tbody>`;
   ordenados.forEach(r => {
     const d = rs[r];
     const bgColor = rowIndex % 2 === 0 ? '#f9f9f9' : '#ffffff';
@@ -2604,7 +2604,7 @@ function buildEscalaAC4HTML() {
   let dayIndex = 0, valorTotal = 0;
   let html = `<table border="1" style="border-collapse:collapse;">
 <thead><tr><th>RG</th><th>Responsável</th><th>Dia Início</th><th>Dia Fim</th>
-<th>Horário Início</th><th>Horário Fim</th><th>Função</th><th>Valor</th></tr></thead><tbody>`;
+<th>Hr. Inicial</th><th>Hr. Final</th><th>Função</th><th>Valor</th></tr></thead><tbody>`;
   for (let dia = s; dia <= f; dia++) {
     const dt = new Date(a, m - 1, dia);
     const turnos = calcularAlasTurnosDia(dt);
