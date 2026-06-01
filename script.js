@@ -2493,7 +2493,7 @@ function gerarResumoResponsaveis() {
   let rowIndex = 0;
   let html = `<table><thead><tr>
 <th>Responsável</th><th>Gasto AC4</th>
-<th>Total<br>Hrs.Extras</th><th>Horas por Dia da Semana</th></tr></thead><tbody>`;
+<th>Total Hrs.<br>Extras</th><th>Horas por Dia da Semana</th></tr></thead><tbody>`;
   ordenados.forEach(r => {
     const d = rs[r];
     const bgColor = rowIndex % 2 === 0 ? '#f9f9f9' : '#ffffff';
