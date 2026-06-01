@@ -871,9 +871,9 @@ function abrirHtmlNova(titulo, conteudo, printFontSize) {
       th,td{border:1px solid #000;padding:4px 8px;text-align:left;white-space:nowrap}
     }
     @media print{
-      @page{margin:3mm}
-      table{width:auto;border-collapse:collapse}
-      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:${fs};white-space:nowrap;overflow-wrap:break-word}
+      @page{margin:5mm}
+      table{width:100%;border-collapse:collapse}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:${fs};white-space:normal}
     }
   </style>`;
   const html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>' + titulo + '</title>' + baseStyle + '</head><body>' + conteudo + '</body></html>';
@@ -885,15 +885,15 @@ function abrirHtmlNova(titulo, conteudo, printFontSize) {
 
 function abrirResumoNoNavegador() {
   if (!resumoHTML) return;
-  abrirHtmlNova('Resumo de Responsáveis', resumoHTML, '11pt');
+  abrirHtmlNova('Resumo de Responsáveis', resumoHTML, '10pt');
 }
 function abrirVagasNoNavegador() {
   if (!vagasHTML) return;
-  abrirHtmlNova('Vagas Disponíveis', vagasHTML, '11pt');
+  abrirHtmlNova('Vagas Disponíveis', vagasHTML);
 }
 function abrirEscalaNoNavegador() {
   if (!escalaHTML) return;
-  abrirHtmlNova('Escala', escalaHTML, '12pt');
+  abrirHtmlNova('Escala', escalaHTML);
 }
 function abrirEscalaAC4NoNavegador() {
   if (!escalaAC4HTML) return;
@@ -953,10 +953,10 @@ function copiarColuna(colIdx) {
       .btn-copiar-col:hover{background:#dbeafe;}
     }
     @media print {
-      @page{margin:3mm}
+      @page{margin:5mm}
       .linha-copiar{display:none}
-      table{width:auto;border-collapse:collapse}
-      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:11pt;white-space:nowrap;overflow-wrap:break-word}
+      table{width:100%;border-collapse:collapse}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:10pt;white-space:normal}
     }
   </style>`;
 
