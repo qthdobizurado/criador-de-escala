@@ -942,7 +942,7 @@ function copiarColuna(colIdx) {
 
   const style = `<style>
     @media screen{
-      table{width:auto;border-collapse:collapse}
+      table{width:auto !important;border-collapse:collapse}
       th,td{border:1px solid #000;padding:4px 8px;text-align:left;white-space:nowrap}
       .linha-copiar th{border:none;padding:2px 2px 6px 2px;background:#fff;}
       .btn-copiar-col{
