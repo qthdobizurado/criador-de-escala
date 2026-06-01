@@ -865,13 +865,14 @@ function carregarDadosPersistentes() {
 // ============================================================
 function abrirHtmlNova(titulo, conteudo) {
   const baseStyle = `<style>
-    table{width:auto;border-collapse:collapse}
-    th,td{border:1px solid #000;padding:4px 8px;text-align:left;white-space:nowrap}
+    @media screen{
+      table{width:auto;border-collapse:collapse}
+      th,td{border:1px solid #000;padding:4px 8px;text-align:left;white-space:nowrap}
+    }
     @media print{
       @page{margin:5mm}
-      body{font-size:12pt}
-      table{width:100% !important}
-      th,td{padding:3px 5px;font-size:12pt;white-space:nowrap}
+      table{width:100%;border-collapse:collapse}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:12pt;white-space:nowrap}
     }
   </style>`;
   const html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>' + titulo + '</title>' + baseStyle + '</head><body>' + conteudo + '</body></html>';
@@ -939,21 +940,22 @@ function copiarColuna(colIdx) {
 <\/script>`;
 
   const style = `<style>
-    table{width:auto;border-collapse:collapse}
-    th,td{border:1px solid #000;padding:4px 8px;text-align:left;white-space:nowrap}
-    .linha-copiar th{border:none;padding:2px 2px 6px 2px;background:#fff;}
-    .btn-copiar-col{
-      background:#e8f0fe;border:1px solid #93c5fd;color:#1a3c7a;
-      border-radius:5px;padding:3px 8px;font-size:11px;font-weight:600;
-      cursor:pointer;white-space:nowrap;transition:background 0.15s;
+    @media screen{
+      table{width:auto;border-collapse:collapse}
+      th,td{border:1px solid #000;padding:4px 8px;text-align:left;white-space:nowrap}
+      .linha-copiar th{border:none;padding:2px 2px 6px 2px;background:#fff;}
+      .btn-copiar-col{
+        background:#e8f0fe;border:1px solid #93c5fd;color:#1a3c7a;
+        border-radius:5px;padding:3px 8px;font-size:11px;font-weight:600;
+        cursor:pointer;white-space:nowrap;transition:background 0.15s;
+      }
+      .btn-copiar-col:hover{background:#dbeafe;}
     }
-    .btn-copiar-col:hover{background:#dbeafe;}
     @media print {
       @page{margin:5mm}
       .linha-copiar{display:none}
-      body{font-size:12pt}
-      table{width:100% !important}
-      th,td{padding:3px 5px;font-size:12pt;white-space:nowrap}
+      table{width:100%;border-collapse:collapse}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:12pt;white-space:nowrap}
     }
   </style>`;
 
@@ -2069,7 +2071,7 @@ function gerarVagasDisponiveis() {
     });
   });
   let dayIndex = 0;
-  let html = `<table border="1" style="border-collapse:collapse; width:auto;">
+  let html = `<table border="1" style="border-collapse:collapse;">
 <thead><tr><th>Dia</th><th>Função</th><th>Hora</th><th>Tipo de Remuneração</th></tr></thead><tbody>`;
   Object.keys(diasVagas).map(Number).sort((a, b) => a - b).forEach(dia => {
     const vagas = diasVagas[dia];
