@@ -885,15 +885,15 @@ function abrirHtmlNova(titulo, conteudo, printFontSize) {
 
 function abrirResumoNoNavegador() {
   if (!resumoHTML) return;
-  abrirHtmlNova('Resumo de Responsáveis', resumoHTML, '10pt');
+  abrirHtmlNova('Resumo de Responsáveis', resumoHTML, '11pt');
 }
 function abrirVagasNoNavegador() {
   if (!vagasHTML) return;
-  abrirHtmlNova('Vagas Disponíveis', vagasHTML);
+  abrirHtmlNova('Vagas Disponíveis', vagasHTML, '11pt');
 }
 function abrirEscalaNoNavegador() {
   if (!escalaHTML) return;
-  abrirHtmlNova('Escala', escalaHTML);
+  abrirHtmlNova('Escala', escalaHTML, '11pt');
 }
 function abrirEscalaAC4NoNavegador() {
   if (!escalaAC4HTML) return;
@@ -956,7 +956,7 @@ function copiarColuna(colIdx) {
       @page{margin:5mm}
       .linha-copiar{display:none}
       table{width:100%;border-collapse:collapse}
-      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:10pt;white-space:normal}
+      th,td{border:1px solid #000;padding:3px 5px;text-align:left;font-size:11pt;white-space:normal}
     }
   </style>`;
 
