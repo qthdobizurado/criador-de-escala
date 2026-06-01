@@ -2621,11 +2621,11 @@ function buildEscalaAC4HTML() {
         const bgColor = dayIndex % 2 === 0 ? '#f9f9f9' : '#ffffff';
         const hIStr = String(Math.max(0, Math.min(23, hI))).padStart(2, '0');
         const hFStr = String(Math.max(0, Math.min(23, hF))).padStart(2, '0');
-        const diaFim = hF <= hI ? dia + 1 : dia;
+        const dtFim = hF <= hI ? new Date(a, m - 1, dia + 1) : new Date(a, m - 1, dia);
         const match = v.responsavel.match(/(\d{1,2}\.\d{3}|\d{4,6})/);
         const rg = match ? match[1] : '';
         const diaIniStr = String(dia).padStart(2, '0') + '/' + String(m).padStart(2, '0') + '/' + a;
-        const diaFimStr = String(diaFim).padStart(2, '0') + '/' + String(m).padStart(2, '0') + '/' + a;
+        const diaFimStr = String(dtFim.getDate()).padStart(2, '0') + '/' + String(dtFim.getMonth() + 1).padStart(2, '0') + '/' + dtFim.getFullYear();
         html += `<tr style="background-color:${bgColor};">
 <td>${rg}</td><td>${v.responsavel}</td>
 <td>${diaIniStr}</td><td>${diaFimStr}</td>
