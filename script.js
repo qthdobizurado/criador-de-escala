@@ -2624,10 +2624,12 @@ function buildEscalaAC4HTML() {
         const diaFim = hF <= hI ? dia + 1 : dia;
         const match = v.responsavel.match(/(\d{1,2}\.\d{3}|\d{4,6})/);
         const rg = match ? match[1] : '';
+        const diaIniStr = String(dia).padStart(2, '0') + '/' + String(m).padStart(2, '0') + '/' + a;
+        const diaFimStr = String(diaFim).padStart(2, '0') + '/' + String(m).padStart(2, '0') + '/' + a;
         html += `<tr style="background-color:${bgColor};">
 <td>${rg}</td><td>${v.responsavel}</td>
-<td>${dia}/${m}/${a}</td><td>${diaFim}/${m}/${a}</td>
-<td>${hIStr}h</td><td>${hFStr}h</td>
+<td>${diaIniStr}</td><td>${diaFimStr}</td>
+<td>${hIStr}:00</td><td>${hFStr}:00</td>
 <td>${v.funcao}</td><td>R$ ${formatarMoeda(custo)}</td></tr>`;
         dayIndex++;
       });
