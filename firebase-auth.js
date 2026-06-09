@@ -11,6 +11,24 @@ const FIREBASE_CONFIG = {
   measurementId:     "G-KBD59D8W8F"
 };
 
+// ============================================================
+// VALIDAÇÃO DE NOME DE SLOT (Firestore document ID)
+// ============================================================
+function validarNomeSlotFirestore(nomeSlot) {
+  const nome = String(nomeSlot ?? '').trim();
+  if (!nome) throw new Error('Informe um nome para o save.');
+  if (nome.length > 120) throw new Error('Nome do save muito longo. Use no máximo 120 caracteres.');
+  if (nome === '.' || nome === '..') throw new Error('Nome de save inválido.');
+  if (nome.includes('/') || nome.includes('\\')) {
+    throw new Error('O nome do save não pode conter barra / ou \\.');
+  }
+  if (/^[\s.]+$/.test(nome)) throw new Error('Nome de save inválido.');
+  if (/[\x00-\x1F\x7F]/.test(nome)) throw new Error('O nome do save contém caracteres inválidos.');
+  // Evita IDs reservados usados internamente pelo Firestore.
+  if (/^__.*__$/.test(nome)) throw new Error('Nome de save reservado pelo sistema. Escolha outro nome.');
+  return nome;
+}
+
 // ── Inicialização ─────────────────────────────────────────────
 async function initFirebase() {
   const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
@@ -73,8 +91,9 @@ async function listarSlots(uid) {
 async function carregarSlot(uid, nomeSlot) {
   const { doc, getDoc } =
     await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-  const snap = await getDoc(doc(window._fbDb, 'usuarios', uid, 'slots', nomeSlot));
-  if (!snap.exists()) throw new Error('Slot não encontrado: ' + nomeSlot);
+  const nomeSeguro = validarNomeSlotFirestore(nomeSlot);
+  const snap = await getDoc(doc(window._fbDb, 'usuarios', uid, 'slots', nomeSeguro));
+  if (!snap.exists()) throw new Error('Slot não encontrado: ' + nomeSeguro);
   return snap.data().dados;
 }
 
@@ -85,20 +104,31 @@ async function salvarSlot(uid, nomeSlot, dados, nomeSlotAntigo) {
   const { doc, setDoc, deleteDoc, serverTimestamp } =
     await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
 
-  if (!nomeSlotAntigo || nomeSlotAntigo.trim() === '' || nomeSlotAntigo === nomeSlot) {
-    const slots    = await listarSlots(uid);
-    const jaExiste = slots.some(s => s.nome === nomeSlot);
-    if (!jaExiste && slots.length >= 12) {
+  const nomeSeguro = validarNomeSlotFirestore(nomeSlot);
+  const nomeAntigoSeguro = nomeSlotAntigo ? validarNomeSlotFirestore(nomeSlotAntigo) : null;
+  const slots = await listarSlots(uid);
+  const jaExiste = slots.some(s => s.nome === nomeSeguro);
+  const substituindo = !!nomeAntigoSeguro;
+
+  if (substituindo) {
+    const antigoExiste = slots.some(s => s.nome === nomeAntigoSeguro);
+    if (!antigoExiste) throw new Error('O slot selecionado para substituir não existe mais. Atualize a lista e tente novamente.');
+    if (jaExiste && nomeSeguro !== nomeAntigoSeguro) {
+      throw new Error('Já existe outro save com esse nome. Escolha um nome diferente para não sobrescrever outro slot.');
+    }
+  } else {
+    if (jaExiste) throw new Error('Já existe um save com esse nome. Use outro nome ou escolha substituir esse slot.');
+    if (slots.length >= 12) {
       throw new Error('Limite de 12 saves atingido. Escolha um slot para substituir.');
     }
   }
 
-  await setDoc(doc(window._fbDb, 'usuarios', uid, 'slots', nomeSlot), {
+  await setDoc(doc(window._fbDb, 'usuarios', uid, 'slots', nomeSeguro), {
     dados, atualizadoEm: serverTimestamp()
   });
 
-  if (nomeSlotAntigo && nomeSlotAntigo.trim() !== '' && nomeSlotAntigo !== nomeSlot) {
-    await deleteDoc(doc(window._fbDb, 'usuarios', uid, 'slots', nomeSlotAntigo));
+  if (nomeAntigoSeguro && nomeAntigoSeguro !== nomeSeguro) {
+    await deleteDoc(doc(window._fbDb, 'usuarios', uid, 'slots', nomeAntigoSeguro));
   }
 }
 
@@ -108,7 +138,8 @@ async function salvarSlot(uid, nomeSlot, dados, nomeSlotAntigo) {
 async function apagarSlot(uid, nomeSlot) {
   const { doc, deleteDoc } =
     await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-  await deleteDoc(doc(window._fbDb, 'usuarios', uid, 'slots', nomeSlot));
+  const nomeSeguro = validarNomeSlotFirestore(nomeSlot);
+  await deleteDoc(doc(window._fbDb, 'usuarios', uid, 'slots', nomeSeguro));
 }
 
 // ============================================================

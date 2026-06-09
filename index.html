@@ -153,7 +153,7 @@
     <button id="botao-imprimir-escala-ac4" style="display:none;" onclick="abrirEscalaAC4NoNavegador()">Abrir Somente Escala de AC4</button>
 
     <footer>
-      <p id="rodapeTexto">© 2025 - Desenvolvido por BM Fernandes 04032.</p>
+      <p id="rodapeTexto">© 2026 - Desenvolvido por BM Fernandes 04032 e BM Matheus 04144.</p>
     </footer>
 
   </div><!-- fim #appContent -->
@@ -261,6 +261,13 @@
           <span class="cfg-unidade">h</span>
         </div>
       </div>
+      <div class="cfg-hora-inicio-row">
+        <label for="cfgDataReferenciaAlpha">Data de referência da Ala Alpha:</label>
+        <div class="cfg-input-wrap">
+          <input type="date" id="cfgDataReferenciaAlpha" value="2024-03-21" oninput="_atualizarPreviewConfig()">
+        </div>
+      </div>
+      <p class="cfg-descricao" style="font-size:12px;margin-top:6px;">Padrão: 21/03/2024. Altere somente se a sequência das alas precisar ser recalculada a partir de outra data em que a Ala Alpha trabalhou.</p>
       <div class="cfg-preview" id="cfgPreview"></div>
       <div style="margin-top:18px; display:flex; gap:10px;">
         <button onclick="salvarConfigEscala()">✔ Salvar configuração</button>

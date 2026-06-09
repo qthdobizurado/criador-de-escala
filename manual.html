@@ -665,6 +665,8 @@
       </div>
       <div class="prose">
         <p>Funções são os cargos ou atividades que os militares exercem durante o plantão. <strong>Atenção:</strong> as funções cadastradas nesta etapa são adicionadas automaticamente em <em>todas</em> as alas.</p>
+        <p>O sistema trata nomes repetidos de forma segura: diferenças de maiúsculas, minúsculas ou espaços extras não criam uma nova função. Assim, <code>socorrista 2</code>, <code>Socorrista 2</code> e <code>SOCORRISTA   2</code> são considerados o mesmo nome.</p>
+        <p>Se houver conflito entre uma função global e uma função específica de ala com o mesmo nome, a função global será mantida normalmente e a função específica será renomeada automaticamente, por exemplo: <code>Socorrista 2 (2)</code>.</p>
       </div>
 
       <div class="example">
@@ -729,8 +731,8 @@
       <div class="callout tip">
         <div class="callout-icon">💡</div>
         <div class="callout-body">
-          <strong>Função exclusiva por ala</strong>
-          É possível adicionar uma função específica apenas a uma determinada ala — por exemplo, incluir a função "Socorrista 2" somente na Ala Alpha. Use esta opção nos vínculos, em vez de cadastrar a função global (que a adicionaria em todas as alas).
+          <strong>Função global × função específica da ala</strong>
+          A função global sempre entra em todas as alas. A função específica da ala deve ser usada quando aquela função existe somente em uma ala. Se uma função global tiver o mesmo nome de uma função específica, o sistema mantém a global com o nome original e renomeia automaticamente a específica para evitar conflito interno. Exemplo: a global fica <code>Socorrista 2</code> e a específica da Ala Alpha pode virar <code>Socorrista 2 (2)</code>.
         </div>
       </div>
     </section>
@@ -746,6 +748,7 @@
       </div>
       <div class="prose">
         <p>Afastamentos registram períodos em que um militar não estará disponível — férias, licença médica, curso, entre outros. Nesses dias, o sistema gera automaticamente uma vaga de AC4 para a função do militar ausente.</p>
+        <p>Se o afastamento for cadastrado depois que o calendário já foi gerado, o sistema verifica os dias em que o militar estava escalado e pode transformar essas funções em vaga de AC4. Quando necessário, um aviso é exibido antes da alteração. Funções bloqueadas preservam os dados preenchidos manualmente.</p>
       </div>
 
       <figure class="screenshot"><img src="fotos/foto5.png" alt="Cadastrar Afastamentos" loading="lazy"><figcaption>Formulário de registro de afastamentos</figcaption></figure>
@@ -773,8 +776,20 @@
   <figure class="screenshot"><img src="fotos/foto7.png" alt="Configurações de tipo de escala" loading="lazy"><figcaption>Opções de tipo e horário de turno</figcaption></figure>
 </div>
       <div class="prose">
-        <p>Antes de gerar o calendário, defina o tipo de escala e o horário de início do turno. Clique no botão <code>⚙ Configurar Escala</code>, ao lado do botão "Gerar Calendário", e selecione o modelo desejado.</p>
+        <p>Antes de gerar o calendário, defina o tipo de escala, o horário de início do turno e, se necessário, a data de referência da Ala Alpha. Clique no botão <code>⚙ Configurar Escala</code>, ao lado do botão "Gerar Calendário", e selecione o modelo desejado.</p>
+        <p>A data de referência padrão é <strong>21/03/2024</strong>, data em que a Ala Alpha estava de serviço. Essa referência é usada para manter a continuidade da sequência das alas ao gerar meses diferentes. Altere essa data apenas se a escala da unidade precisar ser recalculada a partir de outra data em que a Ala Alpha tenha trabalhado.</p>
       </div>
+      <table class="doc-table">
+        <thead>
+          <tr><th>Tipo</th><th>Como funciona</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>24 × 72</strong></td><td>24h de plantão e 72h de folga, usando Alpha, Bravo, Charlie e Delta. É o modelo padrão.</td></tr>
+          <tr><td><strong>24 × 48</strong></td><td>24h de plantão e 48h de folga, usando Alpha, Bravo e Charlie.</td></tr>
+          <tr><td><strong>12 × 36</strong></td><td>Dois turnos por dia, por exemplo 08h–20h e 20h–08h, mantendo a sequência das alas por turno.</td></tr>
+          <tr><td><strong>48 × 144</strong></td><td>48h de plantão e 144h de folga, usando Alpha, Bravo, Charlie e Delta.</td></tr>
+        </tbody>
+      </table>
     </section>
 
     <!-- ── 7. GERAR CALENDÁRIO ── -->
@@ -807,11 +822,11 @@
         <h3>Recursos disponíveis no calendário</h3>
         <ol class="steps">
           <li><span class="step-num">💰</span><span class="step-text"><strong>Custos:</strong> veja o gasto por função no dia, o total de AC4 por dia e o total de AC4 do mês.</span></li>
-          <li><span class="step-num">🏷️</span><span class="step-text"><strong>Tipo de serviço:</strong> defina para cada função se é AC4, Serviço Normal, Serviço Extra Não Remunerado ou Troca com a SOP.</span></li>
-          <li><span class="step-num">➕</span><span class="step-text"><strong>Funções por dia:</strong> adicione ou remova uma função específica em um dia e ala determinados.</span></li>
-          <li><span class="step-num">✏️</span><span class="step-text"><strong>Editar nome:</strong> edite o nome de uma função em um dia e ala específicos.</span></li>
+          <li><span class="step-num">🏷️</span><span class="step-text"><strong>Tipo de serviço:</strong> defina se a função será <code>AC4</code>, <code>AC4 - Regência</code>, <code>Normal</code>, <code>Extra não remunerado</code>, <code>Troca com a SOP</code> ou <code>...</code>. Apenas AC4 e AC4 - Regência entram no cálculo de valor; os demais tipos servem para registrar o serviço sem gerar valor de AC4.</span></li>
+          <li><span class="step-num">➕</span><span class="step-text"><strong>Funções por dia:</strong> adicione ou remova uma função específica em um dia e ala determinados. Ao remover uma função do calendário, ela sai apenas daquele dia/turno; a função cadastrada no vínculo geral continua existindo para os demais dias.</span></li>
+          <li><span class="step-num">✏️</span><span class="step-text"><strong>Editar nome:</strong> edite o nome de uma função em um dia e ala específicos. Quando a função veio do vínculo geral, a edição vale somente para aquele dia/turno, sem alterar o cadastro da função nos outros dias.</span></li>
           <li><span class="step-num"><img src="fotos/foto11.png" alt="Ícone de reordenar" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;border-radius:4px;"></span><span class="step-text"><strong>Reordenar:</strong> arraste pelo ícone para mudar a posição de uma função dentro do mesmo dia.</span></li>
-          <li><span class="step-num">🔒</span><span class="step-text"><strong>Bloquear função:</strong> bloqueie uma função para que nenhuma modificação automática (como novo afastamento ou regeneração do calendário) altere o que está preenchido nela.</span></li>
+          <li><span class="step-num">🔒</span><span class="step-text"><strong>Bloquear função:</strong> bloqueie uma função para congelar responsável, remuneração e horários preenchidos. Enquanto estiver bloqueada, ela não será alterada por afastamentos, regeneração do calendário ou ajustes automáticos. Ao desbloquear, o sistema restaura os dados salvos no momento do bloqueio.</span></li>
           <li><span class="step-num">⏱️</span><span class="step-text"><strong>Edição de hora:</strong> edite a hora de início e fim do serviço de uma função em um determinado dia. Se o tipo de remuneração for AC4, o custo é recalculado automaticamente com base no horário definido.</span></li>
         </ol>
       </div>
@@ -886,7 +901,7 @@ Para consultar o valor real de gastos do mês, o usuário deve abrir a "Escala s
           </tr>
           <tr>
             <td><span class="btn-label">💰 Escala de AC4</span></td>
-            <td>Escala exclusiva dos militares que realizaram AC4, com função e custo correspondentes. Dados já formatados para cópia direta na planilha de prestação de contas. Abre em nova guia do navegador.</td>
+            <td>Escala exclusiva dos militares que realizaram AC4, com função e custo correspondentes. Dados já formatados para cópia direta na planilha de prestação de contas. Cada coluna possui botão de cópia, como RG, Responsável, Dia Início, Dia Fim, Hr. Inicial, Hr. Final, Função e Valor. Abre em nova guia do navegador.</td>
           </tr>
         </tbody>
       </table>
@@ -933,8 +948,8 @@ Para consultar o valor real de gastos do mês, o usuário deve abrir a "Escala s
         <h3>Backup Local (PC)</h3>
         <p style="color:var(--muted); font-size:14px; margin-bottom:1rem;">Salve todos os dados em um arquivo <code style="background:rgba(79,142,247,.12);color:var(--accent);padding:1px 7px;border-radius:5px;font-size:13px;">.json</code> no seu computador — uma proteção extra independente da nuvem.</p>
         <ol class="steps">
-          <li><span class="step-num">⬇</span><span class="step-text"><strong>Exportar:</strong> clique em <code>⬇ Exportar para PC</code>. Um arquivo <code>backup_escala_AAAA-MM-DD.json</code> será baixado automaticamente.</span></li>
-          <li><span class="step-num">⬆</span><span class="step-text"><strong>Importar:</strong> clique em <code>⬆ Importar do PC</code>, selecione o arquivo <code>.json</code> salvo. O sistema carregará todos os dados e perguntará se deseja salvar na nuvem também.</span></li>
+          <li><span class="step-num">⬆</span><span class="step-text"><strong>Exportar:</strong> clique em <code>⬆ Exportar para PC</code>. Um arquivo <code>backup_escala_AAAA-MM-DD.json</code> será baixado automaticamente.</span></li>
+          <li><span class="step-num">⬇</span><span class="step-text"><strong>Importar:</strong> clique em <code>⬇ Importar do PC</code>, selecione o arquivo <code>.json</code> salvo. O sistema carregará todos os dados e perguntará se deseja salvar na nuvem também.</span></li>
         </ol>
       </div>
 
@@ -981,8 +996,8 @@ Para consultar o valor real de gastos do mês, o usuário deve abrir a "Escala s
 
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-val">5 KB</div>
-          <div class="stat-label">Tamanho máximo por arquivo salvo (após compressão)</div>
+          <div class="stat-val">3–5 KB</div>
+          <div class="stat-label">Tamanho médio estimado por save em uso normal (após compressão)</div>
         </div>
         <div class="stat-card">
           <div class="stat-val" style="color:var(--accent2)">~16.600</div>
@@ -995,7 +1010,7 @@ Para consultar o valor real de gastos do mês, o usuário deve abrir a "Escala s
       </div>
 
       <div class="prose" style="margin-top:1rem">
-        <p>Cada usuário pode manter até <strong>12 saves</strong> na nuvem, totalizando <strong>60 KB</strong> por conta. Considerando uma média de 50 salvamentos diários por usuário — valor já bastante elevado para uso normal — o sistema atende confortavelmente até 400 usuários por dia sem ultrapassar os limites do plano gratuito.</p>
+        <p>Cada usuário pode manter até <strong>12 saves</strong> na nuvem. Em uso normal, cada save costuma ficar em torno de <strong>3 KB a 5 KB</strong> após compressão, então uma conta com 12 saves tende a usar aproximadamente <strong>36 KB a 60 KB</strong>. Considerando uma média de 50 salvamentos diários por usuário — valor já bastante elevado para uso normal — o sistema atende confortavelmente até 400 usuários por dia sem ultrapassar os limites do plano gratuito.</p>
         <p>Considerando um usuário por unidade operacional, o plano gratuito utilizado é suficiente para atender a demanda esperada.</p>
       </div>
     </section>

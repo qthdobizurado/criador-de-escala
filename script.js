@@ -8,7 +8,8 @@ const VERMELHA_DIURNO = 36.41;
 const VERMELHA_NOTURNO = 41.38;
 const AZUL_DIURNO = 26.47;
 const AZUL_NOTURNO = 29.80;
-// Data em que a Ala Alpha trabalhou (referência para o cálculo do calendário)
+// Data padrão em que a Ala Alpha trabalhou (referência para o cálculo do calendário).
+// O usuário pode alterar essa data em ⚙ Configurar Escala; se não alterar, esta continua sendo a referência padrão.
 // Formato: 'AAAA-MM-DD'
 const DATA_REFERENCIA_ALPHA = '2024-03-21';
 const taxas = {
@@ -21,12 +22,78 @@ let funcoes = [],
   afastamentos = [],
   calendarioGerado = false;
 let exclusoesDiarias = {};
-let configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'] };
+let configEscala = criarConfigEscalaPadrao();
 let resumoHTML = '',
   vagasHTML = '',
   escalaHTML = '',
   escalaAC4HTML = '';
 const $ = id => document.getElementById(id);
+
+
+function criarConfigEscalaPadrao() {
+  return {
+    horasOn: 24,
+    horasOff: 72,
+    horaInicio: 8,
+    alasAtivas: ['Alpha','Bravo','Charlie','Delta'],
+    dataReferenciaAlpha: DATA_REFERENCIA_ALPHA
+  };
+}
+function normalizarDataReferenciaAlpha(valor) {
+  const data = String(valor || '').trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) return DATA_REFERENCIA_ALPHA;
+  const [ano, mes, dia] = data.split('-').map(Number);
+  const dt = new Date(ano, mes - 1, dia);
+  if (dt.getFullYear() !== ano || dt.getMonth() !== mes - 1 || dt.getDate() !== dia) return DATA_REFERENCIA_ALPHA;
+  return data;
+}
+function obterDataReferenciaAlpha() {
+  return normalizarDataReferenciaAlpha(configEscala?.dataReferenciaAlpha);
+}
+function formatarDataReferenciaAlpha(data) {
+  const d = normalizarDataReferenciaAlpha(data);
+  const [ano, mes, dia] = d.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+// ============================================================
+// SEGURANÇA DE HTML / EVENTOS INLINE
+// ============================================================
+function escapeHtml(valor) {
+  return String(valor ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function escapeAttr(valor) {
+  return escapeHtml(valor);
+}
+function jsArgAttr(valor) {
+  // Gera um literal JS seguro para ser usado dentro de onclick/onchange em atributo HTML.
+  // O navegador decodifica &quot; para aspas antes de executar o handler.
+  return escapeAttr(JSON.stringify(String(valor ?? '')));
+}
+function turnoInicioDoSufixo(turnoSufixo) {
+  if (!turnoSufixo) return null;
+  const n = parseInt(String(turnoSufixo).replace('_t', ''), 10);
+  return Number.isFinite(n) ? n : null;
+}
+function obterVinculoDia(ala, dia, funcao, turnoSufixo = '') {
+  const lista = vinculos[ala] || [];
+  const turnoInicio = turnoInicioDoSufixo(turnoSufixo);
+  if (turnoInicio !== null) {
+    const porTurno = lista.find(v => nomesIguais(v.funcao, funcao) && v.dia === dia && v.turnoInicio === turnoInicio);
+    if (porTurno) return porTurno;
+  }
+  return lista.find(v => nomesIguais(v.funcao, funcao) && v.dia === dia);
+}
+function filtrarVinculosDia(ala, dia, funcao, turnoSufixo = '') {
+  const turnoInicio = turnoInicioDoSufixo(turnoSufixo);
+  return v => !(nomesIguais(v.funcao, funcao) && v.dia === dia && (turnoInicio === null || v.turnoInicio === turnoInicio));
+}
+
 const backupEdicaoFuncao = {};
 
 // Estado de autenticação (Firebase user object)
@@ -98,8 +165,40 @@ function _aoEntrar(user) {
 }
 
 function _aoSair() {
+  // Segurança: ao trocar de conta na mesma aba, não podemos manter dados/auto-save
+  // do usuário anterior em memória. Isso evita sobrescrita acidental entre usuários.
+  clearTimeout(_autoSaveTimer);
+  _autoSaveTimer = null;
+  _autoSaveEmAndamento = false;
+  _autoSaveEstado = 'salvo';
+  _ultimoHashSalvo = null;
+  _slotAutoSave = null;
+  _slotNuvemCarregado = null;
+  _salvarAposImport = false;
+  _slotsCache = [];
+
   _fbUser      = null;
   usuarioAtual = null;
+  funcoes = [];
+  responsaveis = [];
+  vinculos = { Alpha: [], Bravo: [], Charlie: [], Delta: [] };
+  afastamentos = [];
+  calendarioGerado = false;
+  exclusoesDiarias = {};
+  configEscala = criarConfigEscalaPadrao();
+  resumoHTML = '';
+  vagasHTML = '';
+  escalaHTML = '';
+  escalaAC4HTML = '';
+  Object.keys(backupEdicaoFuncao).forEach(k => delete backupEdicaoFuncao[k]);
+
+  ['funcoes', 'responsaveis'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+  ['vinculos', 'afastamentos', 'calendario', 'resumo', 'vagas', 'escala', 'escalaAC4'].forEach(id => { const el = $(id); if (el) el.innerHTML = ''; });
+  ['botao-imprimir-resumo', 'botao-imprimir-vagas', 'botao-imprimir-escala', 'botao-imprimir-escala-ac4']
+    .forEach(id => { const btn = $(id); if (btn) btn.style.display = 'none'; });
+  _mostrarToastAutoSave('none');
+  _atualizarIndicadorAutoSave();
+
   $('loginOverlay').style.display = 'flex';
   $('appContent').style.display   = 'none';
   // Reseta o botão e mensagens da tela de login
@@ -163,6 +262,7 @@ function closeWarningModal() {
 // BACKUP LOCAL (PC)
 // ============================================================
 function exportarBackup() {
+  sincronizarCamposPrincipais();
   const dados = coletarDadosParaSalvar();
   const json = JSON.stringify(dados, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -235,7 +335,7 @@ async function _perguntarSalvarNuvemAposImport(nomeArquivo) {
           // Pré-seleciona o último slot (mais antigo, pois lista vem por data desc)
           const sel = $('selectSlotSubstituir');
           sel.innerHTML = '<option value="">-- Selecione o slot --</option>' +
-            _slotsCache.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
+            _slotsCache.map(s => `<option value="${escapeAttr(s.nome)}">${escapeHtml(s.nome)}</option>`).join('');
           // Seleciona o último da lista
           sel.value = _slotsCache[_slotsCache.length - 1].nome;
         } else {
@@ -321,7 +421,7 @@ function _renderModalSalvar(statusMsg, carregando) {
   // Select substituir
   const sel = $('selectSlotSubstituir');
   sel.innerHTML = '<option value="">-- Selecione o slot --</option>' +
-    _slotsCache.map(s => `<option value="${s.nome}">${s.nome}</option>`).join('');
+    _slotsCache.map(s => `<option value="${escapeAttr(s.nome)}">${escapeHtml(s.nome)}</option>`).join('');
 
   // Mostrar/ocultar campos conforme modo
   _atualizarVisibilidadeModoSalvar();
@@ -334,13 +434,17 @@ function _atualizarVisibilidadeModoSalvar() {
 }
 
 async function confirmarSalvarNuvem() {
-  const nomeSlot = $('inputNomeNovoSlot').value.trim();
+  sincronizarCamposPrincipais();
+  let nomeSlot = $('inputNomeNovoSlot').value.trim();
   const modoNovo = $('radioModoNovo').checked;
   const substituir = modoNovo ? '' : $('selectSlotSubstituir').value;
   const cheio = _slotsCache.length >= 12;
 
-  if (!nomeSlot) {
-    $('nuvemSalvarStatus').textContent = '⚠ Informe um nome para o save.';
+  try {
+    nomeSlot = validarNomeSlotFirestore(nomeSlot);
+    $('inputNomeNovoSlot').value = nomeSlot;
+  } catch (err) {
+    $('nuvemSalvarStatus').textContent = '⚠ ' + (err.message || 'Nome do save inválido.');
     $('nuvemSalvarStatus').style.color = '#c62828';
     return;
   }
@@ -371,6 +475,8 @@ async function confirmarSalvarNuvem() {
     if (_slotAutoSave && substituir && substituir === _slotAutoSave) _slotAutoSave = nomeSlot;
     // Registra como slot da nuvem carregado (permite ativar auto-save)
     _slotNuvemCarregado = nomeSlot;
+    // Marca o estado atual como salvo para o aviso/auto-save não considerar alteração antiga.
+    _ultimoHashSalvo = JSON.stringify(coletarDadosParaNuvem());
     $('nuvemSalvarStatus').textContent = '✅ Salvo com sucesso!';
     $('nuvemSalvarStatus').style.color = '#2e7d32';
     await _listarSlots();
@@ -426,16 +532,13 @@ function _renderListaCarregar() {
     return;
   }
   $('slotsParaCarregar').innerHTML = '<div class="slot-lista">' +
-    slots.map(s => {
-      const nome = s.nome.replace(/'/g, "\\'");
-      return `<div class="slot-item">
-        <span>📄 ${s.nome}</span>
+    slots.map(s => `<div class="slot-item">
+        <span>📄 ${escapeHtml(s.nome)}</span>
         <div class="slot-acoes">
-          <button class="btn-carregar-slot" onclick="carregarSlotNuvem('${nome}')">⬇ Carregar</button>
-          <button class="btn-apagar-slot" onclick="apagarSlotNuvem('${nome}')">🗑 Apagar</button>
+          <button class="btn-carregar-slot" onclick="carregarSlotNuvem(${jsArgAttr(s.nome)})">⬇ Carregar</button>
+          <button class="btn-apagar-slot" onclick="apagarSlotNuvem(${jsArgAttr(s.nome)})">🗑 Apagar</button>
         </div>
-      </div>`;
-    }).join('') +
+      </div>`).join('') +
     '</div>';
 }
 
@@ -686,17 +789,24 @@ function coletarDadosParaNuvem() {
 
 function aplicarDados(dados) {
   if (!dados) return;
-  funcoes = dados.funcoes || [];
-  responsaveis = dados.responsaveis || [];
-  vinculos = dados.vinculos || { Alpha: [], Bravo: [], Charlie: [], Delta: [] };
-  afastamentos = dados.afastamentos || [];
+  funcoes = Array.isArray(dados.funcoes) ? dados.funcoes : [];
+  responsaveis = Array.isArray(dados.responsaveis) ? dados.responsaveis : [];
+  const vinculosCarregados = (dados.vinculos && typeof dados.vinculos === 'object') ? dados.vinculos : {};
+  vinculos = { Alpha: [], Bravo: [], Charlie: [], Delta: [] };
+  Object.assign(vinculos, vinculosCarregados);
+  // Backups antigos/parciais podem vir sem Bravo/Charlie/Delta após troca de tipo de escala.
+  // Garante que todas as alas existam antes de qualquer .forEach().
+  alas.forEach(a => { if (!Array.isArray(vinculos[a])) vinculos[a] = []; });
+  afastamentos = Array.isArray(dados.afastamentos) ? dados.afastamentos : [];
   calendarioGerado = dados.calendarioGerado || false;
-  exclusoesDiarias = dados.exclusoesDiarias || {};
+  exclusoesDiarias = (dados.exclusoesDiarias && typeof dados.exclusoesDiarias === 'object') ? dados.exclusoesDiarias : {};
   if (dados.configEscala) {
-    configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'], ...dados.configEscala };
+    configEscala = { ...criarConfigEscalaPadrao(), ...dados.configEscala };
+    configEscala.dataReferenciaAlpha = normalizarDataReferenciaAlpha(configEscala.dataReferenciaAlpha);
   } else {
-    configEscala = { horasOn: 24, horasOff: 72, horaInicio: 8, alasAtivas: ['Alpha','Bravo','Charlie','Delta'] };
+    configEscala = criarConfigEscalaPadrao();
   }
+  alas.forEach(a => garantirFuncoesExclusivasSemConflito(a));
   alas.forEach(a => {
     vinculos[a].forEach(func => {
       if (!func.hasOwnProperty('dia')) {
@@ -779,7 +889,7 @@ async function _autoSaveNuvem() {
   }
 
   try {
-    const dados = await comprimirParaNuvem(hashAtual === null ? coletarDadosParaNuvem() : JSON.parse(hashAtual)).catch(e => { throw e; });
+    const dados = await comprimirParaNuvem(coletarDadosParaNuvem());
     // Tenta salvar — em caso de falha aguarda 10s e tenta mais uma vez
     try {
       await salvarSlot(usuarioAtual, _slotAutoSave, dados, _slotAutoSave);
@@ -973,9 +1083,14 @@ function salvarArquivosTemporarios() {}
 // ============================================================
 // DOMContentLoaded
 // ============================================================
+let _debouncedAdicionarFuncoes = null;
+let _debouncedAdicionarResponsaveis = null;
+
 document.addEventListener('DOMContentLoaded', () => {
-  $('funcoes').addEventListener('input', debounce(adicionarFuncoes));
-  $('responsaveis').addEventListener('input', debounce(adicionarResponsaveis));
+  _debouncedAdicionarFuncoes = debounce(adicionarFuncoes);
+  _debouncedAdicionarResponsaveis = debounce(adicionarResponsaveis);
+  $('funcoes').addEventListener('input', _debouncedAdicionarFuncoes);
+  $('responsaveis').addEventListener('input', _debouncedAdicionarResponsaveis);
   $('mes').addEventListener('change', () => {
     setFimDaEscalaPadrao();
     salvarDadosPersistentes();
@@ -1008,10 +1123,34 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================================
 function debounce(fn, delay = 1000) {
   let timeout;
-  return function (...args) {
+  let lastArgs = [];
+  let lastThis = null;
+  const wrapped = function (...args) {
+    lastArgs = args;
+    lastThis = this;
     clearTimeout(timeout);
-    timeout = setTimeout(() => fn.apply(this, args), delay);
+    timeout = setTimeout(() => {
+      timeout = null;
+      fn.apply(lastThis, lastArgs);
+    }, delay);
   };
+  wrapped.flush = function () {
+    if (!timeout) return false;
+    clearTimeout(timeout);
+    timeout = null;
+    fn.apply(lastThis, lastArgs);
+    return true;
+  };
+  return wrapped;
+}
+function sincronizarCamposPrincipais() {
+  // Garante que textos digitados em Funções/Responsáveis sejam aplicados antes de gerar, salvar ou exportar.
+  if (_debouncedAdicionarFuncoes && _debouncedAdicionarFuncoes.flush()) {
+    // flush já executou adicionarFuncoes()
+  }
+  if (_debouncedAdicionarResponsaveis && _debouncedAdicionarResponsaveis.flush()) {
+    // flush já executou adicionarResponsaveis()
+  }
 }
 function formatarMoeda(valor) {
   return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -1037,57 +1176,168 @@ function compararDatas(data1, data2) {
   if (t1 > t2) return 1;
   return 0;
 }
+function normalizarEspacosNome(nome) {
+  return String(nome || '').trim().replace(/\s+/g, ' ');
+}
+function chaveNome(nome) {
+  return normalizarEspacosNome(nome).toLocaleLowerCase('pt-BR');
+}
+function nomesIguais(a, b) {
+  return chaveNome(a) === chaveNome(b);
+}
+function setChavesNomes(nomes) {
+  return new Set((nomes || []).map(chaveNome).filter(Boolean));
+}
 function setFimDaEscalaPadrao() {
   const m = parseInt($('mes').value), a = parseInt($('ano').value);
   $('fimDaEscala').value = m && a ? new Date(a, m, 0).getDate() : '';
 }
 
 
+function obterNomeFuncaoUnico(nomeBase, nomesOcupados) {
+  const base = normalizarEspacosNome(nomeBase);
+  if (!base) return '';
+  const ocupados = nomesOcupados instanceof Set ? nomesOcupados : setChavesNomes(nomesOcupados || []);
+  if (!ocupados.has(chaveNome(base))) return base;
+  let n = 2;
+  let candidato = `${base} (${n})`;
+  while (ocupados.has(chaveNome(candidato))) {
+    n += 1;
+    candidato = `${base} (${n})`;
+  }
+  return candidato;
+}
+
+function renomearFuncaoExclusivaAlaInterno(ala, nomeAntigo, nomeNovo, vinculoGeralRef = null) {
+  if (!ala || !nomeAntigo || !nomeNovo || nomesIguais(nomeAntigo, nomeNovo) || !Array.isArray(vinculos[ala])) return;
+  vinculos[ala].forEach(v => {
+    // Funções exclusivas usam apenasAla=true. Renomeia o vínculo geral específico
+    // e seus lançamentos diários, sem tocar na função global de mesmo nome.
+    if (v === vinculoGeralRef || (v.apenasAla && v.hasOwnProperty('dia') && nomesIguais(v.funcao, nomeAntigo))) {
+      v.funcao = nomeNovo;
+    }
+  });
+  if (exclusoesDiarias[ala]) {
+    Object.keys(exclusoesDiarias[ala]).forEach(dia => {
+      exclusoesDiarias[ala][dia] = exclusoesDiarias[ala][dia].map(f => nomesIguais(f, nomeAntigo) ? nomeNovo : f);
+      exclusoesDiarias[ala][dia] = [...new Set(exclusoesDiarias[ala][dia])];
+    });
+  }
+}
+
+function garantirFuncoesExclusivasSemConflito(ala) {
+  if (!Array.isArray(vinculos[ala])) vinculos[ala] = [];
+  const renomeadas = [];
+  const nomesOcupados = setChavesNomes(funcoes);
+  vinculos[ala]
+    .filter(v => !v.hasOwnProperty('dia') && !v.apenasAla)
+    .forEach(v => nomesOcupados.add(chaveNome(v.funcao)));
+
+  vinculos[ala]
+    .filter(v => !v.hasOwnProperty('dia') && v.apenasAla)
+    .forEach(v => {
+      const nomeAtual = v.funcao;
+      const nomeUnico = obterNomeFuncaoUnico(nomeAtual, nomesOcupados);
+      if (nomeUnico !== nomeAtual) {
+        renomearFuncaoExclusivaAlaInterno(ala, nomeAtual, nomeUnico, v);
+        renomeadas.push({ ala, antigo: nomeAtual, novo: nomeUnico });
+      }
+      nomesOcupados.add(chaveNome(nomeUnico));
+    });
+  return renomeadas;
+}
+
+
 function adicionarFuncoes() {
-  const input = $('funcoes').value.split('\n').map(f => f.trim()).filter(Boolean);
-  const unicas = [], duplicadas = [];
-  input.forEach(f => unicas.includes(f) ? duplicadas.push(f) : unicas.push(f));
+  const input = $('funcoes').value.split('\n').map(f => normalizarEspacosNome(f)).filter(Boolean);
+  const unicas = [], duplicadas = [], chavesVistas = new Set();
+  input.forEach(f => {
+    const chave = chaveNome(f);
+    if (chavesVistas.has(chave)) {
+      duplicadas.push(f);
+    } else {
+      chavesVistas.add(chave);
+      unicas.push(f);
+    }
+  });
+  const mensagensAviso = [];
   if (duplicadas.length) {
     $('funcoes').value = unicas.join('\n');
-    openWarningModal(`Não deve haver funções com nomes repetidos`);
+    mensagensAviso.push('Não deve haver funções com nomes repetidos, mesmo mudando maiúsculas/minúsculas. As duplicadas foram removidas da lista global.');
   }
-  const funcoesRemovidas = funcoes.filter(f => !unicas.includes(f));
+  const chavesUnicas = setChavesNomes(unicas);
+  const funcoesRemovidas = funcoes.filter(f => !chavesUnicas.has(chaveNome(f)));
   funcoes = unicas;
   atualizarSelectResponsaveis();
   funcoesRemovidas.forEach(funcaoRemovida => {
     removerResiduosFuncao(funcaoRemovida);
   });
+  const renomeacoesExclusivas = [];
   alas.forEach(a => {
-    // Preserva funções exclusivas de ala (apenasAla) ao filtrar
-    vinculos[a] = vinculos[a].filter(v => funcoes.includes(v.funcao) || v.apenasAla);
+    // Preserva funções exclusivas de ala (apenasAla) ao filtrar.
+    // A função global deve existir em todas as alas; se uma função exclusiva tiver
+    // o mesmo nome, ela é renomeada automaticamente para "Nome (2)", "Nome (3)" etc.
+    vinculos[a] = vinculos[a].filter(v => chavesUnicas.has(chaveNome(v.funcao)) || v.apenasAla);
     funcoes.forEach(f => {
-      if (!vinculos[a].some(v => v.funcao === f && !v.hasOwnProperty('dia') && !v.apenasAla))
+      if (!vinculos[a].some(v => nomesIguais(v.funcao, f) && !v.hasOwnProperty('dia') && !v.apenasAla)) {
         vinculos[a].push({ funcao: f, responsavel: 'Indeterminado' });
+      }
     });
+    renomeacoesExclusivas.push(...garantirFuncoesExclusivasSemConflito(a));
     const geraisGlobais = vinculos[a].filter(v => !v.hasOwnProperty('dia') && !v.apenasAla);
     const geraisExclusivos = vinculos[a].filter(v => !v.hasOwnProperty('dia') && v.apenasAla);
     const diarios = vinculos[a].filter(v => v.hasOwnProperty('dia'));
-    vinculos[a] = funcoes.map(f => geraisGlobais.find(v => v.funcao === f) || { funcao: f, responsavel: 'Indeterminado' })
+    diarios.forEach(v => {
+      if (!v.apenasAla) {
+        const nomeCanonico = funcoes.find(f => nomesIguais(f, v.funcao));
+        if (nomeCanonico) v.funcao = nomeCanonico;
+      }
+    });
+    vinculos[a] = funcoes
+      .map(f => {
+        const existente = geraisGlobais.find(v => nomesIguais(v.funcao, f));
+        if (existente) existente.funcao = f;
+        return existente || { funcao: f, responsavel: 'Indeterminado' };
+      })
       .concat(geraisExclusivos)
       .concat(diarios);
   });
+  if (renomeacoesExclusivas.length) {
+    const detalhes = renomeacoesExclusivas
+      .map(r => `${r.ala}: "${r.antigo}" virou "${r.novo}"`)
+      .join(' | ');
+    mensagensAviso.push(`A função global foi adicionada em todas as alas. Onde já existia função específica com o mesmo nome, ela foi duplicada e renomeada automaticamente: ${detalhes}`);
+  }
   for (let a in exclusoesDiarias) {
+    const nomesValidosNaAla = setChavesNomes(funcoes);
+    (vinculos[a] || [])
+      .filter(v => !v.hasOwnProperty('dia') && v.apenasAla)
+      .forEach(v => nomesValidosNaAla.add(chaveNome(v.funcao)));
     for (let d in exclusoesDiarias[a]) {
-      exclusoesDiarias[a][d] = exclusoesDiarias[a][d].filter(f => funcoes.includes(f));
+      exclusoesDiarias[a][d] = exclusoesDiarias[a][d].filter(f => nomesValidosNaAla.has(chaveNome(f)));
       if (!exclusoesDiarias[a][d].length) delete exclusoesDiarias[a][d];
     }
   }
   exibirVinculos();
   salvarDadosPersistentes();
   if (calendarioGerado) gerarCalendario(true);
+  if (mensagensAviso.length) {
+    openWarningModal(mensagensAviso.join('\n\n'));
+  }
 }
 function removerResiduosFuncao(funcao) {
   alas.forEach(ala => {
-    vinculos[ala] = vinculos[ala].filter(v => v.funcao !== funcao);
+    // Remove apenas a função global e seus lançamentos diários.
+    // Funções exclusivas de ala com o mesmo nome são preservadas.
+    vinculos[ala] = vinculos[ala].filter(v => !nomesIguais(v.funcao, funcao) || v.apenasAla);
   });
   for (let ala in exclusoesDiarias) {
+    const existeExclusivaComEsseNome = (vinculos[ala] || [])
+      .some(v => v.apenasAla && !v.hasOwnProperty('dia') && nomesIguais(v.funcao, funcao));
     for (let dia in exclusoesDiarias[ala]) {
-      exclusoesDiarias[ala][dia] = exclusoesDiarias[ala][dia].filter(f => f !== funcao);
+      if (!existeExclusivaComEsseNome) {
+        exclusoesDiarias[ala][dia] = exclusoesDiarias[ala][dia].filter(f => !nomesIguais(f, funcao));
+      }
       if (!exclusoesDiarias[ala][dia].length) delete exclusoesDiarias[ala][dia];
     }
     if (Object.keys(exclusoesDiarias[ala]).length === 0) delete exclusoesDiarias[ala];
@@ -1134,11 +1384,11 @@ function atualizarSelectResponsaveis() {
         const diaId = parseInt(sel.id.split('-')[1]);
         const dt = isNaN(diaId) ? null : new Date(parseInt($('ano').value), parseInt($('mes').value) - 1, diaId);
         const afastado = dt ? isResponsavelAfastado(r, dt) : false;
-        return `<option value="${r}" ${r === val ? 'selected' : ''}>${r}${afastado ? ' (Afastado)' : ''}</option>`;
+        return `<option value="${escapeAttr(r)}" ${r === val ? 'selected' : ''}>${escapeHtml(r)}${afastado ? ' (Afastado)' : ''}</option>`;
       }).join('');
   });
   $('afastamento-responsavel').innerHTML = '<option value="">Selecione um responsável</option>' +
-    responsaveis.map(r => `<option value="${r}">${r}</option>`).join('');
+    responsaveis.map(r => `<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join('');
 }
 function gerarVinculos() {
   const resetar = () => {
@@ -1146,6 +1396,7 @@ function gerarVinculos() {
       // Mantém apenas funções exclusivas de ala ao resetar os vínculos globais
       const exclusivas = vinculos[a].filter(v => !v.hasOwnProperty('dia') && v.apenasAla);
       vinculos[a] = funcoes.map(f => ({ funcao: f, responsavel: 'Indeterminado' })).concat(exclusivas);
+      garantirFuncoesExclusivasSemConflito(a);
     });
     exibirVinculos();
     gerarResumoResponsaveis();
@@ -1170,13 +1421,13 @@ function exibirVinculos() {
 <table>
 <tr><th>Função</th><th>Responsável</th><th>Tipo</th></tr>
 ${todasFuncoes.map(it => `<tr>
-<td>${it.funcao}</td>
-<td><select data-role="responsavel-vinculo" onchange="editarResponsavel('${a}','${it.funcao}',this.value)">
+<td>${escapeHtml(it.funcao)}</td>
+<td><select data-role="responsavel-vinculo" onchange="editarResponsavel(${jsArgAttr(a)},${jsArgAttr(it.funcao)},this.value)">
 <option value="">Selecione um responsável</option>
-${responsaveis.map(r => `<option value="${r}" ${r === it.responsavel ? 'selected' : ''}>${r}</option>`).join('')}
+${responsaveis.map(r => `<option value="${escapeAttr(r)}" ${r === it.responsavel ? 'selected' : ''}>${escapeHtml(r)}</option>`).join('')}
 </select></td>
 <td>${it.apenasAla
-  ? `<span class="tag-funcao-exclusiva">Função específica da ala</span><br><button class="btn-remover-funcao-ala" onclick="removerFuncaoExclusivaAla('${a}','${it.funcao.replace(/'/g, "\\'")}')">🗑 Remover</button>`
+  ? `<span class="tag-funcao-exclusiva">Função específica da ala</span><br><button class="btn-remover-funcao-ala" onclick="removerFuncaoExclusivaAla(${jsArgAttr(a)},${jsArgAttr(it.funcao)})">🗑 Remover</button>`
   : `<span class="tag-funcao-geral">Função geral</span>`
 }</td>
 </tr>`).join('')}
@@ -1184,35 +1435,34 @@ ${responsaveis.map(r => `<option value="${r}" ${r === it.responsavel ? 'selected
 
     const tabelaExclusiva = '';
 
-    const escapedA = a.replace(/'/g, "\\'");
     const painel = `
-<div class="painel-adicionar-funcao-ala" id="painel-funcao-${a}">
-  <div class="painel-adicionar-funcao-ala-titulo" onclick="togglePainelFuncaoAla('${escapedA}')">
-    ➕ Adicionar função exclusiva à Ala ${a}
-    <span id="seta-painel-${a}" class="seta-painel">▼</span>
+<div class="painel-adicionar-funcao-ala" id="painel-funcao-${escapeAttr(a)}">
+  <div class="painel-adicionar-funcao-ala-titulo" onclick="togglePainelFuncaoAla(${jsArgAttr(a)})">
+    ➕ Adicionar função exclusiva à Ala ${escapeHtml(a)}
+    <span id="seta-painel-${escapeAttr(a)}" class="seta-painel">▼</span>
   </div>
-  <div class="painel-adicionar-funcao-ala-corpo" id="corpo-painel-${a}" style="display:none;">
+  <div class="painel-adicionar-funcao-ala-corpo" id="corpo-painel-${escapeAttr(a)}" style="display:none;">
     <div class="painel-funcao-campos">
       <div class="painel-funcao-campo">
         <label>Nome da função:</label>
-        <input type="text" id="input-funcao-ala-${a}" placeholder="Ex: Socorrista" maxlength="80">
+        <input type="text" id="input-funcao-ala-${escapeAttr(a)}" placeholder="Ex: Socorrista" maxlength="80">
       </div>
       <div class="painel-funcao-campo">
         <label>Responsável:</label>
-        <select id="select-resp-ala-${a}" data-role="responsavel-vinculo">
+        <select id="select-resp-ala-${escapeAttr(a)}" data-role="responsavel-vinculo">
           <option value="">Indeterminado</option>
-          ${responsaveis.map(r => `<option value="${r}">${r}</option>`).join('')}
+          ${responsaveis.map(r => `<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join('')}
         </select>
       </div>
       <div class="painel-funcao-campo painel-funcao-campo-btn">
-        <button class="btn-adicionar-funcao-ala" onclick="adicionarFuncaoExclusivaAla('${escapedA}')">Adicionar</button>
+        <button class="btn-adicionar-funcao-ala" onclick="adicionarFuncaoExclusivaAla(${jsArgAttr(a)})">Adicionar</button>
       </div>
     </div>
-    <div id="erro-funcao-ala-${a}" class="erro-funcao-ala" style="display:none;"></div>
+    <div id="erro-funcao-ala-${escapeAttr(a)}" class="erro-funcao-ala" style="display:none;"></div>
   </div>
 </div>`;
 
-    return `<h3>Vínculos da Ala ${a}${a === 'Delta' ? ' <span class="aviso-ala-delta">(Escalas 24×48 não contém essa ala)</span>' : ''}</h3>${tabelaGlobal}${tabelaExclusiva}${painel}`;
+    return `<h3>Vínculos da Ala ${escapeHtml(a)}${a === 'Delta' ? ' <span class="aviso-ala-delta">(Escalas 24×48 não contém essa ala)</span>' : ''}</h3>${tabelaGlobal}${tabelaExclusiva}${painel}`;
   }).join('');
   setTimeout(ativarTodosCustomSelects, 0);
 }
@@ -1232,7 +1482,7 @@ function adicionarFuncaoExclusivaAla(ala) {
   const erroEl = $(`erro-funcao-ala-${ala}`);
   if (!inputEl || !selectEl) return;
 
-  const nomeFuncao = inputEl.value.trim();
+  const nomeFuncao = normalizarEspacosNome(inputEl.value);
   const responsavelEscolhido = selectEl.value || 'Indeterminado';
 
   // Oculta erro anterior
@@ -1244,18 +1494,18 @@ function adicionarFuncaoExclusivaAla(ala) {
     return;
   }
 
-  // Verifica se já existe (global ou exclusiva nesta ala)
-  const jaExisteGlobal = funcoes.includes(nomeFuncao);
-  const jaExisteNaAla = vinculos[ala].some(v => v.funcao === nomeFuncao && !v.hasOwnProperty('dia'));
-  if (jaExisteGlobal || jaExisteNaAla) {
-    erroEl.textContent = '⚠ Já existe uma função com esse nome nesta ala ou nas funções globais.';
-    erroEl.style.display = 'block';
-    return;
-  }
+  // Se o nome já existir como função global ou nesta ala, cria variação automática:
+  // "Nome (2)", "Nome (3)" etc. Isso mantém a regra de negócio: função global
+  // continua entrando em todas as alas, mas não há dois IDs/chaves iguais no código.
+  const nomesOcupados = setChavesNomes(funcoes);
+  vinculos[ala]
+    .filter(v => !v.hasOwnProperty('dia'))
+    .forEach(v => nomesOcupados.add(chaveNome(v.funcao)));
+  const nomeFuncaoFinal = obterNomeFuncaoUnico(nomeFuncao, nomesOcupados);
 
   // Adiciona a função exclusiva à ala
   vinculos[ala].push({
-    funcao: nomeFuncao,
+    funcao: nomeFuncaoFinal,
     responsavel: responsavelEscolhido,
     apenasAla: true
   });
@@ -1263,6 +1513,10 @@ function adicionarFuncaoExclusivaAla(ala) {
   // Limpa os campos
   inputEl.value = '';
   selectEl.value = '';
+
+  if (nomeFuncaoFinal !== nomeFuncao) {
+    openWarningModal(`Já existia uma função chamada "${nomeFuncao}". A função específica foi adicionada como "${nomeFuncaoFinal}".`);
+  }
 
   exibirVinculos();
   // Reabre o painel após rerender
@@ -1380,6 +1634,7 @@ function limparCalendarioEResiduos() {
     .forEach(id => { const btn = $(id); if (btn) btn.style.display = 'none'; });
 }
 function gerarCalendario(mantemEd = false) {
+  sincronizarCamposPrincipais();
   const m = parseInt($('mes').value);
   const a = parseInt($('ano').value);
   if (!m || !a || a < 2000) {
@@ -1406,7 +1661,7 @@ function calcularAlaParaDia(dt) {
 // Para 24×72: um turno por dia — [{ ala:'Alpha', horaInicio:8, horaFim:8 }]
 // Para 12×36: dois turnos por dia — [{ ala:'Alpha', horaInicio:8, horaFim:20 }, { ala:'Bravo', horaInicio:20, horaFim:8 }]
 function calcularAlasTurnosDia(dt) {
-  const [ry, rm, rd] = DATA_REFERENCIA_ALPHA.split('-').map(Number);
+  const [ry, rm, rd] = obterDataReferenciaAlpha().split('-').map(Number);
   const refDate = new Date(ry, rm - 1, rd);
   const hi = configEscala.horaInicio;
   const horasOn = configEscala.horasOn;
@@ -1462,6 +1717,8 @@ function abrirModalConfigEscala() {
   const radio = document.querySelector(`input[name="cfgTipo"][value="${tipo}"]`);
   if (radio) radio.checked = true;
   $('cfgHoraInicio').value = configEscala.horaInicio;
+  const dataRefInput = $('cfgDataReferenciaAlpha');
+  if (dataRefInput) dataRefInput.value = obterDataReferenciaAlpha();
   _atualizarPreviewConfig();
   $('modalConfigEscala').style.display = 'flex';
 }
@@ -1479,16 +1736,20 @@ function _atualizarPreviewConfig() {
   const hiStr = isNaN(hi) ? '?' : hi + 'h';
   const horaFim = opt.horasOn < 24 ? ((hi + opt.horasOn) % 24) + 'h' : hi + 'h (24h)';
   const alasStr = opt.alasAtivas.join(', ');
-  preview.innerHTML = `<strong>${opt.horasOn}h de plantão × ${opt.horasOff}h de folga</strong> &nbsp;|&nbsp; Início: <strong>${hiStr}</strong> · Fim: <strong>${horaFim}</strong><br><span style="font-size:12px;">Alas: <strong>${alasStr}</strong></span>`;
+  const dataRef = normalizarDataReferenciaAlpha($('cfgDataReferenciaAlpha')?.value || obterDataReferenciaAlpha());
+  preview.innerHTML = `<strong>${opt.horasOn}h de plantão × ${opt.horasOff}h de folga</strong> &nbsp;|&nbsp; Início: <strong>${hiStr}</strong> · Fim: <strong>${horaFim}</strong><br><span style="font-size:12px;">Alas: <strong>${alasStr}</strong> · Referência Alpha: <strong>${escapeHtml(formatarDataReferenciaAlpha(dataRef))}</strong></span>`;
 }
 
 function salvarConfigEscala() {
   const radio = document.querySelector('input[name="cfgTipo"]:checked');
   const hi = parseInt($('cfgHoraInicio').value);
+  const dataRefBruta = $('cfgDataReferenciaAlpha')?.value || DATA_REFERENCIA_ALPHA;
+  const dataRef = normalizarDataReferenciaAlpha(dataRefBruta);
   if (!radio) { openWarningModal('Selecione um tipo de escala.'); return; }
   if (isNaN(hi) || hi < 0 || hi > 23) { openWarningModal('Hora de início inválida (0–23).'); return; }
+  if (dataRef !== dataRefBruta) { openWarningModal('Data de referência da Ala Alpha inválida.'); return; }
   const opt = _OPCOES_ESCALA[radio.value];
-  configEscala = { horasOn: opt.horasOn, horasOff: opt.horasOff, horaInicio: hi, alasAtivas: opt.alasAtivas };
+  configEscala = { horasOn: opt.horasOn, horasOff: opt.horasOff, horaInicio: hi, alasAtivas: opt.alasAtivas, dataReferenciaAlpha: dataRef };
   fecharModalConfigEscala();
   if (calendarioGerado) {
     gerarCalendario(true);
@@ -1529,7 +1790,7 @@ function gerarCalendarioInterno(mantemEd) {
 
       // ── Funções globais ──
       funcoes.forEach(funcao => {
-        const geral = vinculos[ala].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
+        const geral = vinculos[ala].find(v => nomesIguais(v.funcao, funcao) && !v.hasOwnProperty('dia') && !v.apenasAla);
         if (!geral) return;
         let responsavel = geral.responsavel;
         let remuneracao = geral.remuneracao || 'Normal';
@@ -1537,9 +1798,9 @@ function gerarCalendarioInterno(mantemEd) {
           responsavel = 'Indeterminado';
           remuneracao = 'AC4';
         }
-        const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].includes(funcao);
-        const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && !v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
-        const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
+        const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].some(f => nomesIguais(f, funcao));
+        const jaExisteManual = vinculos[ala].some(v => nomesIguais(v.funcao, funcao) && v.dia === dia && !v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
+        const jaExisteAutomatica = vinculos[ala].some(v => nomesIguais(v.funcao, funcao) && v.dia === dia && v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
         if (excluida || jaExisteManual) return;
         if (!jaExisteAutomatica) {
           let ocultarValue = false;
@@ -1567,9 +1828,9 @@ function gerarCalendarioInterno(mantemEd) {
           responsavel = 'Indeterminado';
           remuneracao = 'AC4';
         }
-        const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].includes(funcao);
-        const jaExisteManual = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && !v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
-        const jaExisteAutomatica = vinculos[ala].some(v => v.funcao === funcao && v.dia === dia && v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
+        const excluida = exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] && exclusoesDiarias[ala][dia].some(f => nomesIguais(f, funcao));
+        const jaExisteManual = vinculos[ala].some(v => nomesIguais(v.funcao, funcao) && v.dia === dia && !v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
+        const jaExisteAutomatica = vinculos[ala].some(v => nomesIguais(v.funcao, funcao) && v.dia === dia && v.geradoAutomaticamente && (v.turnoInicio === hInicioTurno || !v.hasOwnProperty('turnoInicio')));
         if (excluida || jaExisteManual) return;
         if (!jaExisteAutomatica) {
           let ocultarValue = false;
@@ -1603,7 +1864,7 @@ function gerarCalendarioInterno(mantemEd) {
       );
       const vincDiaFiltrado = vincDia.filter(v => {
         if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia]) {
-          if (v.geradoAutomaticamente && exclusoesDiarias[ala][dia].includes(v.funcao)) return false;
+          if (v.geradoAutomaticamente && exclusoesDiarias[ala][dia].some(f => nomesIguais(f, v.funcao))) return false;
         }
         return true;
       });
@@ -1616,10 +1877,16 @@ function gerarCalendarioInterno(mantemEd) {
       let funHtml = "";
       let td = 0;
       vincDiaFiltrado.forEach((func, index) => {
-        const hi = `hora-inicio-${dia}-${ala}-${func.funcao}${turnoSufixo}`,
-          hf = `hora-fim-${dia}-${ala}-${func.funcao}${turnoSufixo}`,
-          rm = `remuneracao-${dia}-${ala}-${func.funcao}${turnoSufixo}`,
-          c = `custo-${dia}-${ala}-${func.funcao}${turnoSufixo}`,
+        const idBase = `${dia}-${ala}-${func.funcao}${turnoSufixo}`;
+        const hi = `hora-inicio-${idBase}`,
+          hf = `hora-fim-${idBase}`,
+          rm = `remuneracao-${idBase}`,
+          c = `custo-${idBase}`,
+          hFEId = `hora-fim-escala-${idBase}`,
+          funcaoId = `funcao-${idBase}`,
+          nomeFuncaoId = `nome-funcao-${idBase}`,
+          ocultarId = `ocultar-${idBase}`,
+          alertaId = `alerta-responsavel-msg-${ala}-${func.funcao}-${dia}${turnoSufixo}`,
           hI = func.horaInicio ?? configEscala.horaInicio,
           hF = func.horaFim ?? _horaFimConfig,
           hFE = func.horaFimEscala ?? hF,
@@ -1632,40 +1899,52 @@ function gerarCalendarioInterno(mantemEd) {
         const isOriginalUndefined = !originalResponsavel;
         let alertaHtml = "";
         if (isOriginalUndefined) {
-          alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}${turnoSufixo}" style="color: dodgerblue; font-size: 12px; margin-top: 5px; text-align: center;">Função adicionada manualmente</div>`;
+          alertaHtml = `<div id="${escapeAttr(alertaId)}" style="color: dodgerblue; font-size: 12px; margin-top: 5px; text-align: center;">Função adicionada manualmente</div>`;
         } else if (originalResponsavel && originalResponsavel !== 'Indeterminado' && isResponsavelAfastado(originalResponsavel, dt)) {
-          alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}${turnoSufixo}" style="color: #FF8C00; font-size: 12px; margin-top: 5px; text-align: center;">Função com responsável afastado definido no vínculo geral</div>`;
+          alertaHtml = `<div id="${escapeAttr(alertaId)}" style="color: #FF8C00; font-size: 12px; margin-top: 5px; text-align: center;">Função com responsável afastado definido no vínculo geral</div>`;
         } else if (mantemEd && isResponsavelDiferente && originalResponsavel && originalResponsavel !== 'Indeterminado') {
-          alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}${turnoSufixo}" style="color: red; font-size: 12px; margin-top: 5px; text-align: center;">${originalResponsavel} é o responsável por essa função no vínculo geral da Ala ${ala}.</div>`;
+          alertaHtml = `<div id="${escapeAttr(alertaId)}" style="color: red; font-size: 12px; margin-top: 5px; text-align: center;">${escapeHtml(originalResponsavel)} é o responsável por essa função no vínculo geral da Ala ${escapeHtml(ala)}.</div>`;
         } else if (originalResponsavel && originalResponsavel !== 'Indeterminado') {
-          alertaHtml = `<div id="alerta-responsavel-msg-${ala}-${func.funcao}-${dia}${turnoSufixo}" style="color: darkgoldenrod; font-size: 12px; margin-top: 5px; text-align: center;">Função com responsável definido no vínculo geral</div>`;
+          alertaHtml = `<div id="${escapeAttr(alertaId)}" style="color: darkgoldenrod; font-size: 12px; margin-top: 5px; text-align: center;">Função com responsável definido no vínculo geral</div>`;
         }
         const disabledClass = func.bloqueada ? ' input-disabled' : '';
         const selectDisabledClass = func.bloqueada ? ' select-disabled' : '';
         const disabledAttr = func.bloqueada ? ' disabled' : '';
-        funHtml += `<div id="funcao-${dia}-${ala}-${func.funcao}${turnoSufixo}" class="draggable-funcao" data-dia="${dia}" data-ala="${ala}" data-funcao="${func.funcao}" data-ordem="${index}">
+
+        // Regras intencionais conforme o manual:
+        // - "Ocultar da escala" aparece apenas no 1º dia do mês. Ele é usado quando um serviço de AC4
+        //   começou no último dia do mês anterior e passou de 00h. Nesse caso, o lançamento precisa existir
+        //   no mês atual a partir de 00h para consumir/calcular a cota vigente, mas não deve aparecer de novo
+        //   na escala publicada do mês atual porque o serviço já foi publicado na escala do mês anterior.
+        //   Por isso a marcação afeta só a escala publicada; a Escala de AC4 continua mostrando o serviço para
+        //   cálculo e prestação de contas.
+        // - "H.Fim Escala" aparece apenas no último dia do mês. O H.Fim normal fecha o cálculo da cota dentro
+        //   do mês vigente, enquanto o H.Fim Escala mostra na escala publicada o término real quando o serviço
+        //   continua após a virada do mês.
+        const bloquearArgs = `${jsArgAttr(ala)},${jsArgAttr(func.funcao)},${dia},${!func.bloqueada ? 'true' : 'false'},${jsArgAttr(turnoSufixo)}`;
+        funHtml += `<div id="${escapeAttr(funcaoId)}" class="draggable-funcao" data-dia="${dia}" data-ala="${escapeAttr(ala)}" data-funcao="${escapeAttr(func.funcao)}" data-turno-sufixo="${escapeAttr(turnoSufixo)}" data-ordem="${index}">
 <div class="linha-funcao" style="text-align: center;">
 <span class="drag-handle">↓≡↑</span>
-<strong id="nome-funcao-${dia}-${ala}-${func.funcao}${turnoSufixo}">${func.funcao}:</strong>
-<button class="btn-editar-funcao${disabledClass}"${disabledAttr} onclick="editarNomeFuncaoDia(${dia},'${ala}','${func.funcao.replace(/'/g, "\\'")}')">Editar Nome</button>
-<button class="btn-small" onclick="toggleBloqueioFuncao('${ala}','${func.funcao}',${dia}${!func.bloqueada ? ', true' : ''})">
+<strong id="${escapeAttr(nomeFuncaoId)}">${escapeHtml(func.funcao)}:</strong>
+<button class="btn-editar-funcao${disabledClass}"${disabledAttr} onclick="editarNomeFuncaoDia(${dia},${jsArgAttr(ala)},${jsArgAttr(func.funcao)},${jsArgAttr(turnoSufixo)})">Editar Nome</button>
+<button class="btn-small" onclick="toggleBloqueioFuncao(${bloquearArgs})">
 ${func.bloqueada ? '🔓 Desbloquear Modificaçoes' : '🔒 Bloquear Modificaçoes'}
 </button>
 </div>
 <div class="linha linha-funcao-campos" style="justify-content: center; align-items: center;">
 <label class="label-inline">Nome:</label>
-<select data-role="responsavel-calendario" id="responsavel-${dia}-${ala}-${func.funcao}${turnoSufixo}" class="${selectDisabledClass} select-nome-funcao"${disabledAttr} onchange="atualizarRespCal('${ala}','${func.funcao}',this.value,${dia})">
+<select data-role="responsavel-calendario" id="${escapeAttr(`responsavel-${idBase}`)}" class="${selectDisabledClass} select-nome-funcao"${disabledAttr} onchange="atualizarRespCal(${jsArgAttr(ala)},${jsArgAttr(func.funcao)},this.value,${dia},${jsArgAttr(turnoSufixo)})">
 <option value="">Selecione um responsável</option>
-${responsaveis.map(r => `<option value="${r}" ${r === func.responsavel ? 'selected' : ''}>${r}${isResponsavelAfastado(r, dt) ? ' (Afastado)' : ''}</option>`).join('')}
+${responsaveis.map(r => `<option value="${escapeAttr(r)}" ${r === func.responsavel ? 'selected' : ''}>${escapeHtml(r)}${isResponsavelAfastado(r, dt) ? ' (Afastado)' : ''}</option>`).join('')}
 </select>
 <label class="label-inline">H.Início:</label>
-<input type="number" id="${hi}" class="input-hora${disabledClass}" value="${hI}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}','${turnoSufixo}')">
+<input type="number" id="${escapeAttr(hi)}" class="input-hora${disabledClass}" value="${escapeAttr(hI)}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},${jsArgAttr(ala)},${jsArgAttr(func.funcao)},${jsArgAttr(turnoSufixo)})">
 <label class="label-inline">H.Fim:</label>
-<input type="number" id="${hf}" class="input-hora${disabledClass}" value="${hF}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}','${turnoSufixo}')">
-${dia === dMax ? `<label class="label-inline">H.Fim Escala:</label>
-<input type="number" id="hora-fim-escala-${dia}-${ala}-${func.funcao}${turnoSufixo}" class="input-hora${disabledClass}" value="${hFE}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},'${ala}','${func.funcao}')">` : ``}
+<input type="number" id="${escapeAttr(hf)}" class="input-hora${disabledClass}" value="${escapeAttr(hF)}" min="0" max="23"${disabledAttr} onchange="atualizarCusto(${dia},${jsArgAttr(ala)},${jsArgAttr(func.funcao)},${jsArgAttr(turnoSufixo)})">
+${dia === dMax ? `	<label class="label-inline">H.Fim Escala:</label>
+	<input type="number" id="${escapeAttr(hFEId)}" class="input-hora${disabledClass}" value="${escapeAttr(hFE)}" min="0" max="23"${disabledAttr} onchange="atualizarHoraFimEscala(${dia},${jsArgAttr(ala)},${jsArgAttr(func.funcao)},${jsArgAttr(turnoSufixo)})">` : ``}
 <label class="label-inline">Remuneração:</label>
-<select id="${rm}" class="${selectDisabledClass}"${disabledAttr} onchange="atualizarCusto(${dia},'${ala}','${func.funcao}','${turnoSufixo}')">
+<select id="${escapeAttr(rm)}" class="${selectDisabledClass}"${disabledAttr} onchange="atualizarCusto(${dia},${jsArgAttr(ala)},${jsArgAttr(func.funcao)},${jsArgAttr(turnoSufixo)})">
 <option value="AC4" ${rS==='AC4' ? 'selected' : ''}>AC4</option>
 <option value="AC4 - Regência" ${rS==='AC4 - Regência' ? 'selected' : ''}>AC4 - Regência</option>
 <option value="Extra não remunerado" ${rS==='Extra não remunerado' ? 'selected' : ''}>Extra não remunerado</option>
@@ -1674,33 +1953,33 @@ ${dia === dMax ? `<label class="label-inline">H.Fim Escala:</label>
 <option value="Troca com a SOP" ${rS==='Troca com a SOP' ? 'selected' : ''}>Troca com a SOP</option>
 </select>
 <label class="label-inline">Custo:</label>
-<span id="${c}" class="custo-valor">R$ ${formatarMoeda(cIni)}</span>
-<button${disabledAttr} onclick="removerFuncaoCalendario('${ala}','${func.funcao}',${dia})">Remover</button>
-${dia === 1 ? `<label><input type="checkbox" id="ocultar-${dia}-${ala}-${func.funcao}${turnoSufixo}"${disabledAttr} onchange="toggleOcultar(${dia},'${ala}','${func.funcao}',this.checked)" ${func.ocultar ? 'checked' : ''}> Ocultar da escala</label>` : ``}
+<span id="${escapeAttr(c)}" class="custo-valor">R$ ${formatarMoeda(cIni)}</span>
+<button${disabledAttr} onclick="removerFuncaoCalendario(${jsArgAttr(ala)},${jsArgAttr(func.funcao)},${dia},${jsArgAttr(turnoSufixo)})">Remover</button>
+${dia === 1 ? `	<label><input type="checkbox" id="${escapeAttr(ocultarId)}"${disabledAttr} onchange="toggleOcultar(${dia},${jsArgAttr(ala)},${jsArgAttr(func.funcao)},this.checked,${jsArgAttr(turnoSufixo)})" ${func.ocultar ? 'checked' : ''}> Ocultar da escala</label>` : ``}
 </div>${alertaHtml}</div>`;
       });
 
       // Cabeçalho do turno (só aparece quando há mais de um turno por dia)
       const cabecalhoTurno = turnos.length > 1
-        ? `<div class="turno-cabecalho">🕐 Ala ${ala} — ${String(hInicioTurno).padStart(2,'0')}h às ${String(hFimTurno).padStart(2,'0')}h</div>`
+        ? `<div class="turno-cabecalho">🕐 Ala ${escapeHtml(ala)} — ${String(hInicioTurno).padStart(2,'0')}h às ${String(hFimTurno).padStart(2,'0')}h</div>`
         : '';
 
       htmlTurnos += `${cabecalhoTurno}
-<div id="container-funcoes-${dia}-${ala}${turnoSufixo}" class="sortable-container">
+<div id="${escapeAttr(`container-funcoes-${dia}-${ala}${turnoSufixo}`)}" class="sortable-container" data-dia="${dia}" data-ala="${escapeAttr(ala)}" data-turno-sufixo="${escapeAttr(turnoSufixo)}">
 <div class="funcoes-container">
 ${funHtml}
 </div>
 <div class="input-container">
-<label for="nova-funcao-${dia}-${ala}${turnoSufixo}">Nova Função:</label>
-<input type="text" id="nova-funcao-${dia}-${ala}${turnoSufixo}" placeholder="Adicionar função">
-<button onclick="adicionarFuncaoNoCalendario(${dia},'${ala}',${hInicioTurno},${hFimTurno})">Adicionar Função</button>
+<label for="${escapeAttr(`nova-funcao-${dia}-${ala}${turnoSufixo}`)}">Nova Função:</label>
+<input type="text" id="${escapeAttr(`nova-funcao-${dia}-${ala}${turnoSufixo}`)}" placeholder="Adicionar função">
+<button onclick="adicionarFuncaoNoCalendario(${dia},${jsArgAttr(ala)},${hInicioTurno},${hFimTurno})">Adicionar Função</button>
 </div>
 </div>`;
     } // fim loop turnos
 
     html += `<tr class="${dia % 2 === 0 ? 'linha-par' : 'linha-impar'}">
 <td class="td-data"><span class="data-dia">${dia}/${m}/${a}</span><span class="data-dw">(${dw})</span></td>
-<td>${turnos.map(t => `<div class="ala-cell">${t.ala}</div>`).join('')}</td>
+<td>${turnos.map(t => `<div class="ala-cell">${escapeHtml(t.ala)}</div>`).join('')}</td>
 <td>${htmlTurnos}</td>
 <td id="total-diario-${dia}">R$ ${formatarMoeda(tdDia)}</td>
 </tr>`;
@@ -1816,92 +2095,99 @@ function getDragAfterElement(container, y) {
   }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 function atualizarOrdemFuncoesNoDia(container) {
-  const idParts = container.id.split('-');
-  const dia = parseInt(idParts[2]);
-  const ala = idParts[3];
+  const dia = parseInt(container.dataset.dia, 10);
+  const ala = container.dataset.ala;
+  const turnoSufixo = container.dataset.turnoSufixo || '';
   const funcoesContainer = container.querySelector('.funcoes-container');
-  if (!funcoesContainer) return;
+  if (!funcoesContainer || !ala || isNaN(dia)) return;
   const funcoesNoContainer = funcoesContainer.querySelectorAll('.draggable-funcao');
   funcoesNoContainer.forEach((element, novaOrdem) => {
     const funcao = element.getAttribute('data-funcao');
+    const ts = element.getAttribute('data-turno-sufixo') || turnoSufixo;
     element.setAttribute('data-ordem', novaOrdem);
-    const vinculo = vinculos[ala].find(v => v.funcao === funcao && v.dia === dia);
+    const vinculo = obterVinculoDia(ala, dia, funcao, ts);
     if (vinculo) vinculo.ordemOriginal = novaOrdem;
   });
   salvarDadosPersistentes();
   gerarEscala();
 }
-function editarNomeFuncaoDia(dia, ala, funcaoAtual) {
-  const container = document.getElementById(`funcao-${dia}-${ala}-${funcaoAtual}`);
+function editarNomeFuncaoDia(dia, ala, funcaoAtual, turnoSufixo = '') {
+  const container = document.getElementById(`funcao-${dia}-${ala}-${funcaoAtual}${turnoSufixo}`) ||
+    document.getElementById(`funcao-${dia}-${ala}-${funcaoAtual}`);
   if (!container) return;
-  const vinculoExistente = vinculos[ala].find(v => v.funcao === funcaoAtual && v.dia === dia);
+  const vinculoExistente = obterVinculoDia(ala, dia, funcaoAtual, turnoSufixo);
   if (vinculoExistente && vinculoExistente.bloqueada) {
     openWarningModal("Edição bloqueada para esta função.");
     return;
   }
-  backupEdicaoFuncao[`${dia}-${ala}-${funcaoAtual}`] = container.innerHTML;
-  const nomeAtual = document.getElementById(`nome-funcao-${dia}-${ala}-${funcaoAtual}`)?.textContent.replace(':', '').trim() || funcaoAtual;
+  const chave = `${dia}-${ala}-${funcaoAtual}${turnoSufixo}`;
+  backupEdicaoFuncao[chave] = container.innerHTML;
+  const nomeAtual = document.getElementById(`nome-funcao-${dia}-${ala}-${funcaoAtual}${turnoSufixo}`)?.textContent.replace(':', '').trim() || funcaoAtual;
+  const inputId = `input-editar-funcao-${dia}-${ala}-${funcaoAtual}${turnoSufixo}`;
   const inputHtml = `
 <input type="text"
-id="input-editar-funcao-${dia}-${ala}-${funcaoAtual}"
-value="${nomeAtual.replace(/"/g, '&quot;').replace(/'/g, "\\'")}"
+id="${escapeAttr(inputId)}"
+value="${escapeAttr(nomeAtual)}"
 style="width: 200px; margin-right: 5px;">
-<button onclick="salvarNomeFuncaoDia(${dia},'${ala}','${funcaoAtual}')">Salvar</button>
-<button onclick="cancelarEdicaoFuncaoDia(${dia},'${ala}','${funcaoAtual}')">Cancelar</button>
+<button onclick="salvarNomeFuncaoDia(${dia},${jsArgAttr(ala)},${jsArgAttr(funcaoAtual)},${jsArgAttr(turnoSufixo)})">Salvar</button>
+<button onclick="cancelarEdicaoFuncaoDia(${dia},${jsArgAttr(ala)},${jsArgAttr(funcaoAtual)},${jsArgAttr(turnoSufixo)})">Cancelar</button>
 `;
   const linhaFuncao = container.querySelector('.linha-funcao');
   if (linhaFuncao) {
     linhaFuncao.innerHTML = inputHtml;
   }
 }
-function cancelarEdicaoFuncaoDia(dia, ala, funcaoAtual) {
-  const container = document.getElementById(`funcao-${dia}-${ala}-${funcaoAtual}`);
+function cancelarEdicaoFuncaoDia(dia, ala, funcaoAtual, turnoSufixo = '') {
+  const container = document.getElementById(`funcao-${dia}-${ala}-${funcaoAtual}${turnoSufixo}`) ||
+    document.getElementById(`funcao-${dia}-${ala}-${funcaoAtual}`);
   if (!container) return;
-  const chave = `${dia}-${ala}-${funcaoAtual}`;
+  const chave = `${dia}-${ala}-${funcaoAtual}${turnoSufixo}`;
   if (backupEdicaoFuncao[chave]) {
     container.innerHTML = backupEdicaoFuncao[chave];
     delete backupEdicaoFuncao[chave];
   }
 }
-function salvarNomeFuncaoDia(dia, ala, funcaoAntiga) {
-  const input = document.getElementById(`input-editar-funcao-${dia}-${ala}-${funcaoAntiga}`);
+function salvarNomeFuncaoDia(dia, ala, funcaoAntiga, turnoSufixo = '') {
+  const input = document.getElementById(`input-editar-funcao-${dia}-${ala}-${funcaoAntiga}${turnoSufixo}`) ||
+    document.getElementById(`input-editar-funcao-${dia}-${ala}-${funcaoAntiga}`);
   if (!input) return;
   const novoNome = input.value.trim();
   if (!novoNome) {
     openWarningModal("O nome da função não pode estar vazio.");
     return;
   }
-  const funcoesNoDia = vinculos[ala].filter(v => v.dia === dia);
+  const turnoInicio = turnoInicioDoSufixo(turnoSufixo);
+  const funcoesNoDia = vinculos[ala].filter(v => v.dia === dia && (turnoInicio === null || v.turnoInicio === turnoInicio));
   const funcaoExistente = funcoesNoDia.find(v => v.funcao === novoNome);
   if (funcaoExistente && funcaoExistente.funcao !== funcaoAntiga) {
-    openWarningModal(`Já existe uma função chamada "${novoNome}" neste dia.`);
+    openWarningModal(`Já existe uma função chamada "${novoNome}" neste turno do dia.`);
     return;
   }
-  const vinculoExistente = vinculos[ala].find(v => v.funcao === funcaoAntiga && v.dia === dia);
+  const vinculoExistente = obterVinculoDia(ala, dia, funcaoAntiga, turnoSufixo);
   if (vinculoExistente && vinculoExistente.bloqueada) {
     openWarningModal("Edição bloqueada para esta função.");
-    cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga);
+    cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga, turnoSufixo);
     return;
   }
   const temVinculoGeral = vinculos[ala].some(v => v.funcao === funcaoAntiga && !v.hasOwnProperty('dia'));
   if (temVinculoGeral) {
     openModal(
       `Esta função "${funcaoAntiga}" está no vínculo geral da Ala ${ala}. ` +
-      `Ao editar o nome apenas para o dia ${dia}, você criará uma função especial para este dia. ` +
+      `Ao editar o nome apenas para o dia ${dia}, você criará uma função especial para este dia/turno. ` +
       `A função original "${funcaoAntiga}" continuará existindo nos outros dias. Deseja continuar?`,
       () => {
-        aplicarEdicaoFuncaoComVinculoGeral(dia, ala, funcaoAntiga, novoNome);
+        aplicarEdicaoFuncaoComVinculoGeral(dia, ala, funcaoAntiga, novoNome, turnoSufixo);
       },
       () => {
-        cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga);
+        cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga, turnoSufixo);
       }
     );
   } else {
-    aplicarEdicaoFuncao(dia, ala, funcaoAntiga, novoNome);
+    aplicarEdicaoFuncao(dia, ala, funcaoAntiga, novoNome, turnoSufixo);
   }
 }
-function aplicarEdicaoFuncao(dia, ala, funcaoAntiga, novoNome) {
-  const vinculo = vinculos[ala].find(v => v.funcao === funcaoAntiga && v.dia === dia);
+function aplicarEdicaoFuncao(dia, ala, funcaoAntiga, novoNome, turnoSufixo = '') {
+  const vinculo = obterVinculoDia(ala, dia, funcaoAntiga, turnoSufixo);
   if (vinculo) {
     const ordemOriginal = vinculo.hasOwnProperty('ordemOriginal') ? vinculo.ordemOriginal :
       (vinculo.hasOwnProperty('ordem') ? vinculo.ordem : funcoes.indexOf(funcaoAntiga));
@@ -1917,59 +2203,56 @@ function aplicarEdicaoFuncao(dia, ala, funcaoAntiga, novoNome) {
     gerarCalendario(true);
   }
 }
-function aplicarEdicaoFuncaoComVinculoGeral(dia, ala, funcaoAntiga, novoNome) {
-  const funcaoExistente = vinculos[ala].find(v => v.funcao === novoNome && v.dia === dia);
+function aplicarEdicaoFuncaoComVinculoGeral(dia, ala, funcaoAntiga, novoNome, turnoSufixo = '') {
+  const turnoInicio = turnoInicioDoSufixo(turnoSufixo);
+  const funcaoExistente = vinculos[ala].find(v => v.funcao === novoNome && v.dia === dia && (turnoInicio === null || v.turnoInicio === turnoInicio));
   if (funcaoExistente) {
-    openWarningModal(`Já existe uma função chamada "${novoNome}" neste dia.`);
-    cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga);
+    openWarningModal(`Já existe uma função chamada "${novoNome}" neste turno do dia.`);
+    cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga, turnoSufixo);
     return;
   }
-  const funcoesAntigas = vinculos[ala].filter(v => v.funcao === funcaoAntiga && v.dia === dia);
+  const funcoesAntigas = vinculos[ala].filter(v => v.funcao === funcaoAntiga && v.dia === dia && (turnoInicio === null || v.turnoInicio === turnoInicio));
   if (!funcoesAntigas.length) {
-    cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga);
+    cancelarEdicaoFuncaoDia(dia, ala, funcaoAntiga, turnoSufixo);
     return;
   }
   const funcaoAutomatica = funcoesAntigas.find(v => v.geradoAutomaticamente);
-  let ordemOriginal, responsavelOriginal, originalResponsavelOriginal, horaInicioOriginal, horaFimOriginal, remuneracaoOriginal, ocultarOriginal;
-  if (funcaoAutomatica) {
-    ordemOriginal = funcaoAutomatica.hasOwnProperty('ordemOriginal') ? funcaoAutomatica.ordemOriginal :
-      (funcaoAutomatica.hasOwnProperty('ordem') ? funcaoAutomatica.ordem : funcoes.indexOf(funcaoAntiga));
-    responsavelOriginal = funcaoAutomatica.responsavel;
-    originalResponsavelOriginal = funcaoAutomatica.originalResponsavel || funcaoAutomatica.responsavel;
-    horaInicioOriginal = funcaoAutomatica.horaInicio || 8;
-    horaFimOriginal = funcaoAutomatica.horaFim || 8;
-    remuneracaoOriginal = funcaoAutomatica.remuneracao || 'Normal';
-    ocultarOriginal = funcaoAutomatica.ocultar || false;
-  } else {
-    ordemOriginal = funcoesAntigas[0].hasOwnProperty('ordemOriginal') ? funcoesAntigas[0].ordemOriginal :
-      (funcoesAntigas[0].hasOwnProperty('ordem') ? funcoesAntigas[0].ordem : funcoes.indexOf(funcaoAntiga));
-    responsavelOriginal = funcoesAntigas[0].responsavel;
-    originalResponsavelOriginal = funcoesAntigas[0].originalResponsavel || funcoesAntigas[0].responsavel;
-    horaInicioOriginal = funcoesAntigas[0].horaInicio || 8;
-    horaFimOriginal = funcoesAntigas[0].horaFim || 8;
-    remuneracaoOriginal = funcoesAntigas[0].remuneracao || 'Normal';
-    ocultarOriginal = funcoesAntigas[0].ocultar || false;
-  }
+  let origem;
+  if (funcaoAutomatica) origem = funcaoAutomatica;
+  else origem = funcoesAntigas[0];
+
+  const ordemOriginal = origem.hasOwnProperty('ordemOriginal') ? origem.ordemOriginal :
+    (origem.hasOwnProperty('ordem') ? origem.ordem : funcoes.indexOf(funcaoAntiga));
+  const responsavelOriginal = origem.responsavel;
+  const originalResponsavelOriginal = origem.originalResponsavel || origem.responsavel;
+  const horaInicioOriginal = origem.horaInicio || 8;
+  const horaFimOriginal = origem.horaFim || 8;
+  const horaFimEscalaOriginal = origem.horaFimEscala ?? horaFimOriginal;
+  const remuneracaoOriginal = origem.remuneracao || 'Normal';
+  const ocultarOriginal = origem.ocultar || false;
   registrarExclusao(ala, funcaoAntiga, dia);
-  vinculos[ala] = vinculos[ala].filter(v => !(v.funcao === funcaoAntiga && v.dia === dia));
-  vinculos[ala].push({
+  vinculos[ala] = vinculos[ala].filter(filtrarVinculosDia(ala, dia, funcaoAntiga, turnoSufixo));
+  const novoVinculo = {
     funcao: novoNome,
     responsavel: responsavelOriginal,
     dia: dia,
     horaInicio: horaInicioOriginal,
     horaFim: horaFimOriginal,
-    horaFimEscala: horaFimOriginal,
+    horaFimEscala: horaFimEscalaOriginal,
     remuneracao: remuneracaoOriginal,
     geradoAutomaticamente: false,
     originalResponsavel: originalResponsavelOriginal,
     ordemOriginal: ordemOriginal,
     ocultar: ocultarOriginal
-  });
+  };
+  if (origem.turnoInicio !== undefined) novoVinculo.turnoInicio = origem.turnoInicio;
+  else if (turnoInicio !== null) novoVinculo.turnoInicio = turnoInicio;
+  vinculos[ala].push(novoVinculo);
   salvarDadosPersistentes();
   gerarCalendario(true);
 }
-function toggleBloqueioFuncao(ala, funcao, dia, requerConfirmacao = false) {
-  const vinculo = vinculos[ala].find(v => v.funcao === funcao && v.dia === dia);
+function toggleBloqueioFuncao(ala, funcao, dia, requerConfirmacao = false, turnoSufixo = '') {
+  const vinculo = obterVinculoDia(ala, dia, funcao, turnoSufixo);
   if (!vinculo) return;
   if (vinculo.bloqueada) {
     if (vinculo.estadoBloqueado) {
@@ -2005,15 +2288,16 @@ function toggleBloqueioFuncao(ala, funcao, dia, requerConfirmacao = false) {
 }
 
 // ✅ CORREÇÃO FINAL: Aceita 0 como valor válido para Hora Fim na Escala
-function atualizarHoraFimEscala(dia, ala, funcao) {
-  const vinculoDia = vinculos[ala].find(v => v.funcao === funcao && v.dia === dia);
+function atualizarHoraFimEscala(dia, ala, funcao, turnoSufixo = '') {
+  const vinculoDia = obterVinculoDia(ala, dia, funcao, turnoSufixo);
   // Verifica existência antes de qualquer outra operação
   if (!vinculoDia) return;
   if (vinculoDia.bloqueada) {
     openWarningModal("Edição bloqueada para esta função.");
     return;
   }
-  const inputElem = document.getElementById(`hora-fim-escala-${dia}-${ala}-${funcao}`);
+  const inputElem = document.getElementById(`hora-fim-escala-${dia}-${ala}-${funcao}${turnoSufixo}`) ||
+    document.getElementById(`hora-fim-escala-${dia}-${ala}-${funcao}`);
   if (!inputElem) return;
   
   // ✅ Corrigido: 0 agora é aceito
@@ -2025,11 +2309,16 @@ function atualizarHoraFimEscala(dia, ala, funcao) {
   salvarDadosPersistentes();
 }
 
-function toggleOcultar(dia, ala, funcao, marcado) {
-  const v = vinculos[ala].find(v => v.funcao === funcao && v.dia === dia);
+function toggleOcultar(dia, ala, funcao, marcado, turnoSufixo = '') {
+  // Intencional conforme manual: esta opção é usada no 1º dia do mês para AC4 que veio do mês anterior.
+  // O serviço precisa ser lançado no mês atual a partir de 00h para consumir/calcular a cota vigente,
+  // mas não deve aparecer de novo na escala publicada do mês atual, porque já foi publicado na escala
+  // do mês anterior. Por isso "ocultar" afeta apenas a escala publicada; a Escala de AC4 continua exibindo
+  // o lançamento para cálculo e prestação de contas.
+  const v = obterVinculoDia(ala, dia, funcao, turnoSufixo);
   if (v && v.bloqueada) {
     openWarningModal("Edição bloqueada para esta função.");
-    const chk = $(`ocultar-${dia}-${ala}-${funcao}`);
+    const chk = $(`ocultar-${dia}-${ala}-${funcao}${turnoSufixo}`) || $(`ocultar-${dia}-${ala}-${funcao}`);
     if (chk) chk.checked = !marcado;
     return;
   }
@@ -2062,9 +2351,9 @@ function gerarVagasDisponiveis() {
       const funcaoElement = dv.querySelector('.linha-funcao strong');
       if (!funcaoElement) return;
       const funcao = funcaoElement.textContent.replace(':', '').trim();
-      const ala = row.querySelector('td:nth-child(2)').textContent.trim();
+      const ala = dv.dataset.ala || row.querySelector('td:nth-child(2)').textContent.trim();
       if (exclusoesDiarias[ala] && exclusoesDiarias[ala][diaRow] &&
-        exclusoesDiarias[ala][diaRow].includes(funcao)) return;
+        exclusoesDiarias[ala][diaRow].some(f => nomesIguais(f, funcao))) return;
       const responsavel = dv.querySelector('select[data-role="responsavel-calendario"]').value;
       const remuneracao = dv.querySelector('select[id^="remuneracao-"]').value;
       const horaInicio = parseInt(dv.querySelector('input[id^="hora-inicio-"]').value, 10) || 0;
@@ -2084,7 +2373,7 @@ function gerarVagasDisponiveis() {
     vagas.forEach((vaga, i) => {
       html += `<tr style="background-color:${bgColor}">`;
       if (i === 0) html += `<td rowspan="${vagas.length}">${dia}/${m}/${a}</td>`;
-      html += `<td>${vaga.funcao}</td><td>${vaga.horaInicio}h às ${vaga.horaFim}h</td><td>${vaga.remuneracao}</td></tr>`;
+      html += `<td>${escapeHtml(vaga.funcao)}</td><td>${vaga.horaInicio}h às ${vaga.horaFim}h</td><td>${escapeHtml(vaga.remuneracao)}</td></tr>`;
     });
     dayIndex++;
   });
@@ -2095,34 +2384,43 @@ function gerarVagasDisponiveis() {
   salvarArquivosTemporarios();
 }
 
-function atualizarRespCal(a, funcao, r, d) {
-  let vinculoDia = vinculos[a].find(v => v.funcao === funcao && v.dia === d);
+function atualizarRespCal(a, funcao, r, d, turnoSufixo = '') {
+  let vinculoDia = obterVinculoDia(a, d, funcao, turnoSufixo);
   if (!vinculoDia) {
     const geral = vinculos[a].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
-    if (geral) { vinculoDia = { ...geral, dia: d }; vinculos[a].push(vinculoDia); }
+    if (geral) {
+      vinculoDia = { ...geral, dia: d };
+      const turnoInicio = turnoInicioDoSufixo(turnoSufixo);
+      if (turnoInicio !== null) vinculoDia.turnoInicio = turnoInicio;
+      vinculos[a].push(vinculoDia);
+    }
     else return;
   }
   if (vinculoDia.bloqueada) {
     openWarningModal("Edição bloqueada para esta função.");
-    const sel = $(`responsavel-${d}-${a}-${funcao}`);
+    const sel = $(`responsavel-${d}-${a}-${funcao}${turnoSufixo}`) || $(`responsavel-${d}-${a}-${funcao}`);
     if (sel) sel.value = vinculoDia.responsavel === "Indeterminado" ? "" : vinculoDia.responsavel;
     return;
   }
   const dt = new Date(parseInt($('ano').value), parseInt($('mes').value) - 1, d);
   const prev = vinculoDia.responsavel;
   if (r) {
-    const conflitoMesmoDia = vinculos[a].find(v => v.dia === d && v.funcao !== funcao && v.responsavel === r);
+    const turnoInicio = turnoInicioDoSufixo(turnoSufixo);
+    const conflitoMesmoDia = vinculos[a].find(v =>
+      v.dia === d && v.funcao !== funcao && v.responsavel === r &&
+      (turnoInicio === null || v.turnoInicio === turnoInicio)
+    );
     if (conflitoMesmoDia && !isResponsavelAfastado(r, dt)) {
-      openModal(`O responsável ${r} já está atribuído em outra função neste mesmo dia. Deseja continuar?`,
+      openModal(`O responsável ${r} já está atribuído em outra função neste mesmo turno. Deseja continuar?`,
         () => {
           vinculoDia.responsavel = r || 'Indeterminado';
-          atualizarCusto(d, a, funcao); // já chama gerarResumoResponsaveis, gerarVagasDisponiveis, gerarEscala internamente
+          atualizarCusto(d, a, funcao, turnoSufixo); // já chama gerarResumoResponsaveis, gerarVagasDisponiveis, gerarEscala internamente
           gerarCalendario(true); // atualiza alertas de cor do responsável no calendário
           salvarDadosPersistentes();
         },
         () => {
           vinculoDia.responsavel = prev;
-          const sel = $(`responsavel-${d}-${a}-${funcao}`);
+          const sel = $(`responsavel-${d}-${a}-${funcao}${turnoSufixo}`) || $(`responsavel-${d}-${a}-${funcao}`);
           if (sel) sel.value = prev === "Indeterminado" ? "" : prev;
         }
       );
@@ -2130,7 +2428,7 @@ function atualizarRespCal(a, funcao, r, d) {
     }
   }
   vinculoDia.responsavel = r || 'Indeterminado';
-  atualizarCusto(d, a, funcao); // já chama gerarResumoResponsaveis, gerarVagasDisponiveis, gerarEscala internamente
+  atualizarCusto(d, a, funcao, turnoSufixo); // já chama gerarResumoResponsaveis, gerarVagasDisponiveis, gerarEscala internamente
   gerarCalendario(true); // atualiza alertas de cor do responsável no calendário
   salvarDadosPersistentes();
 }
@@ -2266,20 +2564,20 @@ function adicionarFuncaoNoCalendario(d, a, hInicioTurno, hFimTurno) {
   }
   salvarDadosPersistentes();
 }
-function removerFuncaoCalendario(a, funcao, d) {
+function removerFuncaoCalendario(a, funcao, d, turnoSufixo = '') {
   const geral = vinculos[a].find(v => v.funcao === funcao && !v.hasOwnProperty('dia'));
   if (geral) {
-    openModal(`A função "${funcao}" está presente no vínculo geral da Ala ${a}. Deseja mesmo removê-la para o dia ${d}?`,
+    openModal(`A função "${funcao}" está presente no vínculo geral da Ala ${a}. Deseja mesmo removê-la para o dia ${d}${turnoSufixo ? ' neste turno' : ''}?`,
       () => {
         registrarExclusao(a, funcao, d);
-        vinculos[a] = vinculos[a].filter(v => !(v.funcao === funcao && v.dia === d));
+        vinculos[a] = vinculos[a].filter(filtrarVinculosDia(a, d, funcao, turnoSufixo));
         salvarDadosPersistentes();
         if (calendarioGerado) gerarCalendario(true);
       },
       () => { }
     );
   } else {
-    vinculos[a] = vinculos[a].filter(v => !(v.funcao === funcao && v.dia === d));
+    vinculos[a] = vinculos[a].filter(filtrarVinculosDia(a, d, funcao, turnoSufixo));
     salvarDadosPersistentes();
     if (calendarioGerado) gerarCalendario(true);
   }
@@ -2287,7 +2585,7 @@ function removerFuncaoCalendario(a, funcao, d) {
 function registrarExclusao(a, funcao, d) {
   exclusoesDiarias[a] = exclusoesDiarias[a] || {};
   exclusoesDiarias[a][d] = exclusoesDiarias[a][d] || [];
-  if (!exclusoesDiarias[a][d].includes(funcao)) exclusoesDiarias[a][d].push(funcao);
+  if (!exclusoesDiarias[a][d].some(f => nomesIguais(f, funcao))) exclusoesDiarias[a][d].push(funcao);
 }
 function isResponsavelAfastado(r, d) {
   const dataVerificar = normalizarData(d);
@@ -2391,7 +2689,7 @@ function adicionarAfastamento() {
 }
 function exibirAfastamentos() {
   $('afastamentos').innerHTML = afastamentos
-    .map((af, idx) => `<div><strong>Responsável:</strong> ${af.responsavel} | <strong>Início:</strong> ${formatarData(af.inicio)} | <strong>Fim:</strong> ${formatarData(af.fim)} | <button onclick="removerAfastamento(${idx})">Remover</button></div>`)
+    .map((af, idx) => `<div><strong>Responsável:</strong> ${escapeHtml(af.responsavel)} | <strong>Início:</strong> ${formatarData(af.inicio)} | <strong>Fim:</strong> ${formatarData(af.fim)} | <button onclick="removerAfastamento(${idx})">Remover</button></div>`)
     .join('');
   atualizarSelectResponsaveis();
 }
@@ -2450,9 +2748,9 @@ function gerarResumoResponsaveis() {
       const funcaoElement = div.querySelector('.linha-funcao strong');
       if (!funcaoElement) return;
       const funcao = funcaoElement.textContent.replace(':', '').trim();
-      const ala = r.querySelector('td:nth-child(2)').textContent.trim();
+      const ala = div.dataset.ala || r.querySelector('td:nth-child(2)').textContent.trim();
       if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
-        exclusoesDiarias[ala][dia].includes(funcao)) return;
+        exclusoesDiarias[ala][dia].some(f => nomesIguais(f, funcao))) return;
       const sel = div.querySelector('select[data-role="responsavel-calendario"]');
       const remuSel = div.querySelector('select[id^="remuneracao-"]');
       const hiInput = div.querySelector('input[id^="hora-inicio-"]');
@@ -2504,7 +2802,7 @@ function gerarResumoResponsaveis() {
     const txtDias = `Seg: ${d.trabalhos.segunda}h, Ter: ${d.trabalhos.terca}h, Qua: ${d.trabalhos.quarta}h, ` +
       `Qui: ${d.trabalhos.quinta}h, Sex: ${d.trabalhos.sexta}h, Sáb: ${d.trabalhos.sabado}h, Dom: ${d.trabalhos.domingo}h`;
     html += `<tr style="background-color:${bgColor}">
-<td>${r}</td><td>${formatarMoeda(d.gastoAC4)}</td>
+<td>${escapeHtml(r)}</td><td>${formatarMoeda(d.gastoAC4)}</td>
 <td>${d.horasTotal}h</td><td>${txtDias}</td></tr>`;
     rowIndex++;
   });
@@ -2551,7 +2849,7 @@ function gerarEscala() {
         if (v.responsavel && v.responsavel !== 'Indeterminado') {
           if (v.ocultar) return;
           if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
-            exclusoesDiarias[ala][dia].includes(v.funcao) && v.geradoAutomaticamente) return;
+            exclusoesDiarias[ala][dia].some(f => nomesIguais(f, v.funcao)) && v.geradoAutomaticamente) return;
           const hI = v.horaInicio ?? configEscala.horaInicio;
           const hF = (dia === f && v.hasOwnProperty('horaFimEscala')) ? v.horaFimEscala : (v.horaFim ?? hI);
           lines.push({ funcao: v.funcao, responsavel: v.responsavel, tipo: v.remuneracao, horaInicio: hI, horaFim: hF, ala });
@@ -2576,12 +2874,12 @@ function gerarEscala() {
       if (i === 0) html += `<td rowspan="${rSpan}">${dia}/${m}/${a}</td>`;
       if (ln.ala !== lastAla) {
         const count = info.lines.filter((l, j) => j >= i && l.ala === ln.ala).length;
-        html += `<td rowspan="${count}">${ln.ala}</td>`;
+        html += `<td rowspan="${count}">${escapeHtml(ln.ala)}</td>`;
         lastAla = ln.ala;
       }
       const hI = String(Math.max(0, Math.min(23, parseInt(ln.horaInicio) || 0))).padStart(2, '0');
       const hF = String(Math.max(0, Math.min(23, parseInt(ln.horaFim) || 0))).padStart(2, '0');
-      html += `<td>${ln.funcao}</td><td>${ln.responsavel}</td><td>${ln.tipo}</td><td>${hI}h às ${hF}h</td></tr>`;
+      html += `<td>${escapeHtml(ln.funcao)}</td><td>${escapeHtml(ln.responsavel)}</td><td>${escapeHtml(ln.tipo)}</td><td>${hI}h às ${hF}h</td></tr>`;
     });
     dayIndex++;
   }
@@ -2630,7 +2928,9 @@ function buildEscalaAC4HTML() {
       funcoesDoDia.forEach(v => {
         if (v.responsavel && v.responsavel !== 'Indeterminado') {
           if (exclusoesDiarias[ala] && exclusoesDiarias[ala][dia] &&
-            exclusoesDiarias[ala][dia].includes(v.funcao) && v.geradoAutomaticamente) return;
+            exclusoesDiarias[ala][dia].some(f => nomesIguais(f, v.funcao)) && v.geradoAutomaticamente) return;
+          // Intencional conforme manual: v.ocultar esconde apenas na escala publicada.
+          // A Escala de AC4 deve continuar mostrando esse serviço para calcular/prestar contas da cota do mês atual.
           if (v.remuneracao !== 'AC4' && v.remuneracao !== 'AC4 - Regência') return;
           const hI = v.horaInicio ?? configEscala.horaInicio;
           const hF = v.horaFim ?? hI;
@@ -2649,10 +2949,10 @@ function buildEscalaAC4HTML() {
         const diaIniStr = String(dia).padStart(2, '0') + '/' + String(m).padStart(2, '0') + '/' + a;
         const diaFimStr = String(dtFim.getDate()).padStart(2, '0') + '/' + String(dtFim.getMonth() + 1).padStart(2, '0') + '/' + dtFim.getFullYear();
         html += `<tr style="background-color:${bgColor};">
-<td>${rg}</td><td>${v.responsavel}</td>
+<td>${escapeHtml(rg)}</td><td>${escapeHtml(v.responsavel)}</td>
 <td>${diaIniStr}</td><td>${diaFimStr}</td>
 <td>${hIStr}:00</td><td>${hFStr}:00</td>
-<td>${v.funcao}</td><td>R$ ${formatarMoeda(custo)}</td></tr>`;
+<td>${escapeHtml(v.funcao)}</td><td>R$ ${formatarMoeda(custo)}</td></tr>`;
         dayIndex++;
       });
     }
