@@ -48,6 +48,14 @@
     <div id="topBar">
       <span id="usuarioLogado"></span>
       <a href="manual.html" target="_blank" rel="noopener noreferrer" class="btn-manual-top">📖 Manual</a>
+      <div class="topbar-suporte-wrap">
+        <button type="button" class="btn-suporte-top" onclick="document.getElementById('contatoSuporteTop').classList.toggle('visivel')">📞 Contato / Suporte</button>
+        <div id="contatoSuporteTop" class="contato-suporte-top-card">
+          <button type="button" class="contato-suporte-fechar" onclick="document.getElementById('contatoSuporteTop').classList.remove('visivel')">✕</button>
+          <span class="contato-suporte-label">Entre em contato:</span>
+          <a class="contato-suporte-email" href="mailto:qthdobizurado@gmail.com">qthdobizurado@gmail.com</a>
+        </div>
+      </div>
       <button onclick="fazerLogout()" class="btn-logout">Sair</button>
     </div>
 
