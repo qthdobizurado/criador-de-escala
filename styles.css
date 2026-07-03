@@ -1593,6 +1593,16 @@ table .cs-wrapper {
 .valor-ac4-row select {
   min-width: 190px;
 }
+
+.valor-ac4-fixo {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: 6px;
+  background: var(--input-bg, #fff);
+  font-weight: 600;
+}
+
 .hint-valor-ac4 {
   color: #7c2d12;
   font-size: 13px;

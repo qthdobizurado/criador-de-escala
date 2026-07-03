@@ -120,12 +120,9 @@
     <h2>5. Preencher calendário de funções</h2>
     <div class="input-inline valor-ac4-row">
       <label for="valorAC4">Valor AC4:</label>
-      <select id="valorAC4" onchange="onValorAC4Change()">
-        <option value="" selected disabled>Selecione o valor AC4</option>
-        <option value="antigo">Valor AC4 antigo</option>
-        <option value="novo">Valor AC4 novo</option>
-      </select>
-      <span class="hint-valor-ac4">Obrigatório para calcular.</span>
+      <input type="hidden" id="valorAC4" value="novo">
+      <span class="valor-ac4-fixo">Valor AC4 novo</span>
+      <span class="hint-valor-ac4">Aplicado automaticamente.</span>
     </div>
     <div class="input-inline">
       <label for="mes">Mês:</label>
