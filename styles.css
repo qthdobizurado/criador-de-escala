@@ -1588,33 +1588,3 @@ table .cs-wrapper {
   color: #888;
   font-style: italic;
 }
-
-/* Seleção obrigatória da tabela de valores AC4 */
-.valor-ac4-row select {
-  min-width: 190px;
-}
-
-.valor-ac4-fixo {
-  display: inline-block;
-  padding: 8px 12px;
-  border: 1px solid var(--border-color, #d1d5db);
-  border-radius: 6px;
-  background: var(--input-bg, #fff);
-  font-weight: 600;
-}
-
-.hint-valor-ac4 {
-  color: #7c2d12;
-  font-size: 13px;
-  font-weight: 600;
-}
-.aviso-valor-ac4 {
-  margin: 12px 0;
-  padding: 10px 12px;
-  border: 1px solid #b45309;
-  background: #fff7ed;
-  color: #7c2d12;
-  border-radius: 6px;
-  font-weight: 700;
-}
-
