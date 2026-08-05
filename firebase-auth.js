@@ -41,6 +41,11 @@ async function initFirebase() {
 
 // ── Login com Google (popup) ──────────────────────────────────
 async function loginComGoogle() {
+  // Se o Firebase já restaurou uma sessão, não abre novamente o popup Google.
+  if (window._fbAuth && window._fbAuth.currentUser) {
+    return window._fbAuth.currentUser;
+  }
+
   const { GoogleAuthProvider, signInWithPopup } =
     await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
   const { doc, setDoc, getDoc, serverTimestamp } =
